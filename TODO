@@ -1,0 +1,14 @@
+[ ] Rodar os casos do mestrado.
+
+[x] Criar Distribuição de Tamanho de Poros (DTP) e  Distribuição de Tamanho de Sólidos (DTS).
+[x] Reconstrução ES deve aceitar somente DTS.
+[x] Corrigir também no ploter.
+
+[x] Implementar correlação 3D.
+[x] Possibilitar escolher o número de planos para fazer a média em correlação 3D.
+[x] Implementar distribuição 3D.
+[ ] Implementar filtros 3D.
+
+[x] Permitir informar quem é poro (índice) em Correlacao.
+[ ] Corrigir em CCorrelacaoFrequencial o uso de índice para informar quem é poro.
+[ ] Resolver bug em conectividade 3D quando informa que poro é branco (0).

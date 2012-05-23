@@ -1,0 +1,1208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Leandro Puerari - puerari@gmail.com</author>
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>785</width>
+    <height>1039</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>LVP - LENEP</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="application.qrc">
+    <normaloff>:/images/logo.png</normaloff>:/images/logo.png</iconset>
+  </property>
+  <property name="dockNestingEnabled">
+   <bool>true</bool>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks|QMainWindow::VerticalTabs</set>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>785</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionPrint"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionCopy"/>
+    <addaction name="actionRotate"/>
+   </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>&amp;Window</string>
+    </property>
+    <addaction name="actionClose"/>
+    <addaction name="actionCloseAll"/>
+    <addaction name="separator"/>
+    <addaction name="actionViewMode"/>
+    <addaction name="actionTitle"/>
+    <addaction name="actionCascade"/>
+    <addaction name="separator"/>
+    <addaction name="actionNext"/>
+    <addaction name="actionPrevious"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionAbaut"/>
+    <addaction name="actionAbautQt"/>
+   </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionZoomIn"/>
+    <addaction name="actionZoomOut"/>
+    <addaction name="actionNormalSize"/>
+    <addaction name="separator"/>
+    <addaction name="actionFitToWindow"/>
+    <addaction name="separator"/>
+    <addaction name="actionSource"/>
+    <addaction name="action3DVisualization"/>
+    <addaction name="actionInverter"/>
+   </widget>
+   <widget class="QMenu" name="menuFilters">
+    <property name="title">
+     <string>Fil&amp;ters</string>
+    </property>
+    <widget class="QMenu" name="menuSpatial">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Spatial</string>
+     </property>
+     <addaction name="actionLowPass"/>
+     <addaction name="actionHighPass"/>
+     <addaction name="actionInversion"/>
+     <addaction name="actionIDF"/>
+    </widget>
+    <widget class="QMenu" name="menuMorphology">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="title">
+      <string>Morphology</string>
+     </property>
+     <addaction name="actionErosion"/>
+     <addaction name="actionErosion3D"/>
+     <addaction name="actionDilation"/>
+     <addaction name="actionDilation3D"/>
+     <addaction name="actionOpening"/>
+     <addaction name="actionOpening3D"/>
+     <addaction name="actionClosing"/>
+     <addaction name="actionClosing3D"/>
+    </widget>
+    <widget class="QMenu" name="menu3DFilters">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>3D Filters</string>
+     </property>
+     <addaction name="actionConnectivity"/>
+     <addaction name="actionInversion3D"/>
+     <addaction name="actionIDF3D"/>
+    </widget>
+    <widget class="QMenu" name="menuSkeleton">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="title">
+      <string>Skeleton</string>
+     </property>
+     <addaction name="actionV1"/>
+     <addaction name="actionV2"/>
+     <addaction name="actionV3"/>
+     <addaction name="actionV4"/>
+     <addaction name="actionZhangSuen"/>
+    </widget>
+    <addaction name="menuSpatial"/>
+    <addaction name="menuSkeleton"/>
+    <addaction name="menuMorphology"/>
+    <addaction name="menu3DFilters"/>
+   </widget>
+   <widget class="QMenu" name="menuCharacterization">
+    <property name="title">
+     <string>&amp;Characterization</string>
+    </property>
+    <widget class="QMenu" name="menuCorrelation">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="title">
+      <string>Correlation</string>
+     </property>
+     <addaction name="actionCorFrequency"/>
+     <addaction name="actionCorFrequency3D"/>
+     <addaction name="actionCorSpatial"/>
+     <addaction name="actionCorSpatial3D"/>
+    </widget>
+    <widget class="QMenu" name="menuDTS">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="title">
+      <string>Solid Size Distribution</string>
+     </property>
+     <addaction name="actionDTSd34"/>
+     <addaction name="actionDTSd34_3D"/>
+     <addaction name="actionDTSd345"/>
+     <addaction name="actionDTSd5711"/>
+     <addaction name="actionDTSd5711_3D"/>
+     <addaction name="actionDTSeuclidian"/>
+     <addaction name="actionDTSeuclidian3D"/>
+     <addaction name="actionDTSspatial"/>
+     <addaction name="actionDTSspatial3D"/>
+    </widget>
+    <widget class="QMenu" name="menuDTP">
+     <property name="title">
+      <string>Pores Size Distribution</string>
+     </property>
+     <addaction name="actionDTPd34"/>
+     <addaction name="actionDTPd34_3D"/>
+     <addaction name="actionDTPd345"/>
+     <addaction name="actionDTPd5711"/>
+     <addaction name="actionDTPd5711_3D"/>
+     <addaction name="actionDTPeuclidian"/>
+     <addaction name="actionDTPeuclidian3D"/>
+     <addaction name="actionDTPspatial"/>
+     <addaction name="actionDTPspatial3D"/>
+    </widget>
+    <addaction name="actionConfEq"/>
+    <addaction name="actionPorosity"/>
+    <addaction name="menuCorrelation"/>
+    <addaction name="menuDTS"/>
+    <addaction name="menuDTP"/>
+    <addaction name="actionIntrinsicPermeability"/>
+    <addaction name="actionRelativePermeability"/>
+   </widget>
+   <widget class="QMenu" name="menuLanguage">
+    <property name="title">
+     <string>&amp;Idiom</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuReconstruction">
+    <property name="title">
+     <string>&amp;Reconstruction</string>
+    </property>
+    <addaction name="actionTruncadeGaussiana"/>
+    <addaction name="actionSuperposedSpheres"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menu_View"/>
+   <addaction name="menuFilters"/>
+   <addaction name="menuCharacterization"/>
+   <addaction name="menuReconstruction"/>
+   <addaction name="menuWindow"/>
+   <addaction name="menuLanguage"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="fileToolBar">
+   <property name="windowTitle">
+    <string>File Tool Bar</string>
+   </property>
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
+   <addaction name="actionSaveAs"/>
+   <addaction name="actionPrint"/>
+  </widget>
+  <widget class="QToolBar" name="editToolBar">
+   <property name="contextMenuPolicy">
+    <enum>Qt::DefaultContextMenu</enum>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Edit Tool Bar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionCopy"/>
+   <addaction name="actionRotate"/>
+  </widget>
+  <widget class="QToolBar" name="viewToolBar">
+   <property name="windowTitle">
+    <string>View Tool Bar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action3DVisualization"/>
+   <addaction name="actionInverter"/>
+   <addaction name="actionSource"/>
+   <addaction name="separator"/>
+   <addaction name="actionZoomIn"/>
+   <addaction name="actionZoomOut"/>
+   <addaction name="actionNormalSize"/>
+   <addaction name="actionFitToWindow"/>
+  </widget>
+  <widget class="QToolBar" name="windowToolBar">
+   <property name="windowTitle">
+    <string>Window Tool Bar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionViewMode"/>
+   <addaction name="actionTitle"/>
+   <addaction name="actionCascade"/>
+   <addaction name="actionPrevious"/>
+   <addaction name="actionNext"/>
+   <addaction name="actionClose"/>
+   <addaction name="actionCloseAll"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetLista">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>228</width>
+     <height>226</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>388</width>
+     <height>524287</height>
+    </size>
+   </property>
+   <property name="windowIcon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/logo.png</normaloff>:/images/logo.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="accessibleName">
+    <string/>
+   </property>
+   <property name="accessibleDescription">
+    <string/>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetFloatable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>:. Images List</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetLista3D">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>228</width>
+     <height>226</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>388</width>
+     <height>524287</height>
+    </size>
+   </property>
+   <property name="windowIcon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/logo.png</normaloff>:/images/logo.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="accessibleName">
+    <string/>
+   </property>
+   <property name="accessibleDescription">
+    <string/>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetFloatable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>:. 3D Images List</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents3D"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetListaChart">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>260</width>
+     <height>250</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>400</width>
+     <height>524287</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="accessibleName">
+    <string/>
+   </property>
+   <property name="accessibleDescription">
+    <string/>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetFloatable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>:. Charts List</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContentsListaChart"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetListaTextEditor">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>260</width>
+     <height>250</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>400</width>
+     <height>524287</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="accessibleName">
+    <string/>
+   </property>
+   <property name="accessibleDescription">
+    <string/>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetFloatable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>:. Text Editors List</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContentsListaTextEditor"/>
+  </widget>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/open.png</normaloff>:/images/open.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+   <property name="statusTip">
+    <string>Open an existing file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/save.png</normaloff>:/images/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+   <property name="statusTip">
+    <string>Save to disk</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSaveAs">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/saveAs.png</normaloff>:/images/saveAs.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save &amp;As...</string>
+   </property>
+   <property name="statusTip">
+    <string>Save under a new name</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/exit.png</normaloff>:/images/exit.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Exit</string>
+   </property>
+   <property name="statusTip">
+    <string>Exit the application</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/copy.png</normaloff>:/images/copy.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+   <property name="statusTip">
+    <string>Copy to the clipboard</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/close.png</normaloff>:/images/close.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cl&amp;ose</string>
+   </property>
+   <property name="statusTip">
+    <string>Close the active window</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F4</string>
+   </property>
+  </action>
+  <action name="actionCloseAll">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/closeAll.png</normaloff>:/images/closeAll.png</iconset>
+   </property>
+   <property name="text">
+    <string>Close &amp;All</string>
+   </property>
+   <property name="statusTip">
+    <string>Close all the windows</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+F4</string>
+   </property>
+  </action>
+  <action name="actionTitle">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/title.png</normaloff>:/images/title.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Title</string>
+   </property>
+   <property name="statusTip">
+    <string>Tile the windows</string>
+   </property>
+  </action>
+  <action name="actionCascade">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/cascade.png</normaloff>:/images/cascade.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Cascade</string>
+   </property>
+   <property name="statusTip">
+    <string>Cascade the windows</string>
+   </property>
+  </action>
+  <action name="actionNext">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/next.png</normaloff>:/images/next.png</iconset>
+   </property>
+   <property name="text">
+    <string>Ne&amp;xt</string>
+   </property>
+   <property name="statusTip">
+    <string>Move the focus to the next window</string>
+   </property>
+   <property name="shortcut">
+    <string>Right</string>
+   </property>
+  </action>
+  <action name="actionPrevious">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/previous.png</normaloff>:/images/previous.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pre&amp;vious</string>
+   </property>
+   <property name="statusTip">
+    <string>Move the focus to the previous window</string>
+   </property>
+   <property name="shortcut">
+    <string>Left</string>
+   </property>
+  </action>
+  <action name="actionAbaut">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/about.png</normaloff>:/images/about.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the application's About box</string>
+   </property>
+  </action>
+  <action name="actionAbautQt">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/qtLogo.png</normaloff>:/images/qtLogo.png</iconset>
+   </property>
+   <property name="text">
+    <string>About &amp;Qt</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the Qt library's About box</string>
+   </property>
+  </action>
+  <action name="actionSeparator">
+   <property name="text">
+    <string/>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/zoomIn.png</normaloff>:/images/zoomIn.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom &amp;in (25%)</string>
+   </property>
+   <property name="statusTip">
+    <string>Zoom in (25%)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl++</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/zoomOut.png</normaloff>:/images/zoomOut.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom &amp;Out (25%)</string>
+   </property>
+   <property name="statusTip">
+    <string>Zoom Out (25%)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionNormalSize">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/zoomNormal.png</normaloff>:/images/zoomNormal.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Normal Size</string>
+   </property>
+   <property name="statusTip">
+    <string>Normal Size</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+=</string>
+   </property>
+  </action>
+  <action name="actionFitToWindow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/fitToWindow.png</normaloff>:/images/fitToWindow.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Fit to Window</string>
+   </property>
+   <property name="statusTip">
+    <string>Fit to Window</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/print.png</normaloff>:/images/print.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Print</string>
+   </property>
+   <property name="statusTip">
+    <string>Print</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionLowPass">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Low Pass</string>
+   </property>
+   <property name="statusTip">
+    <string>Low Pass filter</string>
+   </property>
+  </action>
+  <action name="actionHighPass">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>High Pass</string>
+   </property>
+   <property name="statusTip">
+    <string>High Pass filter</string>
+   </property>
+  </action>
+  <action name="actionErosion">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Erosion</string>
+   </property>
+   <property name="statusTip">
+    <string>Erosion Filter</string>
+   </property>
+  </action>
+  <action name="actionDilation">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Dilation</string>
+   </property>
+  </action>
+  <action name="actionOpening">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Opening</string>
+   </property>
+  </action>
+  <action name="actionClosing">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Closing</string>
+   </property>
+  </action>
+  <action name="actionConfEq">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Equilibrium Configuration</string>
+   </property>
+  </action>
+  <action name="actionPorosity">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Porosity</string>
+   </property>
+  </action>
+  <action name="action3DVisualization">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/logo.png</normaloff>:/images/logo.png</iconset>
+   </property>
+   <property name="text">
+    <string>3D Visualization</string>
+   </property>
+   <property name="statusTip">
+    <string>3D Visualization</string>
+   </property>
+  </action>
+  <action name="actionTruncadeGaussiana">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Truncade Gaussiana</string>
+   </property>
+  </action>
+  <action name="actionViewMode">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/viewMode.png</normaloff>:/images/viewMode.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Mode</string>
+   </property>
+   <property name="toolTip">
+    <string>View Mode (Tabbed or Window)</string>
+   </property>
+   <property name="statusTip">
+    <string>View Mode (Tabbed or Window)</string>
+   </property>
+  </action>
+  <action name="actionRelativePermeability">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Relative Permeability</string>
+   </property>
+  </action>
+  <action name="actionCorFrequency">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Frequency</string>
+   </property>
+  </action>
+  <action name="actionCorSpatial">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Spatial</string>
+   </property>
+  </action>
+  <action name="actionSuperposedSpheres">
+   <property name="text">
+    <string>Superposed Spheres</string>
+   </property>
+  </action>
+  <action name="actionInverter">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/invert.png</normaloff>:/images/invert.png</iconset>
+   </property>
+   <property name="text">
+    <string>Invert</string>
+   </property>
+   <property name="toolTip">
+    <string>Invert pore</string>
+   </property>
+   <property name="statusTip">
+    <string>Invert pore</string>
+   </property>
+  </action>
+  <action name="actionConnectivity">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Connectivity</string>
+   </property>
+  </action>
+  <action name="actionInversion">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Inversion</string>
+   </property>
+  </action>
+  <action name="actionInversion3D">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Inversion</string>
+   </property>
+  </action>
+  <action name="actionIDF">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>IDF</string>
+   </property>
+  </action>
+  <action name="actionIDF3D">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>IDF</string>
+   </property>
+  </action>
+  <action name="actionRotate">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/rotate.png</normaloff>:/images/rotate.png</iconset>
+   </property>
+   <property name="text">
+    <string>Rotate</string>
+   </property>
+   <property name="statusTip">
+    <string>Rotate</string>
+   </property>
+  </action>
+  <action name="actionIntrinsicPermeability">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Intrinsic Permeability</string>
+   </property>
+  </action>
+  <action name="actionV1">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>V1</string>
+   </property>
+  </action>
+  <action name="actionV2">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>V2</string>
+   </property>
+  </action>
+  <action name="actionV3">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>V3</string>
+   </property>
+  </action>
+  <action name="actionV4">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>V4</string>
+   </property>
+  </action>
+  <action name="actionZhangSuen">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Zhang Suen</string>
+   </property>
+  </action>
+  <action name="actionDTSspatial">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Spatial</string>
+   </property>
+  </action>
+  <action name="actionDTSd34">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>d34 Metric</string>
+   </property>
+  </action>
+  <action name="actionSource">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/8435_64x64.png</normaloff>:/images/8435_64x64.png</iconset>
+   </property>
+   <property name="text">
+    <string>Source</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Source</string>
+   </property>
+  </action>
+  <action name="actionDTSd5711">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>d5711 Metric</string>
+   </property>
+  </action>
+  <action name="actionDTSeuclidian">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Euclidian Metric</string>
+   </property>
+  </action>
+  <action name="actionDTSd345">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>d345 Metric</string>
+   </property>
+  </action>
+  <action name="actionDTSeuclidian3D">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Euclidian Metric</string>
+   </property>
+  </action>
+  <action name="actionDTSspatial3D">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Spatial</string>
+   </property>
+  </action>
+  <action name="actionErosion3D">
+   <property name="text">
+    <string>Erosion</string>
+   </property>
+  </action>
+  <action name="actionDilation3D">
+   <property name="text">
+    <string>Dilation</string>
+   </property>
+  </action>
+  <action name="actionOpening3D">
+   <property name="text">
+    <string>Opening</string>
+   </property>
+  </action>
+  <action name="actionClosing3D">
+   <property name="text">
+    <string>Closing</string>
+   </property>
+  </action>
+  <action name="actionCorFrequency3D">
+   <property name="text">
+    <string>Frequency</string>
+   </property>
+  </action>
+  <action name="actionCorSpatial3D">
+   <property name="text">
+    <string>Spatial</string>
+   </property>
+  </action>
+  <action name="actionDTPd34">
+   <property name="text">
+    <string>d34 Metric</string>
+   </property>
+  </action>
+  <action name="actionDTPd345">
+   <property name="text">
+    <string>d345 Metric</string>
+   </property>
+  </action>
+  <action name="actionDTPd5711">
+   <property name="text">
+    <string>d5711 Metric</string>
+   </property>
+  </action>
+  <action name="actionDTPeuclidian">
+   <property name="text">
+    <string>Euclidian Metric</string>
+   </property>
+  </action>
+  <action name="actionDTPeuclidian3D">
+   <property name="text">
+    <string>Euclidian Metric</string>
+   </property>
+  </action>
+  <action name="actionDTPspatial">
+   <property name="text">
+    <string>Spatial</string>
+   </property>
+  </action>
+  <action name="actionDTPspatial3D">
+   <property name="text">
+    <string>Spatial</string>
+   </property>
+  </action>
+  <action name="actionDTSd34_3D">
+   <property name="text">
+    <string>d34 Metric</string>
+   </property>
+  </action>
+  <action name="actionDTSd5711_3D">
+   <property name="text">
+    <string>d5711 Metric</string>
+   </property>
+  </action>
+  <action name="actionDTPd34_3D">
+   <property name="text">
+    <string>d34 Metric</string>
+   </property>
+  </action>
+  <action name="actionDTPd5711_3D">
+   <property name="text">
+    <string>d5711 Metric</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="application.qrc"/>
+ </resources>
+ <connections/>
+</ui>

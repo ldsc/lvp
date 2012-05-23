@@ -1,0 +1,31 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/copy.png</file>
+        <file>images/cut.png</file>
+        <file>images/new.png</file>
+        <file>images/open.png</file>
+        <file>images/paste.png</file>
+        <file>images/save.png</file>
+        <file>images/saveAs.png</file>
+        <file>images/print.png</file>
+        <file>images/zoomIn.png</file>
+        <file>images/zoomOut.png</file>
+        <file>images/zoomNormal.png</file>
+        <file>images/fitToWindow.png</file>
+        <file>images/exit.png</file>
+        <file>images/title.png</file>
+        <file>images/cascade.png</file>
+        <file>images/next.png</file>
+        <file>images/previous.png</file>
+        <file>images/close.png</file>
+        <file>images/closeAll.png</file>
+        <file>images/qtLogo.png</file>
+        <file>images/about.png</file>
+        <file>images/logo.png</file>
+        <file>images/viewMode.png</file>
+        <file>images/invert.png</file>
+        <file>images/3d.png</file>
+        <file>images/rotate.png</file>
+        <file>images/8435_64x64.png</file>
+    </qresource>
+</RCC>
