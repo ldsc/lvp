@@ -178,7 +178,7 @@ GLuint GLWidget::makeObject() {
    int nz = pm3D->NZ();
    for (int k = 0; k < nz; k++)
       for (int j = 0; j < ny; j++)
-			for (int i = 0; i < nx; i++)
+         for (int i = 0; i < nx; i++)
             if( ( (k==0 || k==nz-1) &&  (i==0 || j==0 || i==nx-1 || j==ny-1) ) ||
                 ( (j==0 || j==ny-1) &&  (i==0 || k==0 || i==nx-1 || k==nz-1) ) ){
                //glNormal3d(0.0, 0.0, -1.0);
@@ -186,7 +186,7 @@ GLuint GLWidget::makeObject() {
                glVertex3d( ((i-(nx/2))*w) , ((j-(ny/2))*w) , ((k-(nz/2))*w) );
             } else if( pm3D->data3D[i][j][k] == pore /*&& (k==0 || i==0 || j==0 || k==nz-1 || i==nx-1 || j==ny-1)*/ ){
                //glNormal3d(0.0, 0.0, -1.0);
-					glColor3f(0.0, 0.0, 0.0);
+               glColor3f(0.0, 0.0, 0.0);
                glVertex3d( ((i-(nx/2))*w) , ((j-(ny/2))*w) , ((k-(nz/2))*w) );
             }
    glEnd();

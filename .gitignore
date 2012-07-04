@@ -40,4 +40,7 @@ autom4te.cache
 qtc-gdbmacros
 pullToGithub
 pushToGithub
+ui_*.h
+qrc_*.cpp
+tmp/
 

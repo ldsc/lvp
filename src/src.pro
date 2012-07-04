@@ -51,7 +51,7 @@ INCLUDEPATH += ../../qwt/include \
 			   ../../libldsc/src/
 
 LIBS += -L../../qwt/lib \
-		-L../../libldsc/build/src \
+                -L../../libldsc/src \
 		-lqwt \
         -lldsc
 
