@@ -22,8 +22,13 @@ class GLWidget : public QGLWidget
     Q_OBJECT
 
 public:
+    enum {
+      VIEW3D,	// 0 - Visualizar em 3D
+      MULTIPLANS	// 1 - Visualizar em Multi Planos
+    };
+
     //GLWidget(QString _fileName, QWidget *parent = 0);
-    GLWidget(CMatriz3D *_pm3D, QString _fileName, QWidget *parent = 0);
+    GLWidget(CMatriz3D *_pm3D, QString _fileName, int _viewtype=MULTIPLANS, QWidget *parent = 0);
     ~GLWidget();
 
     QSize sizeHint() const;
@@ -38,9 +43,18 @@ public slots:
     void setXRotation(int angle);
     void setYRotation(int angle);
     void setZRotation(int angle);
-    void invertPore( );
+    void setPlanX(int _plan);
+    void setPlanY(int _plan);
+    void setPlanZ(int _plan);
     void setPore(int _pore);
-    int  getPore( );
+    void setViewType(int _viewtype);
+    void invertPore( );
+    int getPlanX( );
+    int getPlanY( );
+    int getPlanZ( );
+    int getPore( );
+    int getViewType( );
+    CMatriz3D * getPM3D();
 
 protected:
     void initializeGL();
@@ -66,6 +80,10 @@ private:
     //GLfloat angle, fAspect;
     CMatriz3D * pm3D;
     int pore;
+    int planX;
+    int planY;
+    int planZ;
+    int viewtype;
 };
 
 #endif

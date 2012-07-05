@@ -14,7 +14,7 @@
     <x>0</x>
     <y>0</y>
     <width>785</width>
-    <height>1039</height>
+    <height>1220</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,6 +85,24 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
+    <widget class="QMenu" name="menuMulti_Plan_View">
+     <property name="title">
+      <string>Multi Plan View</string>
+     </property>
+     <addaction name="actionIncreaseX"/>
+     <addaction name="actionDecreaseX"/>
+     <addaction name="separator"/>
+     <addaction name="actionIncreaseY"/>
+     <addaction name="actionDecreaseY"/>
+     <addaction name="separator"/>
+     <addaction name="actionIncreaseZ"/>
+     <addaction name="actionDecreaseZ"/>
+    </widget>
+    <widget class="QMenu" name="menuType_Here">
+     <property name="title">
+      <string>Type Here</string>
+     </property>
+    </widget>
     <addaction name="actionZoomIn"/>
     <addaction name="actionZoomOut"/>
     <addaction name="actionNormalSize"/>
@@ -94,6 +112,9 @@
     <addaction name="actionSource"/>
     <addaction name="action3DVisualization"/>
     <addaction name="actionInverter"/>
+    <addaction name="separator"/>
+    <addaction name="menuMulti_Plan_View"/>
+    <addaction name="menuType_Here"/>
    </widget>
    <widget class="QMenu" name="menuFilters">
     <property name="title">
@@ -311,6 +332,229 @@
    <addaction name="actionClose"/>
    <addaction name="actionCloseAll"/>
   </widget>
+  <widget class="QDockWidget" name="dockWidgetVisualisation3D">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>260</width>
+     <height>160</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>260</width>
+     <height>160</height>
+    </size>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="windowIcon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/logo.png</normaloff>:/images/logo.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="accessibleName">
+    <string/>
+   </property>
+   <property name="accessibleDescription">
+    <string/>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>:. Controlling Multi Plan View</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContentsVisual3D">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>255</width>
+       <height>130</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Axis</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <widget class="QWidget" name="layoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>241</width>
+        <height>107</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetMaximumSize</enum>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_x">
+         <property name="font">
+          <font>
+           <family>Tahoma</family>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>X</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_y">
+         <property name="font">
+          <font>
+           <family>Tahoma</family>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Y</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_z">
+         <property name="font">
+          <font>
+           <family>Tahoma</family>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Z</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QSlider" name="horizontalSlider_x">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QSpinBox" name="spinBox_x"/>
+       </item>
+       <item row="1" column="2">
+        <widget class="QSpinBox" name="spinBox_y"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="QSlider" name="horizontalSlider_y">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QSpinBox" name="spinBox_z"/>
+       </item>
+       <item row="2" column="1">
+        <widget class="QSlider" name="horizontalSlider_z">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetLista3D">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>228</width>
+     <height>226</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>388</width>
+     <height>524287</height>
+    </size>
+   </property>
+   <property name="windowIcon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/logo.png</normaloff>:/images/logo.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="accessibleName">
+    <string/>
+   </property>
+   <property name="accessibleDescription">
+    <string/>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetFloatable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>:. 3D Images List</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents3D"/>
+  </widget>
   <widget class="QDockWidget" name="dockWidgetLista">
    <property name="enabled">
     <bool>true</bool>
@@ -362,55 +606,6 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents"/>
-  </widget>
-  <widget class="QDockWidget" name="dockWidgetLista3D">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>228</width>
-     <height>226</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>388</width>
-     <height>524287</height>
-    </size>
-   </property>
-   <property name="windowIcon">
-    <iconset resource="application.qrc">
-     <normaloff>:/images/logo.png</normaloff>:/images/logo.png</iconset>
-   </property>
-   <property name="toolTip">
-    <string/>
-   </property>
-   <property name="accessibleName">
-    <string/>
-   </property>
-   <property name="accessibleDescription">
-    <string/>
-   </property>
-   <property name="floating">
-    <bool>false</bool>
-   </property>
-   <property name="features">
-    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetFloatable</set>
-   </property>
-   <property name="allowedAreas">
-    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
-   </property>
-   <property name="windowTitle">
-    <string>:. 3D Images List</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents3D"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetListaChart">
    <property name="sizePolicy">
@@ -646,7 +841,7 @@
     <string>Move the focus to the next window</string>
    </property>
    <property name="shortcut">
-    <string>Right</string>
+    <string>Ctrl+Right</string>
    </property>
   </action>
   <action name="actionPrevious">
@@ -661,7 +856,7 @@
     <string>Move the focus to the previous window</string>
    </property>
    <property name="shortcut">
-    <string>Left</string>
+    <string>Ctrl+Left</string>
    </property>
   </action>
   <action name="actionAbaut">
@@ -1200,9 +1395,269 @@
     <string>d5711 Metric</string>
    </property>
   </action>
+  <action name="actionIncreaseX">
+   <property name="text">
+    <string>Increase X</string>
+   </property>
+   <property name="toolTip">
+    <string>Increase X value</string>
+   </property>
+   <property name="shortcut">
+    <string>Right</string>
+   </property>
+  </action>
+  <action name="actionDecreaseX">
+   <property name="text">
+    <string>Decrease X</string>
+   </property>
+   <property name="toolTip">
+    <string>Decrease X value</string>
+   </property>
+   <property name="shortcut">
+    <string>Left</string>
+   </property>
+  </action>
+  <action name="actionIncreaseY">
+   <property name="text">
+    <string>Increase Y</string>
+   </property>
+   <property name="toolTip">
+    <string>Increase Y value</string>
+   </property>
+   <property name="shortcut">
+    <string>Up</string>
+   </property>
+  </action>
+  <action name="actionDecreaseY">
+   <property name="text">
+    <string>Decrease Y</string>
+   </property>
+   <property name="toolTip">
+    <string>Decrease Y value</string>
+   </property>
+   <property name="shortcut">
+    <string>Down</string>
+   </property>
+  </action>
+  <action name="actionIncreaseZ">
+   <property name="text">
+    <string>Increase Z</string>
+   </property>
+   <property name="toolTip">
+    <string>Increase Z value</string>
+   </property>
+   <property name="shortcut">
+    <string>PgUp</string>
+   </property>
+  </action>
+  <action name="actionDecreaseZ">
+   <property name="text">
+    <string>Decrease Z</string>
+   </property>
+   <property name="toolTip">
+    <string>Decrease Z value</string>
+   </property>
+   <property name="shortcut">
+    <string>PgDown</string>
+   </property>
+  </action>
+  <zorder>dockWidgetVisualisation3D</zorder>
  </widget>
  <resources>
   <include location="application.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>horizontalSlider_x</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_x</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>599</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>362</x>
+     <y>598</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_x</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider_x</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>357</x>
+     <y>608</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>423</x>
+     <y>606</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_y</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_y</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>416</x>
+     <y>635</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>359</x>
+     <y>623</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_y</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider_y</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>365</x>
+     <y>634</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>632</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_z</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_z</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>410</x>
+     <y>662</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>361</x>
+     <y>660</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_z</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider_z</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>366</x>
+     <y>666</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>663</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionIncreaseX</sender>
+   <signal>triggered()</signal>
+   <receiver>spinBox_x</receiver>
+   <slot>stepUp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>222</x>
+     <y>124</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionIncreaseY</sender>
+   <signal>triggered()</signal>
+   <receiver>spinBox_y</receiver>
+   <slot>stepUp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>222</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionIncreaseZ</sender>
+   <signal>triggered()</signal>
+   <receiver>spinBox_z</receiver>
+   <slot>stepUp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>222</x>
+     <y>194</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDecreaseX</sender>
+   <signal>triggered()</signal>
+   <receiver>spinBox_x</receiver>
+   <slot>stepDown()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>222</x>
+     <y>124</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDecreaseY</sender>
+   <signal>triggered()</signal>
+   <receiver>spinBox_y</receiver>
+   <slot>stepDown()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>222</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDecreaseZ</sender>
+   <signal>triggered()</signal>
+   <receiver>spinBox_z</receiver>
+   <slot>stepDown()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>222</x>
+     <y>194</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

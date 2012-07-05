@@ -150,6 +150,9 @@ private slots:
    void erosion3D();
    void exChangeAxis();
 	void exChangePlan( int _plan );
+    void exChangePlanX( int _plan );
+    void exChangePlanY( int _plan );
+    void exChangePlanZ( int _plan );
 	void exConfEq();
 	void exConfEq3D();
 	void exReconstructionGT();

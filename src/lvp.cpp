@@ -98,6 +98,7 @@ Lvp::Lvp() {
 
    spinBoxPlano3D = new QSpinBox(dockWidgetContents3D);
    gridLayout->addWidget(spinBoxPlano3D, 1, 0, 1, 1);
+
    horizontalSliderPlano3D = new QSlider(dockWidgetContents3D);
    horizontalSliderPlano3D->setOrientation(Qt::Horizontal);
    gridLayout->addWidget(horizontalSliderPlano3D, 2, 0, 1, 1);
@@ -108,6 +109,9 @@ Lvp::Lvp() {
    listWidget3D->setAlternatingRowColors ( true );
    gridLayout->addWidget(listWidget3D, 3, 0, 1, 2);
    dockWidgetLista3D->setVisible( false );
+
+   //Controles da visualização 3D
+   dockWidgetVisualisation3D->setVisible( false );
 
    //Lista de gráficos
    gridLayoutChart = new QGridLayout(dockWidgetContentsListaChart);
@@ -167,9 +171,15 @@ Lvp::Lvp() {
    //connect( listWidgetEditor, SIGNAL( itemClicked(QListWidgetItem *) ), this, SLOT( updateMenus()) );
    connect( mdiArea, SIGNAL( subWindowActivated(QMdiSubWindow *) ), this, SLOT( updateMenus()) );
    connect( mdiArea, SIGNAL( subWindowActivated(QMdiSubWindow *) ), this, SLOT( updateDockLista()) );
+
+   connect( spinBox_x, SIGNAL( valueChanged(int) ), this, SLOT( exChangePlanX(int)) );
+   connect( spinBox_y, SIGNAL( valueChanged(int) ), this, SLOT( exChangePlanY(int)) );
+   connect( spinBox_z, SIGNAL( valueChanged(int) ), this, SLOT( exChangePlanZ(int)) );
+
    connect( spinBoxPlano3D, SIGNAL( valueChanged(int) ), this, SLOT( exChangePlan(int)) );
-   connect( horizontalSliderPlano3D, SIGNAL( valueChanged(int) ), spinBoxPlano3D, SLOT(setValue(int)) );
    connect( spinBoxPlano3D, SIGNAL( valueChanged(int) ), horizontalSliderPlano3D, SLOT(setValue(int)) );
+   connect( horizontalSliderPlano3D, SIGNAL( valueChanged(int) ), spinBoxPlano3D, SLOT(setValue(int)) );
+
    connect( radioButtonX, SIGNAL( released() ), this, SLOT( exChangeAxis()) );
    connect( radioButtonY, SIGNAL( released() ), this, SLOT( exChangeAxis()) );
    connect( radioButtonZ, SIGNAL( released() ), this, SLOT( exChangeAxis()) );
@@ -224,10 +234,10 @@ void Lvp::createActions() {
    connect( actionV4,                      SIGNAL( triggered() ), 	this, 	SLOT( skeletonV4() 			       ) );
    connect( actionZhangSuen,               SIGNAL( triggered() ), 	this, 	SLOT( skeletonV5() 			       ) );
    connect( actionConfEq,                  SIGNAL( triggered() ), 	this, 	SLOT( confEq() 				       ) );
-   connect( actionTruncadeGaussiana,       SIGNAL( triggered() ),	   this, 	SLOT( reconstructionGT() 	       ) );
-   connect( actionSuperposedSpheres,       SIGNAL( triggered() ),	   this, 	SLOT( reconstructionES() 	       ) );
-   connect( actionCorFrequency,            SIGNAL( triggered() ),	   this, 	SLOT( correlationFFT() 		       ) );
-   connect( actionCorFrequency3D,          SIGNAL( triggered() ),	   this, 	SLOT( correlationFFT3D()          ) );
+   connect( actionTruncadeGaussiana,       SIGNAL( triggered() ),	this, 	SLOT( reconstructionGT() 	       ) );
+   connect( actionSuperposedSpheres,       SIGNAL( triggered() ),	this, 	SLOT( reconstructionES() 	       ) );
+   connect( actionCorFrequency,            SIGNAL( triggered() ),	this, 	SLOT( correlationFFT() 		       ) );
+   connect( actionCorFrequency3D,          SIGNAL( triggered() ),	this, 	SLOT( correlationFFT3D()          ) );
    connect( actionCorSpatial,              SIGNAL( triggered() ),	   this, 	SLOT( correlationSpatial()        ) );
    connect( actionCorSpatial3D,            SIGNAL( triggered() ),	   this, 	SLOT( correlationSpatial3D()      ) );
    connect( actionDTSspatial,              SIGNAL( triggered() ),	   this, 	SLOT( dtsSpatial()                ) );
@@ -250,22 +260,22 @@ void Lvp::createActions() {
    connect( actionDTPeuclidian3D,          SIGNAL( triggered() ),	   this, 	SLOT( dtpEuclidian3D()       	    ) );
    connect( actionPorosity,                SIGNAL( triggered() ),	   this, 	SLOT( porosity() 			          ) );
    connect( actionConnectivity,            SIGNAL( triggered() ),    this, 	SLOT( connectivity3D() 		       ) );
-   connect( actionClose,                   SIGNAL( triggered() ), 	mdiArea, SLOT( closeActiveSubWindow()      ) );
-   connect( actionCloseAll,                SIGNAL( triggered() ), 	mdiArea, SLOT( closeAllSubWindows() 	    ) );
-   connect( actionTitle,                   SIGNAL( triggered() ), 	mdiArea, SLOT( tileSubWindows() 		       ) );
-   connect( actionCascade,                 SIGNAL( triggered() ), 	mdiArea, SLOT( cascadeSubWindows() 	       ) );
-   connect( actionNext,                    SIGNAL( triggered() ), 	mdiArea, SLOT( activateNextSubWindow()     ) );
-   connect( actionPrevious,                SIGNAL( triggered() ), 	mdiArea, SLOT( activatePreviousSubWindow() ) );
-   connect( actionAbautQt,                 SIGNAL( triggered() ),	   qApp, 	SLOT( aboutQt() 			          ) );
-   connect( actionExit,                    SIGNAL( triggered() ), 	qApp, 	SLOT( closeAllWindows() 	       ) );
+   connect( actionClose,                   SIGNAL( triggered() ), 	 mdiArea, SLOT( closeActiveSubWindow()      ) );
+   connect( actionCloseAll,                SIGNAL( triggered() ), 	 mdiArea, SLOT( closeAllSubWindows() 	    ) );
+   connect( actionTitle,                   SIGNAL( triggered() ), 	 mdiArea, SLOT( tileSubWindows() 		       ) );
+   connect( actionCascade,                 SIGNAL( triggered() ), 	 mdiArea, SLOT( cascadeSubWindows() 	       ) );
+   connect( actionNext,                    SIGNAL( triggered() ), 	 mdiArea, SLOT( activateNextSubWindow()     ) );
+   connect( actionPrevious,                SIGNAL( triggered() ), 	 mdiArea, SLOT( activatePreviousSubWindow() ) );
+   connect( actionAbautQt,                 SIGNAL( triggered() ),	 qApp, 	SLOT( aboutQt() 			          ) );
+   connect( actionExit,                    SIGNAL( triggered() ), 	 qApp, 	SLOT( closeAllWindows() 	       ) );
    connect( action3DVisualization,         SIGNAL( triggered() ),    this, 	SLOT( open3DVisualization()       ) );
    connect( actionRotate,                  SIGNAL( triggered() ),    this, 	SLOT( rotate() 				       ) );
    connect( actionRelativePermeability,    SIGNAL( triggered() ),    this, 	SLOT( relativePermeability()      ) );
    connect( actionIntrinsicPermeability,   SIGNAL( triggered() ),    this, 	SLOT( intrinsicPermeability()     ) );
    connect( pushButtonAddCurve,            SIGNAL( clicked()   ),    this, 	SLOT( addCurve() 			          ) );
    connect( pushButtonAverage,             SIGNAL( clicked()   ),    this, 	SLOT( average() 			          ) );
-   connect( pushButtonAccumulated,			 SIGNAL( clicked()   ),	   this,	   SLOT( accumulated()               ) );
-   connect( pushButtonSource,			       SIGNAL( clicked()   ),  	this,	   SLOT( openTextEditor()            ) );
+   connect( pushButtonAccumulated,         SIGNAL( clicked()   ),	 this,	SLOT( accumulated()               ) );
+   connect( pushButtonSource,			   SIGNAL( clicked()   ),  	 this,	SLOT( openTextEditor()            ) );
    connect( actionInverter,                SIGNAL( triggered() ),    this, 	SLOT( invertPoro() 			       ) );
    connect( actionInversion,               SIGNAL( triggered() ),    this, 	SLOT( inversion() 			       ) );
    connect( actionInversion3D,             SIGNAL( triggered() ),    this, 	SLOT( inversion3D() 		          ) );
@@ -285,8 +295,6 @@ void Lvp::updateMenus() {
       hasImageViewer = true;
    else if ( active3DImageViewer() != 0 )
       hasImageViewer3D = true;
-   else if ( activeGLWidget() != 0 )
-      hasGLWidget = true;
    else if ( activeGLWidget() != 0 )
       hasGLWidget = true;
    else if ( activePloter() != 0 ) {
@@ -376,7 +384,35 @@ void Lvp::updateMenus() {
    radioButtonY->setEnabled(hasImageViewer3D);
    radioButtonZ->setEnabled(hasImageViewer3D);
    spinBoxPlano3D->setEnabled(hasImageViewer3D);
+   spinBox_x->setEnabled(hasGLWidget);
+   spinBox_y->setEnabled(hasGLWidget);
+   spinBox_z->setEnabled(hasGLWidget);
    horizontalSliderPlano3D->setEnabled(hasImageViewer3D);
+   horizontalSlider_x->setEnabled(hasGLWidget);
+   horizontalSlider_y->setEnabled(hasGLWidget);
+   horizontalSlider_z->setEnabled(hasGLWidget);
+   if ( hasGLWidget ){
+      GLWidget * childImage = activeGLWidget();
+      horizontalSlider_x->setMaximum( childImage->getPM3D()->NX() - 1 );
+      horizontalSlider_y->setMaximum( childImage->getPM3D()->NY() - 1 );
+      horizontalSlider_z->setMaximum( childImage->getPM3D()->NZ() - 1 );
+      spinBox_x->setMaximum( childImage->getPM3D()->NX() - 1 );
+      spinBox_y->setMaximum( childImage->getPM3D()->NY() - 1 );
+      spinBox_z->setMaximum( childImage->getPM3D()->NZ() - 1 );
+      spinBox_x->setValue( childImage->getPlanX() );
+      spinBox_y->setValue( childImage->getPlanY() );
+      spinBox_z->setValue( childImage->getPlanZ() );
+   }else{
+       horizontalSlider_x->setMaximum( 99 );
+       horizontalSlider_y->setMaximum( 99 );
+       horizontalSlider_z->setMaximum( 99 );
+       spinBox_x->setMaximum( 99 );
+       spinBox_y->setMaximum( 99 );
+       spinBox_z->setMaximum( 99 );
+       spinBox_x->setValue( 0 );
+       spinBox_y->setValue( 0 );
+       spinBox_z->setValue( 0 );
+   }
    if ( hasImageViewer3D ) {								//se a imagem ativa for uma imagem 3D
       ImageViewer3D * childImage = active3DImageViewer( );		//pega a imagem 3D ativa
       switch (childImage->direcao) {
@@ -488,6 +524,7 @@ void Lvp::updateDockLista() {
    bool hasImageViewer3D = false;
    bool hasPloter		  = false;
    bool hasTextEditor	  = false;
+   bool hasGlWidget    = false;
    for (int i = 0; i < windows.size(); ++i) {
       if ( ImageViewer *child = qobject_cast<ImageViewer *>(windows.at(i)->widget()) ) {
          QListWidgetItem *item = new QListWidgetItem(child->getFileName(), listWidget);
@@ -509,12 +546,15 @@ void Lvp::updateDockLista() {
          child->item = item;
          item->setSelected(child == activeTextEditor());
          hasTextEditor = true;
-      }
+      } else if (qobject_cast<QGLWidget *>(windows.at(i)->widget())) {
+         hasGlWidget = true;
+      }      
    }
    dockWidgetLista->setVisible(hasImageViewer);
    dockWidgetLista3D->setVisible(hasImageViewer3D);
    dockWidgetListaChart->setVisible(hasPloter);
    dockWidgetListaTextEditor->setVisible(hasTextEditor);
+   dockWidgetVisualisation3D->setVisible(hasGlWidget);
 }
 
 void Lvp::open( ) {
@@ -680,7 +720,7 @@ ImageViewer3D * Lvp::createImageViewer3D() {
 
 GLWidget * Lvp::createGLWidget(ImageViewer3D * _mdiChild) {
    GLWidget *childim = NULL;
-   childim = new GLWidget(_mdiChild->pm3D, _mdiChild->getFullFileName(), this);
+   childim = new GLWidget(_mdiChild->pm3D, _mdiChild->getFullFileName(), GLWidget::MULTIPLANS, this);
    if ( childim ) {
       mdiArea->addSubWindow(childim);
       return childim;
@@ -1880,12 +1920,31 @@ void Lvp::exConfEq3D() {
    QApplication::restoreOverrideCursor();
 }
 
+void Lvp::exChangePlanX( int _plan ) {
+   if (GLWidget *mdiChild = activeGLWidget()) {
+      mdiChild->setPlanX( _plan );
+   }
+}
+
+void Lvp::exChangePlanY( int _plan ) {
+   if (GLWidget *mdiChild = activeGLWidget()) {
+      mdiChild->setPlanY( _plan );
+   }
+}
+
+void Lvp::exChangePlanZ( int _plan ) {
+   if (GLWidget *mdiChild = activeGLWidget()) {
+      mdiChild->setPlanZ( _plan );
+   }
+}
+
 void Lvp::exChangePlan( int _plan ) {
    if (ImageViewer3D *mdiChild = active3DImageViewer()) {
       CMatriz3D::E_eixo axis= CMatriz3D::EIXO_X;
-      if (radioButtonY->isChecked()) axis = CMatriz3D::EIXO_Y;
-      else if (radioButtonZ->isChecked()) axis = CMatriz3D::EIXO_Z;
-
+      if (radioButtonY->isChecked())
+          axis = CMatriz3D::EIXO_Y;
+      else if (radioButtonZ->isChecked())
+          axis = CMatriz3D::EIXO_Z;
       if ( ! mdiChild->ChangePlan( _plan, axis ) )
          cerr << "erro: exChangePlan" << endl;
    }
