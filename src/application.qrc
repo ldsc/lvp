@@ -27,5 +27,6 @@
         <file>images/3d.png</file>
         <file>images/rotate.png</file>
         <file>images/8435_64x64.png</file>
+        <file>images/mpv.png</file>
     </qresource>
 </RCC>

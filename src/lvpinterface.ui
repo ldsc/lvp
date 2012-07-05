@@ -98,11 +98,6 @@
      <addaction name="actionIncreaseZ"/>
      <addaction name="actionDecreaseZ"/>
     </widget>
-    <widget class="QMenu" name="menuType_Here">
-     <property name="title">
-      <string>Type Here</string>
-     </property>
-    </widget>
     <addaction name="actionZoomIn"/>
     <addaction name="actionZoomOut"/>
     <addaction name="actionNormalSize"/>
@@ -111,10 +106,10 @@
     <addaction name="separator"/>
     <addaction name="actionSource"/>
     <addaction name="action3DVisualization"/>
+    <addaction name="actionMPV"/>
     <addaction name="actionInverter"/>
     <addaction name="separator"/>
     <addaction name="menuMulti_Plan_View"/>
-    <addaction name="menuType_Here"/>
    </widget>
    <widget class="QMenu" name="menuFilters">
     <property name="title">
@@ -306,6 +301,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action3DVisualization"/>
+   <addaction name="actionMPV"/>
    <addaction name="actionInverter"/>
    <addaction name="actionSource"/>
    <addaction name="separator"/>
@@ -1459,6 +1455,18 @@
    </property>
    <property name="shortcut">
     <string>PgDown</string>
+   </property>
+  </action>
+  <action name="actionMPV">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/mpv.png</normaloff>:/images/mpv.png</iconset>
+   </property>
+   <property name="text">
+    <string>Multiplanar Viewing</string>
+   </property>
+   <property name="toolTip">
+    <string>Multiplanar Viewing</string>
    </property>
   </action>
   <zorder>dockWidgetVisualisation3D</zorder>

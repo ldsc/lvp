@@ -24,11 +24,11 @@ class GLWidget : public QGLWidget
 public:
     enum {
       VIEW3D,	// 0 - Visualizar em 3D
-      MULTIPLANS	// 1 - Visualizar em Multi Planos
+      MPV       // 1 - Multiplanar Viewing
     };
 
     //GLWidget(QString _fileName, QWidget *parent = 0);
-    GLWidget(CMatriz3D *_pm3D, QString _fileName, int _viewtype=MULTIPLANS, QWidget *parent = 0);
+    GLWidget(CMatriz3D *_pm3D, QString _fileName, int _viewtype=MPV, QWidget *parent = 0);
     ~GLWidget();
 
     QSize sizeHint() const;
