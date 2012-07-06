@@ -62,6 +62,7 @@ protected:
     void resizeGL(int width, int height);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent *event);
 
 private:
     GLuint makeObject();
@@ -84,6 +85,8 @@ private:
     int planY;
     int planZ;
     int viewtype;
+    float pointsize; //tamanho dos pontos;
+    float distpoints; //distancia entre pontos;
 };
 
 #endif

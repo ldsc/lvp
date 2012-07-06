@@ -6,6 +6,8 @@
 
 GLWidget::GLWidget(CMatriz3D * _pm3D, QString _fileName, int _viewtype, QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
     viewtype=_viewtype;
+    distpoints = 0.001;
+    pointsize = 1.0;
     object = 0;
     xRot = 0;
     yRot = 0;
@@ -154,6 +156,18 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
     QGLWidget::update();
 }
 
+void GLWidget::wheelEvent(QWheelEvent *event) {
+    if (event->delta() > 0 && pm3D->NX()*pointsize*2 < 1500) {
+        pointsize  *= 1.1f;
+        distpoints *= 1.1f;
+    } else if ( pm3D->NX()*pointsize > 50) {
+        pointsize  /= 1.1f;
+        distpoints /= 1.1f;
+    }
+    object = makeObject();
+    QGLWidget::update();
+}
+
 void GLWidget::paintEvent(QPaintEvent *event) {
     event = event; // evitar warning
     makeCurrent(); 							// Faz este widget ser o atual contexto de composição OpenGL.
@@ -176,7 +190,7 @@ void GLWidget::paintEvent(QPaintEvent *event) {
     GLfloat luzDifusa[4]	    = {0.7,  0.7,  0.7, 1.0};	   	// "cor"
     GLfloat luzEspecular[4]  = {1.0,  1.0,  1.0, 1.0};		// "brilho"
     GLfloat especularidade[4]= {1.0,  1.0,  1.0, 1.0}; 		// Capacidade de brilho do material
-    
+
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
     glLightfv(GL_LIGHT0, GL_AMBIENT, luzAmbiente);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, luzDifusa );
@@ -208,61 +222,104 @@ void GLWidget::resizeGL(int width, int height) {
 }
 
 QSize GLWidget::sizeHint() const {
-    return QSize(800, 800);
+    return QSize(1024, 1024);
 }
 
 GLuint GLWidget::makeObject() {
     GLuint list = glGenLists(1);
     glNewList(list, GL_COMPILE);
-    //glEnable(GL_NORMALIZE);
-    glPointSize(1.0);
-    glBegin(GL_POINTS); //GL_POINTS
     /*
     static GLfloat logoDiffuseColor[4] = {trolltechPurple.red()/255.0, trolltechPurple.green()/255.0, trolltechPurple.blue()/255.0, 1.0};
     glMaterialfv(GL_FRONT, GL_DIFFUSE, logoDiffuseColor);
     */
     if( pm3D == NULL )
         pm3D = new CMatriz3D(fullFileName.toStdString());
-    double w = 0.001;
+    double w = distpoints;
     int nx = pm3D->NX();
     int ny = pm3D->NY();
     int nz = pm3D->NZ();
+    int meionx = nx/2;
+    int meiony = ny/2;
+    int meionz = nz/2;
+    double meionxw = w*meionx;
+    double meionyw = w*meiony;
+    double meionzw = w*meionz;
 
+    glPointSize(pointsize);
+    glEnable(GL_POINT_SMOOTH);
+    glEnable(GL_NORMALIZE);
+    //Desenhando o meio poroso
+    glBegin(GL_POINTS); //GL_POINTS
     if (viewtype==VIEW3D){
-        for (int k = 0; k < nz; k++)
-            for (int j = 0; j < ny; j++)
+        for (int k = 0; k < nz; k++){
+            for (int j = 0; j < ny; j++){
                 for (int i = 0; i < nx; i++){
-                    if( ( (k==0 || k==nz-1) &&  (i==0 || j==0 || i==nx-1 || j==ny-1) ) ||
-                            ( (j==0 || j==ny-1) &&  (i==0 || k==0 || i==nx-1 || k==nz-1) ) ){
+                    if( pm3D->data3D[i][j][k] == pore /*&& (k==0 || i==0 || j==0 || k==nz-1 || i==nx-1 || j==ny-1)*/ ){
                         //glNormal3d(0.0, 0.0, -1.0);
-                        glColor3f(0.0, 1.0, 0.0);
-                        glVertex3d( ((i-(nx/2))*w) , ((j-(ny/2))*w) , ((k-(nz/2))*w) );
-                    } else if( pm3D->data3D[i][j][k] == pore /*&& (k==0 || i==0 || j==0 || k==nz-1 || i==nx-1 || j==ny-1)*/ ){
-                       //glNormal3d(0.0, 0.0, -1.0);
-                       glColor3f(0.0, 0.0, 0.0);
-                       glVertex3d( ((i-(nx/2))*w) , ((j-(ny/2))*w) , ((k-(nz/2))*w) );
-                    }
-                }
-    } else {
-        for (int k = 0; k < nz; k++)
-            for (int j = 0; j < ny; j++)
-                for (int i = 0; i < nx; i++){
-                    if( ( (k==0 || k==nz-1) &&  (i==0 || j==0 || i==nx-1 || j==ny-1) ) ||
-                            ( (j==0 || j==ny-1) &&  (i==0 || k==0 || i==nx-1 || k==nz-1) ) ){
-                        //glNormal3d(0.0, 0.0, -1.0);
-                        glColor3f(0.0, 1.0, 0.0);
-                        glVertex3d( ((i-(nx/2))*w) , ((j-(ny/2))*w) , ((k-(nz/2))*w) );
-                    }else if( (i==planX || j==planY || k==planZ) && pm3D->data3D[i][j][k] == pore){
                         glColor3f(0.0, 0.0, 0.0);
-                        glVertex3d( ((i-(nx/2))*w) , ((j-(ny/2))*w) , ((k-(nz/2))*w) );
-                    }else if( i==planX || j==planY || k==planZ ){
-                        glColor3f(1.0, 1.0, 1.0);
-                        glVertex3d( ((i-(nx/2))*w) , ((j-(ny/2))*w) , ((k-(nz/2))*w) );
+                        glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(k-meionz) );
                     }
-
                 }
+            }
+        }
+    } else { //viewtype==MPV
+        for (int j = 0; j < ny; j++){
+            for (int i = 0; i < nx; i++){
+                if (pm3D->data3D[planX][i][j] == pore){
+                    glColor3f(0.0, 0.0, 0.0);
+                } else {
+                    glColor3f(1.0, 1.0, 1.0);
+                }
+                glVertex3d( w*(planX-meionx) , w*(i-meiony) , w*(j-meionz) );
+                if (pm3D->data3D[i][planY][j] == pore){
+                    glColor3f(0.0, 0.0, 0.0);
+                } else {
+                    glColor3f(1.0, 1.0, 1.0);
+                }
+                glVertex3d( w*(i-meionx) , w*(planY-meiony) , w*(j-meionz) );
+                if (pm3D->data3D[i][j][planZ] == pore){
+                    glColor3f(0.0, 0.0, 0.0);
+                } else {
+                    glColor3f(1.0, 1.0, 1.0);
+                }
+                glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(planZ-meionz) );
+            }
+        }
     }
     glEnd();
+    glColor3f(0.0, 1.0, 0.0); // cor verde
+    // desenhando quandrado superior
+    glBegin(GL_LINE_LOOP); //Exibe uma sequencia de linhas conectando os pontos definidos por glVertex e ao final liga o primeiro com o último
+    glVertex3d(-meionxw, meionyw, meionzw);
+    glVertex3d( meionxw, meionyw, meionzw);
+    glVertex3d( meionxw, meionyw,-meionzw);
+    glVertex3d(-meionxw, meionyw,-meionzw);
+    glEnd();
+    // desenhando quandrado inferior
+    glBegin(GL_LINE_LOOP);
+    glVertex3d(-meionxw,-meionyw, meionzw);
+    glVertex3d( meionxw,-meionyw, meionzw);
+    glVertex3d( meionxw,-meionyw,-meionzw);
+    glVertex3d(-meionxw,-meionyw,-meionzw);
+    glEnd();
+    // desenhando linhas ligando os cantos dos quadrados
+    glBegin(GL_LINES); //linha 1
+    glVertex3d(-meionxw, meionyw, meionzw);
+    glVertex3d(-meionxw,-meionyw, meionzw);
+    glEnd();
+    glBegin(GL_LINES); //linha 2
+    glVertex3d( meionxw, meionyw, meionzw);
+    glVertex3d( meionxw,-meionyw, meionzw);
+    glEnd();
+    glBegin(GL_LINES); //linha 3
+    glVertex3d(-meionxw, meionyw,-meionzw);
+    glVertex3d(-meionxw,-meionyw,-meionzw);
+    glEnd();
+    glBegin(GL_LINES); //linha 4
+    glVertex3d( meionxw, meionyw,-meionzw);
+    glVertex3d( meionxw,-meionyw,-meionzw);
+    glEnd();
+
     glEndList();
     return list;
 }
