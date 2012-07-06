@@ -319,7 +319,31 @@ GLuint GLWidget::makeObject() {
     glVertex3d( meionxw, meionyw,-meionzw);
     glVertex3d( meionxw,-meionyw,-meionzw);
     glEnd();
-
+    // desenhando linhas dos eixos
+    // eixo x
+    glColor3f(0.0, 1.0, 0.0); // cor verde para o eixo x
+    glBegin(GL_LINES);
+    glVertex3d(-512.0*w, 0.0, 0.0);
+    glVertex3d(-meionxw, 0.0, 0.0);
+    glVertex3d( 512.0*w, 0.0, 0.0);
+    glVertex3d( meionxw, 0.0, 0.0);
+    glEnd();
+    // eixo y
+    glColor3f(0.0, 0.0, 1.0); // cor azul para o eixo y
+    glBegin(GL_LINES);
+    glVertex3d( 0.0,-512.0*w, 0.0);
+    glVertex3d( 0.0,-meionyw, 0.0);
+    glVertex3d( 0.0, 512.0*w, 0.0);
+    glVertex3d( 0.0, meionyw, 0.0);
+    glEnd();
+    // eixo z
+    glColor3f(1.0, 0.0, 0.0); // cor vermelha para o eixo z
+    glBegin(GL_LINES);
+    glVertex3d( 0.0, 0.0,-512.0*w);
+    glVertex3d( 0.0, 0.0,-meionzw);
+    glVertex3d( 0.0, 0.0, 512.0*w);
+    glVertex3d( 0.0, 0.0, meionzw);
+    glEnd();
     glEndList();
     return list;
 }
@@ -345,16 +369,10 @@ void GLWidget::drawInstructions(QPainter *painter) {
     QString text = tr("Click and drag with the left or right mouse button to rotate the 3D Image.");
     QFontMetrics metrics = QFontMetrics(font());
     int border = qMax(4, metrics.leading());
-
-    QRect rect = metrics.boundingRect(0, 0, width() - 2*border, int(height()*0.125),
-                                      Qt::AlignCenter | Qt::TextWordWrap, text);
+    QRect rect = metrics.boundingRect(0, 0, width()-2*border, int(height()*0.125), Qt::AlignCenter | Qt::TextWordWrap, text);
     painter->setRenderHint(QPainter::TextAntialiasing);
-    painter->fillRect(QRect(0, 0, width(), rect.height() + 2*border),
-                      QColor(0, 0, 0, 127));
+    painter->fillRect(QRect(0, 0, width(), rect.height()+2*border), QColor(0, 0, 0, 127));
     painter->setPen(Qt::white);
-    painter->fillRect(QRect(0, 0, width(), rect.height() + 2*border),
-                      QColor(0, 0, 0, 127));
-    painter->drawText((width() - rect.width())/2, border,
-                      rect.width(), rect.height(),
-                      Qt::AlignCenter | Qt::TextWordWrap, text);
+    painter->fillRect(QRect(0, 0, width(), rect.height()+2*border), QColor(0, 0, 0, 127));
+    painter->drawText((width()-rect.width())/2, border, rect.width(), rect.height(), Qt::AlignCenter | Qt::TextWordWrap, text);
 }

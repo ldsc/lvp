@@ -1053,7 +1053,7 @@
   <action name="action3DVisualization">
    <property name="icon">
     <iconset resource="application.qrc">
-     <normaloff>:/images/logo.png</normaloff>:/images/logo.png</iconset>
+     <normaloff>:/images/3Dview.png</normaloff>:/images/3Dview.png</iconset>
    </property>
    <property name="text">
     <string>3D Visualization</string>
