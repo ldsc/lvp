@@ -170,16 +170,16 @@ void GLWidget::wheelEvent(QWheelEvent *event) {
 
 void GLWidget::paintEvent(QPaintEvent *event) {
     event = event; // evitar warning
-    makeCurrent(); 							// Faz este widget ser o atual contexto de composição OpenGL.
-    glMatrixMode(GL_PROJECTION); 				// GL_MODELVIEW // GL_COLOR // GL_PROJECTION
+    makeCurrent(); // Faz este widget ser o atual contexto de composição OpenGL.
+    glMatrixMode(GL_PROJECTION); // GL_MODELVIEW // GL_COLOR // GL_PROJECTION
     glPushMatrix();
     qglClearColor(trolltechPurple.dark());
     glShadeModel(GL_SMOOTH);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    //glEnable(GL_LIGHTING);
-    //glEnable(GL_LIGHT0);
+    //glEnable(GL_LIGHTING); //Habilita o uso de iluminação
+    //glEnable(GL_LIGHT0); // Habilita a luz de número 0
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_POINT_SMOOTH); //desenhar pontos com a filtragem adequada.
     //glEnable(GL_POINT_SPRITE); //Calcular as coordenadas da textura de pontos com base na textura ambiente e definições de parâmetros ponto.
@@ -241,13 +241,16 @@ GLuint GLWidget::makeObject() {
     int meionx = nx/2;
     int meiony = ny/2;
     int meionz = nz/2;
-    double meionxw = w*meionx;
-    double meionyw = w*meiony;
-    double meionzw = w*meionz;
+    double _meionxw = -w*meionx;
+    double _meionyw = -w*meiony;
+    double _meionzw = -w*meionz;
+    double meionxw = w*(meionx-1);
+    double meionyw = w*(meiony-1);
+    double meionzw = w*(meionz-1);
 
     glPointSize(pointsize);
     glEnable(GL_POINT_SMOOTH);
-    glEnable(GL_NORMALIZE);
+    //glEnable(GL_NORMALIZE);
     //Desenhando o meio poroso
     glBegin(GL_POINTS); //GL_POINTS
     if (viewtype==VIEW3D){
@@ -290,41 +293,41 @@ GLuint GLWidget::makeObject() {
     glColor3f(0.0, 1.0, 0.0); // cor verde
     // desenhando quandrado superior
     glBegin(GL_LINE_LOOP); //Exibe uma sequencia de linhas conectando os pontos definidos por glVertex e ao final liga o primeiro com o último
-    glVertex3d(-meionxw, meionyw, meionzw);
+    glVertex3d(_meionxw, meionyw, meionzw);
     glVertex3d( meionxw, meionyw, meionzw);
-    glVertex3d( meionxw, meionyw,-meionzw);
-    glVertex3d(-meionxw, meionyw,-meionzw);
+    glVertex3d( meionxw, meionyw,_meionzw);
+    glVertex3d(_meionxw, meionyw,_meionzw);
     glEnd();
     // desenhando quandrado inferior
     glBegin(GL_LINE_LOOP);
-    glVertex3d(-meionxw,-meionyw, meionzw);
-    glVertex3d( meionxw,-meionyw, meionzw);
-    glVertex3d( meionxw,-meionyw,-meionzw);
-    glVertex3d(-meionxw,-meionyw,-meionzw);
+    glVertex3d(_meionxw,_meionyw, meionzw);
+    glVertex3d( meionxw,_meionyw, meionzw);
+    glVertex3d( meionxw,_meionyw,_meionzw);
+    glVertex3d(_meionxw,_meionyw,_meionzw);
     glEnd();
     // desenhando linhas ligando os cantos dos quadrados
     glBegin(GL_LINES); //linha 1
-    glVertex3d(-meionxw, meionyw, meionzw);
-    glVertex3d(-meionxw,-meionyw, meionzw);
+    glVertex3d(_meionxw, meionyw, meionzw);
+    glVertex3d(_meionxw,_meionyw, meionzw);
     glEnd();
     glBegin(GL_LINES); //linha 2
     glVertex3d( meionxw, meionyw, meionzw);
-    glVertex3d( meionxw,-meionyw, meionzw);
+    glVertex3d( meionxw,_meionyw, meionzw);
     glEnd();
     glBegin(GL_LINES); //linha 3
-    glVertex3d(-meionxw, meionyw,-meionzw);
-    glVertex3d(-meionxw,-meionyw,-meionzw);
+    glVertex3d(_meionxw, meionyw,_meionzw);
+    glVertex3d(_meionxw,_meionyw,_meionzw);
     glEnd();
     glBegin(GL_LINES); //linha 4
-    glVertex3d( meionxw, meionyw,-meionzw);
-    glVertex3d( meionxw,-meionyw,-meionzw);
+    glVertex3d( meionxw, meionyw,_meionzw);
+    glVertex3d( meionxw,_meionyw,_meionzw);
     glEnd();
     // desenhando linhas dos eixos
     // eixo x
     glColor3f(0.0, 1.0, 0.0); // cor verde para o eixo x
     glBegin(GL_LINES);
     glVertex3d(-512.0*w, 0.0, 0.0);
-    glVertex3d(-meionxw, 0.0, 0.0);
+    glVertex3d(_meionxw, 0.0, 0.0);
     glVertex3d( 512.0*w, 0.0, 0.0);
     glVertex3d( meionxw, 0.0, 0.0);
     glEnd();
@@ -332,7 +335,7 @@ GLuint GLWidget::makeObject() {
     glColor3f(0.0, 0.0, 1.0); // cor azul para o eixo y
     glBegin(GL_LINES);
     glVertex3d( 0.0,-512.0*w, 0.0);
-    glVertex3d( 0.0,-meionyw, 0.0);
+    glVertex3d( 0.0,_meionyw, 0.0);
     glVertex3d( 0.0, 512.0*w, 0.0);
     glVertex3d( 0.0, meionyw, 0.0);
     glEnd();
@@ -340,7 +343,7 @@ GLuint GLWidget::makeObject() {
     glColor3f(1.0, 0.0, 0.0); // cor vermelha para o eixo z
     glBegin(GL_LINES);
     glVertex3d( 0.0, 0.0,-512.0*w);
-    glVertex3d( 0.0, 0.0,-meionzw);
+    glVertex3d( 0.0, 0.0,_meionzw);
     glVertex3d( 0.0, 0.0, 512.0*w);
     glVertex3d( 0.0, 0.0, meionzw);
     glEnd();
