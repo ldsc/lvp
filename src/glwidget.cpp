@@ -134,8 +134,8 @@ CMatriz3D * GLWidget::getPM3D() {
 
 void GLWidget::initializeGL() {
     object = makeObject();
-    setXRotation(xRot - 380);
-    setYRotation(yRot - 740);
+    setXRotation(xRot - 360);
+    setYRotation(yRot + 720);
 }
 
 void GLWidget::mousePressEvent(QMouseEvent *event) {
@@ -157,7 +157,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void GLWidget::wheelEvent(QWheelEvent *event) {
-    if (event->delta() > 0 && pm3D->NX()*pointsize*2 < 1500) {
+    if (event->delta() > 0 && pm3D->NX()*pointsize*2 < 1400) {
         pointsize  *= 1.1f;
         distpoints *= 1.1f;
     } else if ( pm3D->NX()*pointsize > 50) {
@@ -171,46 +171,54 @@ void GLWidget::wheelEvent(QWheelEvent *event) {
 void GLWidget::paintEvent(QPaintEvent *event) {
     event = event; // evitar warning
     makeCurrent(); // Faz este widget ser o atual contexto de composição OpenGL.
-    glMatrixMode(GL_PROJECTION); // GL_MODELVIEW // GL_COLOR // GL_PROJECTION
-    glPushMatrix();
     qglClearColor(trolltechPurple.dark());
-    glShadeModel(GL_SMOOTH);
 
+    //glEnable(GL_LIGHTING);  //Habilita o uso de iluminação
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    //glEnable(GL_LIGHTING); //Habilita o uso de iluminação
-    //glEnable(GL_LIGHT0); // Habilita a luz de número 0
-    glEnable(GL_MULTISAMPLE);
-    glEnable(GL_POINT_SMOOTH); //desenhar pontos com a filtragem adequada.
-    //glEnable(GL_POINT_SPRITE); //Calcular as coordenadas da textura de pontos com base na textura ambiente e definições de parâmetros ponto.
-    //Caso contrário, coordenadas de textura são constantes entre pontos.
-    /*
-    GLfloat lightPosition[4] = { 0.5, 5.0, 7.0, 1.0 };
-    GLfloat luzAmbiente[4]   = {0.2,  0.2,  0.2, 1.0};
-    GLfloat luzDifusa[4]	    = {0.7,  0.7,  0.7, 1.0};	   	// "cor"
-    GLfloat luzEspecular[4]  = {1.0,  1.0,  1.0, 1.0};		// "brilho"
-    GLfloat especularidade[4]= {1.0,  1.0,  1.0, 1.0}; 		// Capacidade de brilho do material
+    glEnable(GL_COLOR_MATERIAL);
 
+    glEnable(GL_LIGHT0);  // Habilita a luz de número 0
+    GLfloat lightPosition[4] = { 1.0, 1.0, 1.0, 1.0}; // x, y, z, w
+    GLfloat luzAmbiente[4]    = { 1.0, 1.0, 1.0, 1.0}; // r, g, b, a
+    //GLfloat luzDifusa[4]	 = {1.0, 1.0, 1.0, 1.0}; // "cor"
+    //GLfloat luzEspecular[4]  = {1.0, 1.0, 1.0, 1.0}; // "brilho"
+    //GLfloat especularidade[4]= {1.0, 1.0, 1.0, 1.0};
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
     glLightfv(GL_LIGHT0, GL_AMBIENT, luzAmbiente);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, luzDifusa );
-    glLightfv(GL_LIGHT0, GL_SPECULAR, luzEspecular );
-    */
-    //glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbiente);	// Ativa o uso da luz ambiente
+    //glLightfv(GL_LIGHT0, GL_DIFFUSE, luzDifusa);
+    //glLightfv(GL_LIGHT0, GL_SPECULAR, luzEspecular);
+    //glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 45.0);
 
+    //material
+    GLfloat especularidade[4] = { 0.5, 0.5, 0.5, 1.0 }; // Capacidade de brilho do material
+    GLfloat shininess[1] = { 50.0 };
+    glShadeModel (GL_SMOOTH);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especularidade);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+    //
+
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbiente);	// Ativa o uso da luz ambiente
+    /*
+    glPushMatrix();
+    glEnable(GL_CULL_FACE);
+    glLightModeli(GL_AMBIENT_AND_DIFFUSE, GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB); // GL_AMBIENT
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glEnable(GL_MULTISAMPLE);
+    */
+    //glEnable(GL_POINT_SPRITE); //Calcular as coordenadas da textura de pontos com base na textura ambiente e definições de parâmetros ponto.
+    //Caso contrário, coordenadas de textura são constantes entre pontos.
+    //
+    //reshape
     setupViewport(width(), height());
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glTranslated(0.0, 0.0, -10.0);
     glRotated(xRot / 16.0, 1.0, 0.0, 0.0);
     glRotated(yRot / 16.0, 0.0, 1.0, 0.0);
     glRotated(zRot / 16.0, 0.0, 0.0, 1.0);
     glCallList(object);
-    /*
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-*/
+
+    //exibe instruções
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     drawInstructions(&painter);
@@ -228,6 +236,7 @@ QSize GLWidget::sizeHint() const {
 GLuint GLWidget::makeObject() {
     GLuint list = glGenLists(1);
     glNewList(list, GL_COMPILE);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     /*
     static GLfloat logoDiffuseColor[4] = {trolltechPurple.red()/255.0, trolltechPurple.green()/255.0, trolltechPurple.blue()/255.0, 1.0};
     glMaterialfv(GL_FRONT, GL_DIFFUSE, logoDiffuseColor);
@@ -250,7 +259,11 @@ GLuint GLWidget::makeObject() {
 
     glPointSize(pointsize);
     glEnable(GL_POINT_SMOOTH);
-    //glEnable(GL_NORMALIZE);
+    //glEnable (GL_BLEND);
+    //glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glHint (GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
+    glEnable(GL_NORMALIZE);
+
     //Desenhando o meio poroso
     glBegin(GL_POINTS); //GL_POINTS
     if (viewtype==VIEW3D){
@@ -291,6 +304,7 @@ GLuint GLWidget::makeObject() {
     }
     glEnd();
     glColor3f(0.0, 1.0, 0.0); // cor verde
+    glLineWidth (1.5);
     // desenhando quandrado superior
     glBegin(GL_LINE_LOOP); //Exibe uma sequencia de linhas conectando os pontos definidos por glVertex e ao final liga o primeiro com o último
     glVertex3d(_meionxw, meionyw, meionzw);
@@ -366,6 +380,7 @@ void GLWidget::setupViewport(int width, int height) {
     glLoadIdentity();
     glOrtho(-0.5, +0.5, +0.5, -0.5, 4.0, 15.0);
     glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 void GLWidget::drawInstructions(QPainter *painter) {
