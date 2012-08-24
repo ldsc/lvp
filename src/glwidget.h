@@ -23,8 +23,8 @@ class GLWidget : public QGLWidget
 
 public:
     enum {
-      VIEW3D,	// 0 - Visualizar em 3D
-      MPV       // 1 - Multiplanar Viewing
+        VIEW3D,	// 0 - Visualizar em 3D
+        MPV       // 1 - Multiplanar Viewing
     };
 
     //GLWidget(QString _fileName, QWidget *parent = 0);
@@ -57,12 +57,13 @@ public slots:
     CMatriz3D * getPM3D();
 
 protected:
-    void initializeGL();
-    void paintEvent(QPaintEvent *event);
-    void resizeGL(int width, int height);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void wheelEvent(QWheelEvent *event);
+    void initializeGL();                        //reimplementada de QGLWidget
+    //void paintEvent(QPaintEvent *event);      //reimplementada de QGLWidget
+    void paintGL();                             //reimplementada de QGLWidget
+    void resizeGL(int width, int height);       //reimplementada de QGLWidget
+    void mousePressEvent(QMouseEvent *event);   //reimplementada de QWidget
+    void mouseMoveEvent(QMouseEvent *event);    //reimplementada de QWidget
+    void wheelEvent(QWheelEvent *event);        //reimplementada de QWidget
 
 private:
     GLuint makeObject();

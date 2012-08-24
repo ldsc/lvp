@@ -4,7 +4,7 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
-GLWidget::GLWidget(CMatriz3D * _pm3D, QString _fileName, int _viewtype, QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
+GLWidget::GLWidget(CMatriz3D * _pm3D, QString _fileName, int _viewtype, QWidget *parent) : QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer), parent) { //QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
     viewtype=_viewtype;
     distpoints = 0.001;
     pointsize = 1.0;
@@ -168,9 +168,11 @@ void GLWidget::wheelEvent(QWheelEvent *event) {
     QGLWidget::update();
 }
 
-void GLWidget::paintEvent(QPaintEvent *event) {
-    event = event; // evitar warning
+//void GLWidget::paintEvent(QPaintEvent *event) {
+void GLWidget::paintGL() {
+    //event = event; // evitar warning
     makeCurrent(); // Faz este widget ser o atual contexto de composição OpenGL.
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     qglClearColor(trolltechPurple.dark());
 
     //glEnable(GL_LIGHTING);  //Habilita o uso de iluminação
