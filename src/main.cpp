@@ -26,6 +26,10 @@ int main(int argc, char *argv[])
 	Q_INIT_RESOURCE(application); //inicia os recursos especificados no arquivo .qrc
 	QApplication app(argc, argv); //
 	
+    QSplashScreen *splash = new QSplashScreen;
+    splash->setPixmap(QPixmap(":/images/splashScream.png"));
+    splash->show();
+
 	//QTranslator translator;
      //translator.load("lvp/src/lvp_pt");
      //app.installTranslator(&translator);
@@ -35,6 +39,10 @@ int main(int argc, char *argv[])
 	if (argc > 1)
         for (int i=1; i < argc; i++)
             mw->open(argv[i], false);
-	return app.exec();
+
+    splash->finish(mw);
+    delete splash;
+
+    return app.exec();
 }
 
