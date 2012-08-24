@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include <QApplication>
+#include <QSplashScreen>
 //#include <QTranslator>
 #include "lvp.h"
 
@@ -26,23 +27,27 @@ int main(int argc, char *argv[])
 	Q_INIT_RESOURCE(application); //inicia os recursos especificados no arquivo .qrc
 	QApplication app(argc, argv); //
 	
-    QSplashScreen *splash = new QSplashScreen;
-    splash->setPixmap(QPixmap(":/images/splashScream.png"));
-    splash->show();
+    QPixmap pixmap(":/images/splashScream.png");
+    QSplashScreen splash(pixmap);
+    splash.show();
+    Qt::Alignment topRight = Qt::AlignBottom | Qt::AlignRight;
+    splash.showMessage(QObject::tr("Loading Main Window"), topRight, Qt::white);
 
-	//QTranslator translator;
-     //translator.load("lvp/src/lvp_pt");
-     //app.installTranslator(&translator);
-	
+    //QTranslator translator;
+    //translator.load("lvp/src/lvp_pt");
+    //app.installTranslator(&translator);
+
+    sleep(1);
+    splash.showMessage(QObject::tr("Main Window Loaded."), topRight, Qt::white);
+    sleep(1);
+
 	Lvp *mw = new Lvp();
 	mw->show();
 	if (argc > 1)
         for (int i=1; i < argc; i++)
             mw->open(argv[i], false);
 
-    splash->finish(mw);
-    delete splash;
-
+    splash.finish(mw);
     return app.exec();
 }
 
