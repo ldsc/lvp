@@ -1102,7 +1102,6 @@ void Lvp::mathematicalMorphology( MorphType mtype ) {
                 } else {
                     indice = 0; fundo = 1;
                 }
-
                 int numFiles = imagesList.size(); //número de arquivos que serão abertos
                 int cont = 0;
                 QProgressDialog progress("Applying filter...", "&Cancel", 0, numFiles, this);
@@ -1374,7 +1373,7 @@ void Lvp::idf() {
                 idf2D->Go(mdiChild->pm);
                 qstr = tr(".idf%1.pgm").arg(QString::number(seqNumberIDF++));
                 stdstr = qstr.toStdString();
-                idf2D->WriteFormat(WRITEFORM_PI_X_Y_GRAY_ASCII);
+								idf2D->WriteFormat(P2_X_Y_GRAY_ASCII);
                 idf2D->NumCores(idf2D->MaiorValor());
                 idf2D->Path(mdiChild->getFilePath().toStdString());
                 idf2D->Write(stdstr);
@@ -1391,7 +1390,7 @@ void Lvp::idf() {
             idf3D->Go(obj3D);
             qstr = tr(".idf%1.dgm").arg(QString::number(seqNumberIDF++));
             stdstr = qstr.toStdString();
-            idf3D->WriteFormat(WRITEFORM_DI_X_Y_Z_GRAY_ASCII);
+						idf3D->WriteFormat(D2_X_Y_Z_GRAY_ASCII);
             idf3D->NumCores(idf3D->MaiorValor());
             idf3D->Path(mdiChild->getFilePath().toStdString());
             idf3D->Write(stdstr);

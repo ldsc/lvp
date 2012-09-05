@@ -28,21 +28,21 @@ bool ImageViewer3D::loadFile(const QString &fileName)
 		}
 		pm3D->LePlano(pm, curPlan, direcao);
 		pm->Path(pm3D->Path());
-      //QString file = fileName.mid(fileName.lastIndexOf("/")+1, (fileName.lastIndexOf("."))-(fileName.lastIndexOf("/")+1) ); //Pega o nome do arquivo sem a extensão.
-      QString file = QFileInfo(fileName).fileName().section('.', 0, -2); //Pega o nome do arquivo sem a extensão.
+		//QString file = fileName.mid(fileName.lastIndexOf("/")+1, (fileName.lastIndexOf("."))-(fileName.lastIndexOf("/")+1) ); //Pega o nome do arquivo sem a extensão.
+		QString file = QFileInfo(fileName).fileName().section('.', 0, -2); //Pega o nome do arquivo sem a extensão.
 		switch (pm3D->GetFormat()) {
-		case WRITEFORM_DI_X_Y_Z_ASCII:
-			pm->WriteFormat(WRITEFORM_PI_X_Y_ASCII);
-			file = tr(".lvp_%1.pbm").arg(file);
-			break;
-		case WRITEFORM_DI_X_Y_Z_GRAY_ASCII:
-			pm->WriteFormat(WRITEFORM_PI_X_Y_GRAY_ASCII);
-			pm->NumCores( pm3D->NumCores() );
-			file = tr(".lvp_%1.pgm").arg(file);
-			break;
-		default:
-			pm->WriteFormat(WRITEFORM_PI_X_Y_ASCII);
-			file = tr(".lvp_%1.pbm").arg(file);
+			case D1_X_Y_Z_ASCII:
+				pm->WriteFormat(P1_X_Y_ASCII);
+				file = tr(".lvp_%1.pbm").arg(file);
+				break;
+			case D2_X_Y_Z_GRAY_ASCII:
+				pm->WriteFormat(P2_X_Y_GRAY_ASCII);
+				pm->NumCores( pm3D->NumCores() );
+				file = tr(".lvp_%1.pgm").arg(file);
+				break;
+			default:
+				pm->WriteFormat(P1_X_Y_ASCII);
+				file = tr(".lvp_%1.pbm").arg(file);
 		}
 		if ( pm->Write(file.toStdString()) ) {// se conseguiu salvar arquivo com nome temporário.
 			//delete pm;
@@ -75,18 +75,18 @@ bool ImageViewer3D::ChangePlan( unsigned int plano, CMatriz3D::E_eixo axis )
 	}
 	pm3D->LePlano(pm, plano, axis);
 	switch ( pm3D->GetFormat() ) {
-	case WRITEFORM_DI_X_Y_Z_ASCII:
-		pm->WriteFormat(WRITEFORM_PI_X_Y_ASCII);
-		break;
-	case WRITEFORM_DI_X_Y_Z_GRAY_ASCII:
-		pm->WriteFormat(WRITEFORM_PI_X_Y_GRAY_ASCII);
-		pm->NumCores( pm3D->NumCores() );
-		break;
-	default:
-		pm->WriteFormat(WRITEFORM_PI_X_Y_ASCII);
+		case D1_X_Y_Z_ASCII:
+			pm->WriteFormat(P1_X_Y_ASCII);
+			break;
+		case D2_X_Y_Z_GRAY_ASCII:
+			pm->WriteFormat(P2_X_Y_GRAY_ASCII);
+			pm->NumCores( pm3D->NumCores() );
+			break;
+		default:
+			pm->WriteFormat(P1_X_Y_ASCII);
 	}
-   //if ( pm->Write( curPlanoFile.mid(curPlanoFile.lastIndexOf("/")+1).toStdString()) ) {// se conseguiu salvar arquivo com nome temporário.
-   if ( pm->Write( QFileInfo(curPlanoFile).fileName().toStdString()) ) {// se conseguiu salvar arquivo com nome temporário.
+	//if ( pm->Write( curPlanoFile.mid(curPlanoFile.lastIndexOf("/")+1).toStdString()) ) {// se conseguiu salvar arquivo com nome temporário.
+	if ( pm->Write( QFileInfo(curPlanoFile).fileName().toStdString()) ) {// se conseguiu salvar arquivo com nome temporário.
 		if ( ! image->isNull() ) delete image;
 		image = new QImage(curPlanoFile);
 		if (image->isNull()) {
@@ -131,6 +131,43 @@ bool ImageViewer3D::saveAs()
 	if ( ! pm3D ) {
 		QMessageBox::information(parent, tr("LVP"), tr("Error! - Can't create image."));
 		return false;
+	}
+	QMessageBox msgBox(this);
+	msgBox.setWindowTitle(tr("Save As"));
+	msgBox.setText(tr("Saving Format:"));
+	QPushButton *cancelButton = msgBox.addButton(QMessageBox::Cancel);
+	msgBox.addButton(tr("&Binary"), QMessageBox::ActionRole);
+	QPushButton *asciiButton = msgBox.addButton(tr("&ASCII"), QMessageBox::ActionRole);
+	msgBox.setDefaultButton(asciiButton);
+	msgBox.exec();
+	if ( msgBox.clickedButton() == cancelButton )
+		return false;
+	if (msgBox.clickedButton() == asciiButton) { //ascii
+		switch(pm3D->GetFormat()){ //se o formato atual for binário muda para ascii mantendo o número de cores
+			case D4_X_Y_Z_BINARY:
+				pm3D->WriteFormat(D1_X_Y_Z_ASCII);
+				break;
+			case D5_X_Y_Z_GRAY_BINARY:
+				pm3D->WriteFormat(D2_X_Y_Z_GRAY_ASCII);
+				break;
+			case D6_X_Y_Z_COLOR_BINARY:
+				pm3D->WriteFormat(D3_X_Y_Z_COLOR_ASCII);
+				break;
+			default: pm3D->WriteFormat(D1_X_Y_Z_ASCII);
+		}
+	} else { //binario.
+		switch(pm3D->GetFormat()){ //se o formato atual for ascii muda para binário mantendo o número de cores
+			case D1_X_Y_Z_ASCII:
+				pm3D->WriteFormat(D4_X_Y_Z_BINARY);
+				break;
+			case D2_X_Y_Z_GRAY_ASCII:
+				pm3D->WriteFormat(D5_X_Y_Z_GRAY_BINARY);
+				break;
+			case D3_X_Y_Z_COLOR_ASCII:
+				pm3D->WriteFormat(D6_X_Y_Z_COLOR_BINARY);
+				break;
+			default: pm3D->WriteFormat(D4_X_Y_Z_BINARY);
+		}
 	}
 	string tmp = pm3D->Path();
 	pm3D->Path("");
