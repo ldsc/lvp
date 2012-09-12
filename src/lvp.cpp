@@ -943,14 +943,14 @@ void Lvp::inversion() {
         progress.setValue(cont);
         if (progress.wasCanceled())
             break;
-        QString qstr = mdiChild->getFullFileName();
-        if ( mdiChild->pm == NULL ) mdiChild->pm = new CMatriz2D( qstr.toStdString() );
-        CFEInversao * filtro = new CFEInversao( );
-        pmInv = filtro->Go( mdiChild->pm );
+				QString qstr = mdiChild->getFullFileName();
+				if ( mdiChild->pm == NULL ) mdiChild->pm = new CMatriz2D( qstr.toStdString() );
+				CFEInversao * filtro = new CFEInversao( );
+				pmInv = filtro->Go( mdiChild->pm );
         static int seqNumberInversion = 1;
         qstr = tr(".inversion%1.%2").arg(QString::number(seqNumberInversion++)).arg(mdiChild->getFileExt());
-        pmInv->Write( qstr.toStdString() );
-        open( (mdiChild->getFilePath() + qstr).toStdString() );
+				pmInv->Write( qstr.toStdString() );
+				open( (mdiChild->getFilePath() + qstr).toStdString() );
         delete filtro;
         cont++;
     }

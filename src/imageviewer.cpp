@@ -41,20 +41,58 @@ bool ImageViewer::save()
 }
 
 bool ImageViewer::saveAs() {
-   QString fileName;
-   if (isNew){
-      fileName = filePath + curFile;
-   } else {
-      fileName = fullFileName;
-   }
-   fileName = QFileDialog::getSaveFileName(parent, tr("Save As"), fileName, tr("Images (*.pbm *.pgm)"));
+	QString fileName;
+	if (isNew){
+		fileName = filePath + curFile;
+	} else {
+		fileName = fullFileName;
+	}
+	fileName = QFileDialog::getSaveFileName(parent, tr("Save As"), fileName, tr("Images (*.pbm *.pgm)"));
 	if (fileName.isEmpty()){
-      return false;
+		return false;
 	}
 	if ( ! pm ) pm = new CMatriz2D(fullFileName.toStdString());
 	if ( ! pm ) {
 		QMessageBox::information(parent, tr("LVP"), tr("Error! - Can't create image."));
 		return false;
+	}
+	//
+	QMessageBox msgBox(this);
+	msgBox.setWindowTitle(tr("Save As"));
+	msgBox.setText(tr("Saving Format:"));
+	QPushButton *cancelButton = msgBox.addButton(QMessageBox::Cancel);
+	msgBox.addButton(tr("&Binary"), QMessageBox::ActionRole);
+	QPushButton *asciiButton = msgBox.addButton(tr("&ASCII"), QMessageBox::ActionRole);
+	msgBox.setDefaultButton(asciiButton);
+	msgBox.exec();
+	if ( msgBox.clickedButton() == cancelButton )
+		return false;
+	if (msgBox.clickedButton() == asciiButton) { //ascii
+		switch(pm->GetFormat()){ //se o formato atual for binário muda para ascii mantendo o número de cores
+			case P4_X_Y_BINARY:
+				pm->WriteFormat(P1_X_Y_ASCII);
+				break;
+			case P5_X_Y_GRAY_BINARY:
+				pm->WriteFormat(P2_X_Y_GRAY_ASCII);
+				break;
+			case P6_X_Y_COLOR_BINARY:
+				pm->WriteFormat(P3_X_Y_COLOR_ASCII);
+				break;
+			default: break; //evitar warming do compilador
+		}
+	} else { //binario.
+		switch(pm->GetFormat()){ //se o formato atual for ascii muda para binário mantendo o número de cores
+			case P1_X_Y_ASCII:
+				pm->WriteFormat(P4_X_Y_BINARY);
+				break;
+			case P2_X_Y_GRAY_ASCII:
+				pm->WriteFormat(P5_X_Y_GRAY_BINARY);
+				break;
+			case P3_X_Y_COLOR_ASCII:
+				pm->WriteFormat(P6_X_Y_COLOR_BINARY);
+				break;
+			default: break; //evitar warming do compilador
+		}
 	}
 	string tmp = pm->Path();
 	pm->Path("");

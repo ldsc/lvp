@@ -153,7 +153,7 @@ bool ImageViewer3D::saveAs()
 			case D6_X_Y_Z_COLOR_BINARY:
 				pm3D->WriteFormat(D3_X_Y_Z_COLOR_ASCII);
 				break;
-			default: pm3D->WriteFormat(D1_X_Y_Z_ASCII);
+			default: break; //evitar warming do compilador
 		}
 	} else { //binario.
 		switch(pm3D->GetFormat()){ //se o formato atual for ascii muda para binário mantendo o número de cores
@@ -166,7 +166,7 @@ bool ImageViewer3D::saveAs()
 			case D3_X_Y_Z_COLOR_ASCII:
 				pm3D->WriteFormat(D6_X_Y_Z_COLOR_BINARY);
 				break;
-			default: pm3D->WriteFormat(D4_X_Y_Z_BINARY);
+			default: break; //evitar warming do compilador
 		}
 	}
 	string tmp = pm3D->Path();
