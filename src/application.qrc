@@ -30,5 +30,6 @@
         <file>images/mpv.png</file>
         <file>images/3Dview.png</file>
         <file>images/splashScream.png</file>
+        <file>images/import.png</file>
     </qresource>
 </RCC>

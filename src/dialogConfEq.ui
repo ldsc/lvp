@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>291</width>
+    <width>321</width>
     <height>161</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>291</width>
+    <width>321</width>
     <height>161</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>291</width>
+    <width>321</width>
     <height>161</height>
    </size>
   </property>
@@ -29,98 +29,106 @@
    <iconset resource="application.qrc">
     <normaloff>:/images/logo.png</normaloff>:/images/logo.png</iconset>
   </property>
-  <widget class="QGroupBox" name="groupBoxFluidoA">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>3</y>
-     <width>143</width>
-     <height>96</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Fluid A</string>
-   </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QRadioButton" name="radioButtonCompressivel">
-      <property name="text">
-       <string>Compressible</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QRadioButton" name="radioButtonIncompressivel">
-      <property name="text">
-       <string>Incompressible</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QCheckBox" name="checkBoxSalvar">
-   <property name="geometry">
-    <rect>
-     <x>9</x>
-     <y>103</y>
-     <width>271</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Save partial data to disk</string>
-   </property>
-  </widget>
-  <widget class="QGroupBox" name="groupBoxFluidoB">
-   <property name="geometry">
-    <rect>
-     <x>147</x>
-     <y>3</y>
-     <width>142</width>
-     <height>96</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Fluid B</string>
-   </property>
-   <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="0">
-     <widget class="QRadioButton" name="radioButtonMolhante">
-      <property name="text">
-       <string>Wetting</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QRadioButton" name="radioButtonNaoMolhante">
-      <property name="text">
-       <string>Non-wetting</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QDialogButtonBox" name="buttonBox">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>130</y>
-     <width>261</width>
-     <height>27</height>
+     <y>10</y>
+     <width>301</width>
+     <height>141</height>
     </rect>
    </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QGroupBox" name="groupBoxFluidoA">
+      <property name="title">
+       <string>Fluid A</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget2">
+       <property name="geometry">
+        <rect>
+         <x>17</x>
+         <y>25</y>
+         <width>129</width>
+         <height>46</height>
+        </rect>
+       </property>
+       <layout class="QFormLayout" name="formLayout_2">
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="radioButtonCompressivel">
+          <property name="text">
+           <string>Compressible</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QRadioButton" name="radioButtonIncompressivel">
+          <property name="text">
+           <string>Incompressible</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QGroupBox" name="groupBoxFluidoB">
+      <property name="title">
+       <string>Fluid B</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget3">
+       <property name="geometry">
+        <rect>
+         <x>17</x>
+         <y>25</y>
+         <width>108</width>
+         <height>46</height>
+        </rect>
+       </property>
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="radioButtonMolhante">
+          <property name="text">
+           <string>Wetting</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QRadioButton" name="radioButtonNaoMolhante">
+          <property name="text">
+           <string>Non-wetting</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QCheckBox" name="checkBoxSalvar">
+      <property name="text">
+       <string>Save partial data to disk</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QDialogButtonBox" name="buttonBox">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="standardButtons">
+       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <tabstops>

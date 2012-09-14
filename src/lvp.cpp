@@ -193,6 +193,7 @@ Lvp::Lvp() {
 	dialog = NULL;
 	dialogGT = NULL;
 	dialogES = NULL;
+	dialogImport = NULL;
 	lastOpenPath = "";
 
 	readSettings();
@@ -205,83 +206,84 @@ Lvp::Lvp() {
 }
 
 void Lvp::createActions() {
-	connect( actionOpen,                    SIGNAL( triggered() ), 	this, 	SLOT( open() 				          ) );
-	connect( actionSave,                    SIGNAL( triggered() ), 	this, 	SLOT( save() 				          ) );
-	connect( actionSaveAs,                  SIGNAL( triggered() ), 	this, 	SLOT( saveAs() 				       ) );
-	connect( actionCopy,                    SIGNAL( triggered() ), 	this, 	SLOT( copy() 				          ) );
-	connect( actionAbaut,                   SIGNAL( triggered() ), 	this, 	SLOT( about() 				          ) );
-	connect( menuWindow,                    SIGNAL(aboutToShow()),    this,	   SLOT( updateWindowMenu() 	       ) );
-	connect( actionPrint,                   SIGNAL( triggered() ), 	this, 	SLOT( print() 				          ) );
-	connect( actionSource,                  SIGNAL( triggered() ), 	this, 	SLOT( openTextEditor()  	       ) );
-	connect( actionZoomIn,                  SIGNAL( triggered() ), 	this, 	SLOT( zoomIn() 				       ) );
-	connect( actionZoomOut,                 SIGNAL( triggered() ), 	this, 	SLOT( zoomOut() 			          ) );
-	connect( actionNormalSize,              SIGNAL( triggered() ), 	this, 	SLOT( normalSize() 			       ) );
-	connect( actionFitToWindow,             SIGNAL( triggered() ), 	this, 	SLOT( fitToWindow() 		          ) );
-	connect( actionViewMode,                SIGNAL( triggered() ), 	this, 	SLOT( changeViewMode() 		       ) );
-	connect( actionLowPass,                 SIGNAL( triggered() ), 	this, 	SLOT( lowPass() 			          ) );
-	connect( actionHighPass,                SIGNAL( triggered() ), 	this, 	SLOT( highPass() 			          ) );
-	connect( actionErosion,                 SIGNAL( triggered() ), 	this, 	SLOT( erosion() 			          ) );
-	connect( actionErosion3D,               SIGNAL( triggered() ), 	this, 	SLOT( erosion3D()			          ) );
-	connect( actionDilation,                SIGNAL( triggered() ), 	this, 	SLOT( dilation() 			          ) );
-	connect( actionDilation3D,              SIGNAL( triggered() ), 	this, 	SLOT( dilation3D()                ) );
-	connect( actionOpening,                 SIGNAL( triggered() ), 	this, 	SLOT( opening() 			          ) );
-	connect( actionOpening3D,               SIGNAL( triggered() ), 	this, 	SLOT( opening3D() 		          ) );
-	connect( actionClosing,                 SIGNAL( triggered() ), 	this, 	SLOT( closing() 			          ) );
-	connect( actionClosing3D,               SIGNAL( triggered() ), 	this, 	SLOT( closing3D() 		          ) );
-	connect( actionV1,                      SIGNAL( triggered() ), 	this, 	SLOT( skeletonV1() 			       ) );
-	connect( actionV2,                      SIGNAL( triggered() ), 	this, 	SLOT( skeletonV2() 			       ) );
-	connect( actionV3,                      SIGNAL( triggered() ), 	this, 	SLOT( skeletonV3() 			       ) );
-	connect( actionV4,                      SIGNAL( triggered() ), 	this, 	SLOT( skeletonV4() 			       ) );
-	connect( actionZhangSuen,               SIGNAL( triggered() ), 	this, 	SLOT( skeletonV5() 			       ) );
-	connect( actionConfEq,                  SIGNAL( triggered() ), 	this, 	SLOT( confEq() 				       ) );
-	connect( actionTruncadeGaussiana,       SIGNAL( triggered() ),	this, 	SLOT( reconstructionGT() 	       ) );
-	connect( actionSuperposedSpheres,       SIGNAL( triggered() ),	this, 	SLOT( reconstructionES() 	       ) );
-	connect( actionCorFrequency,            SIGNAL( triggered() ),	this, 	SLOT( correlationFFT() 		       ) );
-	connect( actionCorFrequency3D,          SIGNAL( triggered() ),	this, 	SLOT( correlationFFT3D()          ) );
-	connect( actionCorSpatial,              SIGNAL( triggered() ),	   this, 	SLOT( correlationSpatial()        ) );
-	connect( actionCorSpatial3D,            SIGNAL( triggered() ),	   this, 	SLOT( correlationSpatial3D()      ) );
-	connect( actionDTSspatial,              SIGNAL( triggered() ),	   this, 	SLOT( dtsSpatial()                ) );
-	connect( actionDTSspatial3D,            SIGNAL( triggered() ),	   this, 	SLOT( dtsSpatial3D()              ) );
-	connect( actionDTSd34,                  SIGNAL( triggered() ),	   this, 	SLOT( dtsD34()       	          ) );
-	connect( actionDTSd34_3D,               SIGNAL( triggered() ),	   this, 	SLOT( dtsD34_3D()      	          ) );
-	connect( actionDTSd345,                 SIGNAL( triggered() ),	   this, 	SLOT( dtsD345()	                ) );
-	connect( actionDTSd5711,                SIGNAL( triggered() ),	   this, 	SLOT( dtsD5711() 	                ) );
-	connect( actionDTSd5711_3D,             SIGNAL( triggered() ),	   this, 	SLOT( dtsD5711_3D()               ) );
-	connect( actionDTSeuclidian,            SIGNAL( triggered() ),	   this, 	SLOT( dtsEuclidian() 	          ) );
-	connect( actionDTSeuclidian3D,          SIGNAL( triggered() ),	   this, 	SLOT( dtsEuclidian3D() 	          ) );
-	connect( actionDTPspatial,              SIGNAL( triggered() ),	   this, 	SLOT( dtpSpatial()                ) );
-	connect( actionDTPspatial3D,            SIGNAL( triggered() ),	   this, 	SLOT( dtpSpatial3D()              ) );
-	connect( actionDTPd34,                  SIGNAL( triggered() ),	   this, 	SLOT( dtpD34() 	                ) );
-	connect( actionDTPd34_3D,               SIGNAL( triggered() ),	   this, 	SLOT( dtpD34_3D()                 ) );
-	connect( actionDTPd345,                 SIGNAL( triggered() ),	   this, 	SLOT( dtpD345()	                ) );
-	connect( actionDTPd5711,                SIGNAL( triggered() ),	   this, 	SLOT( dtpD5711() 	                ) );
-	connect( actionDTPd5711_3D,             SIGNAL( triggered() ),	   this, 	SLOT( dtpD5711_3D()               ) );
-	connect( actionDTPeuclidian,            SIGNAL( triggered() ),	   this, 	SLOT( dtpEuclidian() 	          ) );
-	connect( actionDTPeuclidian3D,          SIGNAL( triggered() ),	   this, 	SLOT( dtpEuclidian3D()       	    ) );
-	connect( actionPorosity,                SIGNAL( triggered() ),	   this, 	SLOT( porosity() 			          ) );
-	connect( actionConnectivity,            SIGNAL( triggered() ),    this, 	SLOT( connectivity3D() 		       ) );
-	connect( actionClose,                   SIGNAL( triggered() ), 	 mdiArea, SLOT( closeActiveSubWindow()      ) );
-	connect( actionCloseAll,                SIGNAL( triggered() ), 	 mdiArea, SLOT( closeAllSubWindows() 	    ) );
-	connect( actionTitle,                   SIGNAL( triggered() ), 	 mdiArea, SLOT( tileSubWindows() 		       ) );
-	connect( actionCascade,                 SIGNAL( triggered() ), 	 mdiArea, SLOT( cascadeSubWindows() 	       ) );
-	connect( actionNext,                    SIGNAL( triggered() ), 	 mdiArea, SLOT( activateNextSubWindow()     ) );
-	connect( actionPrevious,                SIGNAL( triggered() ), 	 mdiArea, SLOT( activatePreviousSubWindow() ) );
-	connect( actionAbautQt,                 SIGNAL( triggered() ),	 qApp, 	SLOT( aboutQt() 			          ) );
-	connect( actionExit,                    SIGNAL( triggered() ), 	 qApp, 	SLOT( closeAllWindows() 	       ) );
-	connect( action3DVisualization,         SIGNAL( triggered() ),    this, 	SLOT( open3DVisualization()       ) );
-	connect( actionMPV,                     SIGNAL( triggered() ),    this, 	SLOT( openMPV()                   ) );
-	connect( actionRotate,                  SIGNAL( triggered() ),    this, 	SLOT( rotate() 				       ) );
-	connect( actionRelativePermeability,    SIGNAL( triggered() ),    this, 	SLOT( relativePermeability()      ) );
-	connect( actionIntrinsicPermeability,   SIGNAL( triggered() ),    this, 	SLOT( intrinsicPermeability()     ) );
-	connect( pushButtonAddCurve,            SIGNAL( clicked()   ),    this, 	SLOT( addCurve() 			          ) );
-	connect( pushButtonAverage,             SIGNAL( clicked()   ),    this, 	SLOT( average() 			          ) );
-	connect( pushButtonAccumulated,         SIGNAL( clicked()   ),	 this,	SLOT( accumulated()               ) );
-	connect( pushButtonSource,			   SIGNAL( clicked()   ),  	 this,	SLOT( openTextEditor()            ) );
-	connect( actionInverter,                SIGNAL( triggered() ),    this, 	SLOT( invertPoro() 			       ) );
-	connect( actionInversion,               SIGNAL( triggered() ),    this, 	SLOT( inversion() 			       ) );
-	connect( actionInversion3D,             SIGNAL( triggered() ),    this, 	SLOT( inversion3D() 		          ) );
-	connect( actionIDF,                     SIGNAL( triggered() ),    this, 	SLOT( idf() 				          ) );
-	connect( actionIDF3D,                   SIGNAL( triggered() ),    this, 	SLOT( idf() 				          ) );
+	connect( actionOpen,                    SIGNAL( triggered() ), 	this,			SLOT( open()											) );
+	connect( actionSave,                    SIGNAL( triggered() ), 	this,			SLOT( save()											) );
+	connect( actionSaveAs,                  SIGNAL( triggered() ), 	this,			SLOT( saveAs()										) );
+	connect( actionCopy,                    SIGNAL( triggered() ), 	this,			SLOT( copy()											) );
+	connect( actionAbaut,                   SIGNAL( triggered() ), 	this,			SLOT( about()											) );
+	connect( menuWindow,                    SIGNAL(aboutToShow()),  this,			SLOT( updateWindowMenu()					) );
+	connect( actionPrint,                   SIGNAL( triggered() ), 	this,			SLOT( print()											) );
+	connect( actionSource,                  SIGNAL( triggered() ), 	this,			SLOT( openTextEditor()						) );
+	connect( actionZoomIn,                  SIGNAL( triggered() ), 	this,			SLOT( zoomIn()										) );
+	connect( actionZoomOut,                 SIGNAL( triggered() ), 	this,			SLOT( zoomOut()										) );
+	connect( actionNormalSize,              SIGNAL( triggered() ), 	this,			SLOT( normalSize()								) );
+	connect( actionFitToWindow,             SIGNAL( triggered() ), 	this,			SLOT( fitToWindow() 		          ) );
+	connect( actionViewMode,                SIGNAL( triggered() ), 	this,			SLOT( changeViewMode()						) );
+	connect( actionLowPass,                 SIGNAL( triggered() ), 	this,			SLOT( lowPass()										) );
+	connect( actionHighPass,                SIGNAL( triggered() ), 	this,			SLOT( highPass()									) );
+	connect( actionErosion,                 SIGNAL( triggered() ), 	this,			SLOT( erosion()										) );
+	connect( actionErosion3D,               SIGNAL( triggered() ), 	this,			SLOT( erosion3D()									) );
+	connect( actionDilation,                SIGNAL( triggered() ), 	this,			SLOT( dilation()									) );
+	connect( actionDilation3D,              SIGNAL( triggered() ), 	this,			SLOT( dilation3D()                ) );
+	connect( actionOpening,                 SIGNAL( triggered() ), 	this,			SLOT( opening()										) );
+	connect( actionOpening3D,               SIGNAL( triggered() ), 	this,			SLOT( opening3D()									) );
+	connect( actionClosing,                 SIGNAL( triggered() ), 	this,			SLOT( closing()										) );
+	connect( actionClosing3D,               SIGNAL( triggered() ), 	this,			SLOT( closing3D()									) );
+	connect( actionV1,                      SIGNAL( triggered() ), 	this,			SLOT( skeletonV1()								) );
+	connect( actionV2,                      SIGNAL( triggered() ), 	this,			SLOT( skeletonV2()								) );
+	connect( actionV3,                      SIGNAL( triggered() ), 	this,			SLOT( skeletonV3()								) );
+	connect( actionV4,                      SIGNAL( triggered() ), 	this,			SLOT( skeletonV4()								) );
+	connect( actionZhangSuen,               SIGNAL( triggered() ), 	this,			SLOT( skeletonV5()								) );
+	connect( actionConfEq,                  SIGNAL( triggered() ), 	this,			SLOT( confEq()										) );
+	connect( actionTruncadeGaussiana,       SIGNAL( triggered() ),	this,			SLOT( reconstructionGT()					) );
+	connect( actionSuperposedSpheres,       SIGNAL( triggered() ),	this,			SLOT( reconstructionES()					) );
+	connect( actionCorFrequency,            SIGNAL( triggered() ),	this,			SLOT( correlationFFT()						) );
+	connect( actionCorFrequency3D,          SIGNAL( triggered() ),	this,			SLOT( correlationFFT3D()          ) );
+	connect( actionCorSpatial,              SIGNAL( triggered() ),	this,			SLOT( correlationSpatial()        ) );
+	connect( actionCorSpatial3D,            SIGNAL( triggered() ),	this,			SLOT( correlationSpatial3D()      ) );
+	connect( actionDTSspatial,              SIGNAL( triggered() ),	this,			SLOT( dtsSpatial()                ) );
+	connect( actionDTSspatial3D,            SIGNAL( triggered() ),	this,			SLOT( dtsSpatial3D()              ) );
+	connect( actionDTSd34,                  SIGNAL( triggered() ),	this,			SLOT( dtsD34()										) );
+	connect( actionDTSd34_3D,               SIGNAL( triggered() ),	this,			SLOT( dtsD34_3D()      	          ) );
+	connect( actionDTSd345,                 SIGNAL( triggered() ),	this,			SLOT( dtsD345()										) );
+	connect( actionDTSd5711,                SIGNAL( triggered() ),	this,			SLOT( dtsD5711() 	                ) );
+	connect( actionDTSd5711_3D,             SIGNAL( triggered() ),	this,			SLOT( dtsD5711_3D()               ) );
+	connect( actionDTSeuclidian,            SIGNAL( triggered() ),	this,			SLOT( dtsEuclidian()							) );
+	connect( actionDTSeuclidian3D,          SIGNAL( triggered() ),	this,			SLOT( dtsEuclidian3D() 	          ) );
+	connect( actionDTPspatial,              SIGNAL( triggered() ),	this,			SLOT( dtpSpatial()                ) );
+	connect( actionDTPspatial3D,            SIGNAL( triggered() ),	this,			SLOT( dtpSpatial3D()              ) );
+	connect( actionDTPd34,                  SIGNAL( triggered() ),	this,			SLOT( dtpD34()										) );
+	connect( actionDTPd34_3D,               SIGNAL( triggered() ),	this,			SLOT( dtpD34_3D()                 ) );
+	connect( actionDTPd345,                 SIGNAL( triggered() ),	this,			SLOT( dtpD345()										) );
+	connect( actionDTPd5711,                SIGNAL( triggered() ),	this,			SLOT( dtpD5711() 	                ) );
+	connect( actionDTPd5711_3D,             SIGNAL( triggered() ),	this,			SLOT( dtpD5711_3D()               ) );
+	connect( actionDTPeuclidian,            SIGNAL( triggered() ),	this,			SLOT( dtpEuclidian()							) );
+	connect( actionDTPeuclidian3D,          SIGNAL( triggered() ),	this,			SLOT( dtpEuclidian3D()       	    ) );
+	connect( actionPorosity,                SIGNAL( triggered() ),	this,			SLOT( porosity()									) );
+	connect( actionConnectivity,            SIGNAL( triggered() ),  this,			SLOT( connectivity3D()						) );
+	connect( actionClose,                   SIGNAL( triggered() ), 	mdiArea,	SLOT( closeActiveSubWindow()      ) );
+	connect( actionCloseAll,                SIGNAL( triggered() ), 	mdiArea,	SLOT( closeAllSubWindows()				) );
+	connect( actionTitle,                   SIGNAL( triggered() ), 	mdiArea,	SLOT( tileSubWindows()						) );
+	connect( actionCascade,                 SIGNAL( triggered() ), 	mdiArea,	SLOT( cascadeSubWindows() 	      ) );
+	connect( actionNext,                    SIGNAL( triggered() ), 	mdiArea,	SLOT( activateNextSubWindow()     ) );
+	connect( actionPrevious,                SIGNAL( triggered() ), 	mdiArea,	SLOT( activatePreviousSubWindow() ) );
+	connect( actionAbautQt,                 SIGNAL( triggered() ),	qApp,			SLOT( aboutQt()										) );
+	connect( actionExit,                    SIGNAL( triggered() ), 	qApp,			SLOT( closeAllWindows()						) );
+	connect( action3DVisualization,         SIGNAL( triggered() ),  this,			SLOT( open3DVisualization()       ) );
+	connect( actionMPV,                     SIGNAL( triggered() ),  this,			SLOT( openMPV()                   ) );
+	connect( actionRotate,                  SIGNAL( triggered() ),  this,			SLOT( rotate()										) );
+	connect( actionRelativePermeability,    SIGNAL( triggered() ),  this,			SLOT( relativePermeability()      ) );
+	connect( actionIntrinsicPermeability,   SIGNAL( triggered() ),  this,			SLOT( intrinsicPermeability()     ) );
+	connect( pushButtonAddCurve,            SIGNAL( clicked()   ),  this,			SLOT( addCurve()									) );
+	connect( pushButtonAverage,             SIGNAL( clicked()   ),  this,			SLOT( average()										) );
+	connect( pushButtonAccumulated,         SIGNAL( clicked()   ),	this,			SLOT( accumulated()               ) );
+	connect( pushButtonSource,							SIGNAL( clicked()   ),  this,			SLOT( openTextEditor()            ) );
+	connect( actionInverter,                SIGNAL( triggered() ),  this,			SLOT( invertPoro()								) );
+	connect( actionInversion,               SIGNAL( triggered() ),  this,			SLOT( inversion()									) );
+	connect( actionInversion3D,             SIGNAL( triggered() ),  this,			SLOT( inversion3D() 		          ) );
+	connect( actionIDF,                     SIGNAL( triggered() ),  this,			SLOT( idf()												) );
+	connect( actionIDF3D,                   SIGNAL( triggered() ),  this,			SLOT( idf()												) );
+	connect( actionImport,                  SIGNAL( triggered() ),  this,			SLOT( import()										) );
 }
 
 void Lvp::updateMenus() {
@@ -1904,6 +1906,65 @@ void Lvp::rotate() {
 	} else {
 		QMessageBox::information(this, tr("LVP"), tr("Error retrieving image!"));
 	}
+}
+
+void Lvp::import() {
+	// lista com o nome dos arquivos que serão abertos
+	QString file = QFileDialog::getOpenFileName(this, tr("Import RAW File"), lastOpenPath, tr("RAW Files (*.raw *.3fr *.ari *.arw *.srf *.sr2 *.bay *.crw *.kdc *.nrw *.orf *.rw2 *.rwz *.srw *.x3f)"));
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	if ( ! file.isNull() ) {
+		if ( dialogImport ) {
+			dialogImport->show();
+		} else {
+			dialogImport = new Import(this, file);
+			if ( dialogImport ) {
+				dialogImport->show();
+			} else {
+				QApplication::restoreOverrideCursor();
+				QMessageBox::information(this, tr("LVP"), tr("Erro! - To create Import dialog!"));
+			}
+		}
+		QDir lop( file );
+		lastOpenPath = lop.canonicalPath();
+	}
+	QApplication::restoreOverrideCursor();
+}
+
+void Lvp::exImport() {
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	EImageType tipo;
+	static int seqNumberImport = 1;
+	QString qstr;
+	switch (dialogImport->comboBoxImageType->currentIndex()) {
+		case 0:
+			tipo = D4_X_Y_Z_BINARY;
+			qstr = tr(".imported%1.dbm").arg(QString::number(seqNumberImport++));
+			break;
+		case 1:
+			tipo = D5_X_Y_Z_GRAY_BINARY;
+			qstr = tr(".imported%1.dgm").arg(QString::number(seqNumberImport++));
+			break;
+		case 2:
+			tipo = D6_X_Y_Z_COLOR_BINARY;
+			qstr = tr(".imported%1.dpm").arg(QString::number(seqNumberImport++));
+			break;
+		default:
+			tipo = D4_X_Y_Z_BINARY;
+			qstr = tr(".imported%1.dbm").arg(QString::number(seqNumberImport++));
+	}
+	CImagem3D * pm3D = new CImagem3D( dialogImport->fullFileName.toStdString(), dialogImport->spinBoxWidth->value(), dialogImport->spinBoxHeight->value(), dialogImport->spinBoxNOI->value(), tipo );
+	pm3D->Path(lastOpenPath.toStdString());
+	dialogImport->close();
+	if ( pm3D->Write(qstr.toStdString()) ) {
+		qstr.prepend(lastOpenPath); //concatena lastOpenPath antes de qstr
+		open(qstr.toStdString());
+	} else {
+		QMessageBox::information(this, tr("LVP"), tr("Erro! - To save imported image!"));
+	}
+	delete pm3D;
+	delete dialogImport;
+	dialogImport = NULL;
+	QApplication::restoreOverrideCursor();
 }
 
 void Lvp::confEq() {
