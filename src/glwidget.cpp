@@ -232,7 +232,7 @@ void GLWidget::resizeGL(int width, int height) {
 }
 
 QSize GLWidget::sizeHint() const {
-    return QSize(1024, 1024);
+		return QSize(1536, 1536);
 }
 
 GLuint GLWidget::makeObject() {
