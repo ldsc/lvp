@@ -37,9 +37,9 @@ int main(int argc, char *argv[])
     //translator.load("lvp/src/lvp_pt");
     //app.installTranslator(&translator);
 
-    sleep(1);
+    //sleep(1);
     splash.showMessage(QObject::tr("Main Window Loaded."), topRight, Qt::white);
-    sleep(1);
+    //sleep(1);
 
 	Lvp *mw = new Lvp();
 	mw->show();
