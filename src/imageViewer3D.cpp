@@ -22,7 +22,7 @@ bool ImageViewer3D::loadFile(const QString &fileName)
 		ny = pm3D->NY();
 		nz = pm3D->NZ();
 		if ( ! pm ) {
-			pm = new CMatriz2D(pm3D->NX(), pm3D->NY());
+			pm = new TCMatriz2D<int>(pm3D->NX(), pm3D->NY());
 			if ( ! pm )
 				return false;
 		}
@@ -68,7 +68,7 @@ bool ImageViewer3D::loadFile(const QString &fileName)
 bool ImageViewer3D::ChangePlan( unsigned int plano, CMatriz3D::E_eixo axis )
 {
 	if ( ! pm ) {
-		pm = new CMatriz2D(pm3D->NX(), pm3D->NY());
+		pm = new TCMatriz2D<int>(pm3D->NX(), pm3D->NY());
 		if ( ! pm )
 			return false;
 		pm->Path(pm3D->Path());

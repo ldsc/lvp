@@ -5,7 +5,7 @@
 #include <QScrollArea>
 #include <QtGui>
 #include <QPrinter>
-#include <Matriz/CMatriz2D.h>
+#include <Matriz/TCMatriz2D.h>
 #include <Matriz/CImagem3D.h>
 
 class QLabel;
@@ -34,7 +34,7 @@ public:
 	bool isFitedToWindow;
 	bool isNew; //true se for uma nova imagem.
 	QLabel *imageLabel;
-	CMatriz2D * pm;
+	TCMatriz2D<int> * pm;
 	CImagem3D * pm3D;
 	QListWidgetItem *item;
 	int nx;

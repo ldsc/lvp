@@ -29,7 +29,7 @@
 #include <Filtro/FEspacial3D/FEMorfologiaMatematica3D/CFEMMIDFEuclidiana3D.h>
 #include <Filtro/FEspacial3D/FEConectividade3D/CFEConectividade3D.h>
 #include <Filtro/FEspacial3D/FEInversao3D/CFEInversao3D.h>
-#include <Matriz/CMatriz2D.h>
+#include <Matriz/TCMatriz2D.h>
 #include <Matriz/CMatriz3D.h>
 #include <Matriz/CImagem3D.h>
 #include <Permeabilidade/CPermeabilidadeRelativa.h>
@@ -935,7 +935,7 @@ void Lvp::normalSize() {
 
 void Lvp::inversion() {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
-	CMatriz2D * pmInv = NULL;
+	TCMatriz2D<int> * pmInv = NULL;
 	int numFiles = selectedImagesList().size();
 	int cont = 0;
 	QProgressDialog progress("Inverting images...", "&Cancel", 0, numFiles, this);
@@ -947,7 +947,7 @@ void Lvp::inversion() {
 			break;
 		QString qstr = mdiChild->getFullFileName();
 		if ( mdiChild->pm == NULL )
-			mdiChild->pm = new CMatriz2D( qstr.toStdString() );
+			mdiChild->pm = new TCMatriz2D<int>( qstr.toStdString() );
 		CFEInversao * filtro = new CFEInversao( );
 		pmInv = filtro->Go( mdiChild->pm );
 		if( pmInv ) {
@@ -1012,7 +1012,7 @@ void Lvp::lowPass() {
 			if (progress.wasCanceled())
 				break;
 			QString qstr = mdiChild->getFullFileName();
-			CMatriz2D * pm = new CMatriz2D(qstr.toStdString());
+			TCMatriz2D<int> * pm = new TCMatriz2D<int>(qstr.toStdString());
 			CFiltro * filtro = new CFEPassaBaixa(pm,tamMask);
 			filtro->Go(pm,tamMask);
 			qstr = tr(".lp-%1").arg( mdiChild->getFileName() );
@@ -1048,7 +1048,7 @@ void Lvp::highPass() {
 			if (progress.wasCanceled())
 				break;
 			QString qstr = mdiChild->getFullFileName();
-			CMatriz2D * pm = new CMatriz2D(qstr.toStdString());
+			TCMatriz2D<int> * pm = new TCMatriz2D<int>(qstr.toStdString());
 			CFiltro * filtro = new CFEPassaAlta(pm,tamMask);
 			filtro->Go(pm,tamMask);
 			qstr = tr(".hp-%1").arg( mdiChild->getFileName() );
@@ -1081,7 +1081,7 @@ void Lvp::closing() {
 }
 
 void Lvp::mathematicalMorphology( MorphType mtype ) {
-	CMatriz2D * pm = NULL;
+	TCMatriz2D<int> * pm = NULL;
 	CFEMorfologiaMatematica * filtro = NULL;
 	QString qstr;
 	//CBCDiscreta *maskd = dynamic_cast < CBCDiscreta * > ( mask );
@@ -1119,7 +1119,7 @@ void Lvp::mathematicalMorphology( MorphType mtype ) {
 					if (progress.wasCanceled())
 						break;
 					qstr = mdiChild->getFullFileName();
-					pm = new CMatriz2D(qstr.toStdString());
+					pm = new TCMatriz2D<int>(qstr.toStdString());
 					if (tipos.at(0)==tipo){ //Espacial
 						filtro = new CFEMorfologiaMatematica(pm,tamStruElem, indice, fundo);
 					} else {
@@ -1300,7 +1300,7 @@ void Lvp::skeleton(int type) {
 			if (progress.wasCanceled())
 				break;
 			QString qstr = mdiChild->getFullFileName();
-			CMatriz2D * pm = new CMatriz2D(qstr.toStdString());
+			TCMatriz2D<int> * pm = new TCMatriz2D<int>(qstr.toStdString());
 			CFEEsqueleto * filtro = NULL;
 			QString nomeArquivo;
 			switch (type) {
@@ -1368,7 +1368,7 @@ void Lvp::idf() {
 			QString tipo = QInputDialog::getItem(this, tr(":. IDF"), tr("Kind of metric:"), tipos, 0, false, &ok); //apresenta dialogo para escolha do item
 			if (ok && !tipo.isEmpty()){
 				QApplication::setOverrideCursor(Qt::WaitCursor);
-				if ( mdiChild->pm == NULL ) mdiChild->pm = new CMatriz2D(stdstr);
+				if ( mdiChild->pm == NULL ) mdiChild->pm = new TCMatriz2D<int>(stdstr);
 				CFEMMIDF *idf2D = NULL;
 				if (tipos.at(0)==tipo) { //d34
 					idf2D = new CFEMMIDFd34(mdiChild->pm, indice, fundo);
@@ -1836,8 +1836,8 @@ void Lvp::rotate() {
 	}
 	if ( ! filepath.isNull() ) {
 		if ( active2DImageViewer() != 0 ){
-			CMatriz2D * pm = NULL;
-			pm = new CMatriz2D(filepath.toStdString());
+			TCMatriz2D<int> * pm = NULL;
+			pm = new TCMatriz2D<int>(filepath.toStdString());
 			if ( pm ) {
 				QApplication::setOverrideCursor(Qt::WaitCursor);
 				if ( pm->Rotacionar90 ( ) ) {
@@ -1978,7 +1978,7 @@ void Lvp::exConfEq() {
 	//	QList<QString> listqstr; //lista de imagens criadas.
 	//	foreach (ImageViewer *mdiChild, selectedImagesList()) {
 	if (BaseImageViewer *mdiChild = active2DImageViewer()) {
-		CMatriz2D * pm2D = new CMatriz2D( mdiChild->getFullFileName().toStdString() );
+		TCMatriz2D<int> * pm2D = new TCMatriz2D<int>( mdiChild->getFullFileName().toStdString() );
 
 		CConfiguracoesEquilibrio2D *confeq = NULL;
 		confeq = new CConfiguracoesEquilibrio2D ( );
@@ -2184,10 +2184,10 @@ void Lvp::correlationFFT() {
 			break;
 		if ( mdiChild->pm == NULL ) {
 			string stdstr = mdiChild->getFullFileName().toStdString();	// converte nome do arquivo para string std.
-			mdiChild->pm = new CMatriz2D(stdstr);
+			mdiChild->pm = new TCMatriz2D<int>(stdstr);
 		}
 		if ( mdiChild->pm == NULL ) {
-			cerr << "Não foi possível alocar CMatriz2D em Lvp::correlationFFT()";
+			cerr << "Não foi possível alocar TCMatriz2D<int> em Lvp::correlationFFT()";
 			QApplication::restoreOverrideCursor();
 			return;
 		}
@@ -2247,10 +2247,10 @@ void Lvp::correlationSpatial() {
 			break;
 		if ( mdiChild->pm == NULL ) {
 			string stdstr = mdiChild->getFullFileName().toStdString();	// converte nome do arquivo para string std.
-			mdiChild->pm = new CMatriz2D(stdstr);
+			mdiChild->pm = new TCMatriz2D<int>(stdstr);
 		}
 		if ( mdiChild->pm == NULL ) {
-			cerr << "Não foi possível alocar CMatriz2D em Lvp::correlationSpatial()";
+			cerr << "Não foi possível alocar TCMatriz2D<int> em Lvp::correlationSpatial()";
 			QApplication::restoreOverrideCursor();
 			return;
 		}
@@ -2373,10 +2373,10 @@ void Lvp::distribution (CBaseDistribuicao::Tipos tipo, Metrics2D m2d) {
 		if (progress.wasCanceled())
 			break;
 		if ( ! mdiChild->pm ) {
-			mdiChild->pm = new CMatriz2D( mdiChild->getFullFileName().toStdString() );
+			mdiChild->pm = new TCMatriz2D<int>( mdiChild->getFullFileName().toStdString() );
 		}
 		if ( ! mdiChild->pm ) {
-			cerr << "Não foi possível alocar CMatriz2D em Lvp::distribution()" << endl;
+			cerr << "Não foi possível alocar TCMatriz2D<int> em Lvp::distribution()" << endl;
 			QApplication::restoreOverrideCursor();
 			return;
 		}
@@ -2599,7 +2599,7 @@ void Lvp::porosity() {
 			foreach (ImageViewer *mdiChild, imagesList) {
 				QString qstr = mdiChild->getFullFileName();  // busca nome completo do arquivo.
 				if ( mdiChild->pm == NULL )
-					mdiChild->pm = new CMatriz2D(qstr.toStdString());
+					mdiChild->pm = new TCMatriz2D<int>(qstr.toStdString());
 				poro = 0;
 				int nx = mdiChild->pm->NX();
 				int ny = mdiChild->pm->NY();

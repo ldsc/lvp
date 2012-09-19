@@ -31,7 +31,7 @@ bool ImageViewer::save()
 		return saveAs();
 	} else {
 		//return image->save(curFile);
-		if( ! pm ) pm = new CMatriz2D(fullFileName.toStdString());
+		if( ! pm ) pm = new TCMatriz2D<int>(fullFileName.toStdString());
 		if(pm->Write(curFile.toStdString())) {
 			return true;
 		} else {
@@ -51,7 +51,7 @@ bool ImageViewer::saveAs() {
 	if (fileName.isEmpty()){
 		return false;
 	}
-	if ( ! pm ) pm = new CMatriz2D(fullFileName.toStdString());
+	if ( ! pm ) pm = new TCMatriz2D<int>(fullFileName.toStdString());
 	if ( ! pm ) {
 		QMessageBox::information(parent, tr("LVP"), tr("Error! - Can't create image."));
 		return false;

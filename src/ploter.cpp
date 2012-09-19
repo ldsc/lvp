@@ -281,7 +281,7 @@ bool Ploter::save( QString * lop ) {
 		return saveAs( lop );
 	}/* else {
   if( ! pm )
-	pm = new CMatriz2D(fullCurFile.toStdString());
+	pm = new TCMatriz2D<int>(fullCurFile.toStdString());
   if(pm->Write(curFile.toStdString())) {
 	return true;
   } else {
