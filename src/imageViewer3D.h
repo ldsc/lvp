@@ -5,7 +5,7 @@
 #include "baseImageViewer.h"
 #endif
 
-class CMatriz3D;
+template <typename T> class TCMatriz3D;
 
 class ImageViewer3D : public BaseImageViewer
 {
@@ -19,7 +19,7 @@ public:
 public:
 	int curPlan;
 	int nz;
-	CMatriz3D::E_eixo direcao;
+	TCMatriz3D<int>::E_eixo direcao;
 
 private:
 	QString curPlanoFile;
@@ -30,7 +30,7 @@ public:
 	virtual bool save();
 	virtual bool saveAs();
 	inline QString currentPlanoFile() { return curPlanoFile; }
-	bool ChangePlan( unsigned int plano, CMatriz3D::E_eixo axis );
+	bool ChangePlan( unsigned int plano, TCMatriz3D<int>::E_eixo axis );
 
 protected:
 	void closeEvent(QCloseEvent *event);

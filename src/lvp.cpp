@@ -30,7 +30,7 @@
 #include <Filtro/FEspacial3D/FEConectividade3D/CFEConectividade3D.h>
 #include <Filtro/FEspacial3D/FEInversao3D/CFEInversao3D.h>
 #include <Matriz/TCMatriz2D.h>
-#include <Matriz/CMatriz3D.h>
+#include <Matriz/TCMatriz3D.h>
 #include <Matriz/CImagem3D.h>
 #include <Permeabilidade/CPermeabilidadeRelativa.h>
 #include <Permeabilidade/CPermeabilidadeIntrinseca.h>
@@ -435,17 +435,17 @@ void Lvp::updateMenus() {
 	if ( hasImageViewer3D ) {								//se a imagem ativa for uma imagem 3D
 		ImageViewer3D * childImage = active3DImageViewer( );		//pega a imagem 3D ativa
 		switch (childImage->direcao) {
-			case CMatriz3D::EIXO_X:
+			case TCMatriz3D<int>::EIXO_X:
 				radioButtonX->setChecked(true);
 				spinBoxPlano3D->setMaximum( childImage->nx - 1 ); //seta o valor máximo do spinbox orizontal de acordo com a dimensão z da imagem.
 				horizontalSliderPlano3D->setMaximum( childImage->nx - 1 );	//seta o valor máximo do slider orizontal de acordo com a dimensão z da imagem.
 				break;
-			case CMatriz3D::EIXO_Y:
+			case TCMatriz3D<int>::EIXO_Y:
 				radioButtonY->setChecked(true);
 				spinBoxPlano3D->setMaximum( childImage->ny - 1 ); //seta o valor máximo do spinbox orizontal de acordo com a dimensão z da imagem.
 				horizontalSliderPlano3D->setMaximum( childImage->ny - 1 );	//seta o valor máximo do slider orizontal de acordo com a dimensão z da imagem.
 				break;
-			case CMatriz3D::EIXO_Z:
+			case TCMatriz3D<int>::EIXO_Z:
 				radioButtonZ->setChecked(true);
 				spinBoxPlano3D->setMaximum( childImage->nz - 1 ); //seta o valor máximo do spinbox orizontal de acordo com a dimensão z da imagem.
 				horizontalSliderPlano3D->setMaximum( childImage->nz - 1 );	//seta o valor máximo do slider orizontal de acordo com a dimensão z da imagem.
@@ -1183,7 +1183,7 @@ void Lvp::closing3D() {
 }
 
 void Lvp::mathematicalMorphology3D( MorphType mtype ){
-	CMatriz3D * pm = NULL;
+	TCMatriz3D<int> * pm = NULL;
 	CFEMorfologiaMatematica3D * filtro = NULL;
 	QString qstr;
 	//CBCDiscreta *maskd = dynamic_cast < CBCDiscreta * > ( mask );
@@ -1221,7 +1221,7 @@ void Lvp::mathematicalMorphology3D( MorphType mtype ){
 					if (progress.wasCanceled())
 						break;
 					qstr = mdiChild->getFullFileName();
-					pm = new CMatriz3D(qstr.toStdString());
+					pm = new TCMatriz3D<int>(qstr.toStdString());
 					if (tipos.at(0)==tipo) { //Espacial
 						filtro = new CFEMorfologiaMatematica3D(pm,tamStruElem, indice, fundo);
 					} else {
@@ -1392,7 +1392,7 @@ void Lvp::idf() {
 			if ( mdiChild->pm3D == NULL )
 				mdiChild->pm3D = new CImagem3D(stdstr);
 			CFEMMIDFd3453D *idf3D = NULL;
-			CMatriz3D * obj3D = dynamic_cast<CMatriz3D *>(mdiChild->pm3D);
+			TCMatriz3D<int> * obj3D = dynamic_cast<TCMatriz3D<int> *>(mdiChild->pm3D);
 			idf3D = new CFEMMIDFd3453D(obj3D);
 			idf3D->Go(obj3D);
 			qstr = tr(".idf%1.dgm").arg(QString::number(seqNumberIDF++));
@@ -1857,8 +1857,8 @@ void Lvp::rotate() {
 				return;
 			}
 		} else if ( active3DImageViewer() != 0 ){
-			CMatriz3D * pm = NULL;
-			pm = new CMatriz3D(filepath.toStdString());
+			TCMatriz3D<int> * pm = NULL;
+			pm = new TCMatriz3D<int>(filepath.toStdString());
 			if ( pm ) {
 				QMessageBox msgBox(this);
 				msgBox.setWindowTitle(tr("LVP - Rotate"));
@@ -1870,13 +1870,13 @@ void Lvp::rotate() {
 				msgBox.setDefaultButton(xButton);
 				msgBox.exec();
 
-				CMatriz3D::E_eixo axis;
+				TCMatriz3D<int>::E_eixo axis;
 				if (msgBox.clickedButton() == xButton) {
-					axis = CMatriz3D::EIXO_X;
+					axis = TCMatriz3D<int>::EIXO_X;
 				} else if (msgBox.clickedButton() == yButton) {
-					axis = CMatriz3D::EIXO_Y;
+					axis = TCMatriz3D<int>::EIXO_Y;
 				} else if (msgBox.clickedButton() == zButton) {
-					axis = CMatriz3D::EIXO_Z;
+					axis = TCMatriz3D<int>::EIXO_Z;
 				} else {
 					delete pm;
 					return;
@@ -2015,7 +2015,7 @@ void Lvp::exConfEq3D() {
 		dialog->close();
 		delete dialog;
 		dialog = NULL;
-		CMatriz3D * objM3D = new CMatriz3D( mdiChild->getFullFileName().toStdString() );
+		TCMatriz3D<int> * objM3D = new TCMatriz3D<int>( mdiChild->getFullFileName().toStdString() );
 		confeq->Go( objM3D );
 		QApplication::restoreOverrideCursor();
 		if ( QMessageBox::Yes == QMessageBox::question( this, tr("LVP"), tr("Do you want invert the flow?"),  QMessageBox::Yes | QMessageBox::No ) ) {
@@ -2048,11 +2048,11 @@ void Lvp::exChangePlanZ( int _plan ) {
 
 void Lvp::exChangePlan( int _plan ) {
 	if (ImageViewer3D *mdiChild = active3DImageViewer()) {
-		CMatriz3D::E_eixo axis= CMatriz3D::EIXO_X;
+		TCMatriz3D<int>::E_eixo axis= TCMatriz3D<int>::EIXO_X;
 		if (radioButtonY->isChecked())
-			axis = CMatriz3D::EIXO_Y;
+			axis = TCMatriz3D<int>::EIXO_Y;
 		else if (radioButtonZ->isChecked())
-			axis = CMatriz3D::EIXO_Z;
+			axis = TCMatriz3D<int>::EIXO_Z;
 		if ( ! mdiChild->ChangePlan( _plan, axis ) )
 			cerr << "erro: exChangePlan" << endl;
 	}
@@ -2060,9 +2060,11 @@ void Lvp::exChangePlan( int _plan ) {
 
 void Lvp::exChangeAxis( ) {
 	if ( ImageViewer3D *mdiChild = active3DImageViewer() ) {
-		CMatriz3D::E_eixo axis = CMatriz3D::EIXO_X;
-		if (radioButtonY->isChecked()) axis = CMatriz3D::EIXO_Y;
-		else if (radioButtonZ->isChecked()) axis = CMatriz3D::EIXO_Z;
+		TCMatriz3D<int>::E_eixo axis = TCMatriz3D<int>::EIXO_X;
+		if (radioButtonY->isChecked())
+			axis = TCMatriz3D<int>::EIXO_Y;
+		else if (radioButtonZ->isChecked())
+			axis = TCMatriz3D<int>::EIXO_Z;
 
 		if ( mdiChild->ChangePlan( spinBoxPlano3D->value(), axis ) ) {
 			updateMenus();
@@ -2117,7 +2119,7 @@ void Lvp::correlation3D ( CCorrelacao3D::Tipos tipo ){
 				mdiChild->pm3D = new CImagem3D( mdiChild->getFullFileName().toStdString() );
 			}
 			if ( mdiChild->pm3D == NULL ) {
-				cerr << "Não foi possível alocar CMatriz3D em Lvp::correlation3D()";
+				cerr << "Não foi possível alocar TCMatriz3D em Lvp::correlation3D()";
 				QApplication::restoreOverrideCursor();
 				return;
 			}
@@ -2531,7 +2533,7 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 			mdiChild->pm3D = new CImagem3D( mdiChild->getFullFileName().toStdString() );
 		}
 		if ( ! mdiChild->pm3D ) {
-			cerr << "Não foi possível alocar CMatriz3D em Lvp::distribution3D()" << endl;
+			cerr << "Não foi possível alocar TCMatriz3D em Lvp::distribution3D()" << endl;
 			QApplication::restoreOverrideCursor();
 			return;
 		}

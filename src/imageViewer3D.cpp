@@ -5,7 +5,7 @@ ImageViewer3D::ImageViewer3D(QMainWindow * _parent) : BaseImageViewer( _parent )
 	//setAttribute(Qt::WA_DeleteOnClose);
 	//setBackgroundRole(QPalette::Shadow);
 	curPlan = 0;
-	direcao = CMatriz3D::EIXO_Z;
+	direcao = TCMatriz3D<int>::EIXO_Z;
 }
 
 bool ImageViewer3D::loadFile(const QString &fileName)
@@ -65,7 +65,7 @@ bool ImageViewer3D::loadFile(const QString &fileName)
 	return false;
 }
 
-bool ImageViewer3D::ChangePlan( unsigned int plano, CMatriz3D::E_eixo axis )
+bool ImageViewer3D::ChangePlan( unsigned int plano, TCMatriz3D<int>::E_eixo axis )
 {
 	if ( ! pm ) {
 		pm = new TCMatriz2D<int>(pm3D->NX(), pm3D->NY());

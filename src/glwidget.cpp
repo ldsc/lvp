@@ -4,7 +4,7 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
-GLWidget::GLWidget(CMatriz3D * _pm3D, QString _fileName, int _viewtype, QWidget *parent) : QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer), parent) { //QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
+GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QWidget *parent) : QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer), parent) { //QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
     viewtype=_viewtype;
     distpoints = 0.001;
     pointsize = 1.0;
@@ -128,7 +128,7 @@ int GLWidget::getViewType(){
     return viewtype;
 }
 
-CMatriz3D * GLWidget::getPM3D() {
+TCMatriz3D<int> *GLWidget::getPM3D() {
     return pm3D;
 }
 
@@ -244,7 +244,7 @@ GLuint GLWidget::makeObject() {
     glMaterialfv(GL_FRONT, GL_DIFFUSE, logoDiffuseColor);
     */
     if( pm3D == NULL )
-        pm3D = new CMatriz3D(fullFileName.toStdString());
+				pm3D = new TCMatriz3D<int>(fullFileName.toStdString());
     double w = distpoints;
     int nx = pm3D->NX();
     int ny = pm3D->NY();
