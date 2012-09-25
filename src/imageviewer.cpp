@@ -51,7 +51,9 @@ bool ImageViewer::saveAs() {
 	if (fileName.isEmpty()){
 		return false;
 	}
-	if ( ! pm ) pm = new TCMatriz2D<int>(fullFileName.toStdString());
+	if ( ! pm ) {
+		pm = new TCMatriz2D<int>(fullFileName.toStdString());
+	}
 	if ( ! pm ) {
 		QMessageBox::information(parent, tr("LVP"), tr("Error! - Can't create image."));
 		return false;
@@ -96,7 +98,9 @@ bool ImageViewer::saveAs() {
 	}
 	string tmp = pm->Path();
 	pm->Path("");
+	cerr << "Antes de salvar..." << endl;
 	if( pm->Write( fileName.toStdString() ) ) {
+		cerr << "Depois de salvar..." << endl;
 		if ( isNew && (fileName != fullFileName) ) {
 			QFile::remove(fullFileName);
 		}
