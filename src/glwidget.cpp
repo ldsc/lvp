@@ -17,7 +17,7 @@ GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QW
     planZ = 0;
     pm3D = _pm3D;
     if (pm3D) {
-        if( pm3D->GetFormat() == 13 ) {
+        if( pm3D->GetFormato() == 13 ) {
             pore = 1;
             tonsList << 0 << 1;
         } else {

@@ -35,7 +35,7 @@ public:
 	bool isNew; //true se for uma nova imagem.
 	QLabel *imageLabel;
 	TCMatriz2D<int> * pm;
-	CImagem3D * pm3D;
+	CImagem3D<int> * pm3D;
 	QListWidgetItem *item;
 	int nx;
 	int ny;

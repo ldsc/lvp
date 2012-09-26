@@ -15,7 +15,7 @@ bool ImageViewer3D::loadFile(const QString &fileName)
 			delete pm3D;
 			pm3D = NULL;
 		}
-		pm3D = new CImagem3D( fileName.toStdString() ); //cria matriz 3D só para pegar o valor da dimensão NZ.
+		pm3D = new CImagem3D<int>( fileName.toStdString() ); //cria matriz 3D só para pegar o valor da dimensão NZ.
 		if ( ! pm3D )
 			return false;
 		nx = pm3D->NX();
@@ -30,18 +30,18 @@ bool ImageViewer3D::loadFile(const QString &fileName)
 		pm->Path(pm3D->Path());
 		//QString file = fileName.mid(fileName.lastIndexOf("/")+1, (fileName.lastIndexOf("."))-(fileName.lastIndexOf("/")+1) ); //Pega o nome do arquivo sem a extensão.
 		QString file = QFileInfo(fileName).fileName().section('.', 0, -2); //Pega o nome do arquivo sem a extensão.
-		switch (pm3D->GetFormat()) {
+		switch (pm3D->GetFormato()) {
 			case D1_X_Y_Z_ASCII:
-				pm->WriteFormat(P1_X_Y_ASCII);
+				pm->SetFormato(P1_X_Y_ASCII);
 				file = tr(".lvp_%1.pbm").arg(file);
 				break;
 			case D2_X_Y_Z_GRAY_ASCII:
-				pm->WriteFormat(P2_X_Y_GRAY_ASCII);
+				pm->SetFormato(P2_X_Y_GRAY_ASCII);
 				pm->NumCores( pm3D->NumCores() );
 				file = tr(".lvp_%1.pgm").arg(file);
 				break;
 			default:
-				pm->WriteFormat(P1_X_Y_ASCII);
+				pm->SetFormato(P1_X_Y_ASCII);
 				file = tr(".lvp_%1.pbm").arg(file);
 		}
 		if ( pm->Write(file.toStdString()) ) {// se conseguiu salvar arquivo com nome temporário.
@@ -74,16 +74,16 @@ bool ImageViewer3D::ChangePlan( unsigned int plano, TCMatriz3D<int>::E_eixo axis
 		pm->Path(pm3D->Path());
 	}
 	pm3D->LePlano(pm, plano, axis);
-	switch ( pm3D->GetFormat() ) {
+	switch ( pm3D->GetFormato() ) {
 		case D1_X_Y_Z_ASCII:
-			pm->WriteFormat(P1_X_Y_ASCII);
+			pm->SetFormato(P1_X_Y_ASCII);
 			break;
 		case D2_X_Y_Z_GRAY_ASCII:
-			pm->WriteFormat(P2_X_Y_GRAY_ASCII);
+			pm->SetFormato(P2_X_Y_GRAY_ASCII);
 			pm->NumCores( pm3D->NumCores() );
 			break;
 		default:
-			pm->WriteFormat(P1_X_Y_ASCII);
+			pm->SetFormato(P1_X_Y_ASCII);
 	}
 	//if ( pm->Write( curPlanoFile.mid(curPlanoFile.lastIndexOf("/")+1).toStdString()) ) {// se conseguiu salvar arquivo com nome temporário.
 	if ( pm->Write( QFileInfo(curPlanoFile).fileName().toStdString()) ) {// se conseguiu salvar arquivo com nome temporário.
@@ -110,7 +110,7 @@ bool ImageViewer3D::save()
 	} else {
 		//return image->save(curFile);
 		//CImagem3D * pm = new CImagem3D(fullFileName.toStdString());
-		if ( ! pm3D ) pm3D = new CImagem3D(fullFileName.toStdString());
+		if ( ! pm3D ) pm3D = new CImagem3D<int>(fullFileName.toStdString());
 		if (pm3D->Write(curFile.toStdString())) {
 			return true;
 		} else {
@@ -127,7 +127,7 @@ bool ImageViewer3D::saveAs()
 		//QMessageBox::information(parent, tr("LVP"), tr("Error! - File name is empty."));
 		return false;
 	}
-	if ( ! pm3D ) pm3D = new CImagem3D(fullFileName.toStdString());
+	if ( ! pm3D ) pm3D = new CImagem3D<int>(fullFileName.toStdString());
 	if ( ! pm3D ) {
 		QMessageBox::information(parent, tr("LVP"), tr("Error! - Can't create image."));
 		return false;
@@ -143,28 +143,28 @@ bool ImageViewer3D::saveAs()
 	if ( msgBox.clickedButton() == cancelButton )
 		return false;
 	if (msgBox.clickedButton() == asciiButton) { //ascii
-		switch(pm3D->GetFormat()){ //se o formato atual for binário muda para ascii mantendo o número de cores
+		switch(pm3D->GetFormato()){ //se o formato atual for binário muda para ascii mantendo o número de cores
 			case D4_X_Y_Z_BINARY:
-				pm3D->WriteFormat(D1_X_Y_Z_ASCII);
+				pm3D->SetFormato(D1_X_Y_Z_ASCII);
 				break;
 			case D5_X_Y_Z_GRAY_BINARY:
-				pm3D->WriteFormat(D2_X_Y_Z_GRAY_ASCII);
+				pm3D->SetFormato(D2_X_Y_Z_GRAY_ASCII);
 				break;
 			case D6_X_Y_Z_COLOR_BINARY:
-				pm3D->WriteFormat(D3_X_Y_Z_COLOR_ASCII);
+				pm3D->SetFormato(D3_X_Y_Z_COLOR_ASCII);
 				break;
 			default: break; //evitar warming do compilador
 		}
 	} else { //binario.
-		switch(pm3D->GetFormat()){ //se o formato atual for ascii muda para binário mantendo o número de cores
+		switch(pm3D->GetFormato()){ //se o formato atual for ascii muda para binário mantendo o número de cores
 			case D1_X_Y_Z_ASCII:
-				pm3D->WriteFormat(D4_X_Y_Z_BINARY);
+				pm3D->SetFormato(D4_X_Y_Z_BINARY);
 				break;
 			case D2_X_Y_Z_GRAY_ASCII:
-				pm3D->WriteFormat(D5_X_Y_Z_GRAY_BINARY);
+				pm3D->SetFormato(D5_X_Y_Z_GRAY_BINARY);
 				break;
 			case D3_X_Y_Z_COLOR_ASCII:
-				pm3D->WriteFormat(D6_X_Y_Z_COLOR_BINARY);
+				pm3D->SetFormato(D6_X_Y_Z_COLOR_BINARY);
 				break;
 			default: break; //evitar warming do compilador
 		}

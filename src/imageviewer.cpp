@@ -70,37 +70,35 @@ bool ImageViewer::saveAs() {
 	if ( msgBox.clickedButton() == cancelButton )
 		return false;
 	if (msgBox.clickedButton() == asciiButton) { //ascii
-		switch(pm->GetFormat()){ //se o formato atual for binário muda para ascii mantendo o número de cores
+		switch(pm->GetFormato()){ //se o formato atual for binário muda para ascii mantendo o número de cores
 			case P4_X_Y_BINARY:
-				pm->WriteFormat(P1_X_Y_ASCII);
+				pm->SetFormato(P1_X_Y_ASCII);
 				break;
 			case P5_X_Y_GRAY_BINARY:
-				pm->WriteFormat(P2_X_Y_GRAY_ASCII);
+				pm->SetFormato(P2_X_Y_GRAY_ASCII);
 				break;
 			case P6_X_Y_COLOR_BINARY:
-				pm->WriteFormat(P3_X_Y_COLOR_ASCII);
+				pm->SetFormato(P3_X_Y_COLOR_ASCII);
 				break;
 			default: break; //evitar warming do compilador
 		}
 	} else { //binario.
-		switch(pm->GetFormat()){ //se o formato atual for ascii muda para binário mantendo o número de cores
+		switch(pm->GetFormato()){ //se o formato atual for ascii muda para binário mantendo o número de cores
 			case P1_X_Y_ASCII:
-				pm->WriteFormat(P4_X_Y_BINARY);
+				pm->SetFormato(P4_X_Y_BINARY);
 				break;
 			case P2_X_Y_GRAY_ASCII:
-				pm->WriteFormat(P5_X_Y_GRAY_BINARY);
+				pm->SetFormato(P5_X_Y_GRAY_BINARY);
 				break;
 			case P3_X_Y_COLOR_ASCII:
-				pm->WriteFormat(P6_X_Y_COLOR_BINARY);
+				pm->SetFormato(P6_X_Y_COLOR_BINARY);
 				break;
 			default: break; //evitar warming do compilador
 		}
 	}
 	string tmp = pm->Path();
 	pm->Path("");
-	cerr << "Antes de salvar..." << endl;
 	if( pm->Write( fileName.toStdString() ) ) {
-		cerr << "Depois de salvar..." << endl;
 		if ( isNew && (fileName != fullFileName) ) {
 			QFile::remove(fullFileName);
 		}

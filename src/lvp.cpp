@@ -967,7 +967,7 @@ void Lvp::inversion() {
 
 void Lvp::inversion3D() {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
-	CImagem3D * pi3DInv = NULL;
+	CImagem3D<int> * pi3DInv = NULL;
 	int numFiles = selected3DImagesList().size();
 	int cont = 0;
 	QProgressDialog progress("Inverting images...", "&Cancel", 0, numFiles, this);
@@ -978,7 +978,7 @@ void Lvp::inversion3D() {
 		if (progress.wasCanceled())
 			break;
 		QString qstr = mdiChild->getFullFileName();
-		if ( mdiChild->pm3D == NULL ) mdiChild->pm3D = new CImagem3D( qstr.toStdString() );
+		if ( mdiChild->pm3D == NULL ) mdiChild->pm3D = new CImagem3D<int>( qstr.toStdString() );
 		CFEInversao3D * filtro = new CFEInversao3D( );
 		pi3DInv = filtro->Go( mdiChild->pm3D );
 		static int seqNumberInversion3D = 1;
@@ -1380,7 +1380,7 @@ void Lvp::idf() {
 				idf2D->Go(mdiChild->pm);
 				qstr = tr(".idf%1.pgm").arg(QString::number(seqNumberIDF++));
 				stdstr = qstr.toStdString();
-				idf2D->WriteFormat(P2_X_Y_GRAY_ASCII);
+				idf2D->SetFormato(P2_X_Y_GRAY_ASCII);
 				idf2D->NumCores(idf2D->MaiorValor());
 				idf2D->Path(mdiChild->getFilePath().toStdString());
 				idf2D->Write(stdstr);
@@ -1390,14 +1390,14 @@ void Lvp::idf() {
 		} else if ( qobject_cast<ImageViewer3D *>(mdiChild) != 0 ) {
 			QApplication::setOverrideCursor(Qt::WaitCursor);
 			if ( mdiChild->pm3D == NULL )
-				mdiChild->pm3D = new CImagem3D(stdstr);
+				mdiChild->pm3D = new CImagem3D<int>(stdstr);
 			CFEMMIDFd3453D *idf3D = NULL;
 			TCMatriz3D<int> * obj3D = dynamic_cast<TCMatriz3D<int> *>(mdiChild->pm3D);
 			idf3D = new CFEMMIDFd3453D(obj3D);
 			idf3D->Go(obj3D);
 			qstr = tr(".idf%1.dgm").arg(QString::number(seqNumberIDF++));
 			stdstr = qstr.toStdString();
-			idf3D->WriteFormat(D2_X_Y_Z_GRAY_ASCII);
+			idf3D->SetFormato(D2_X_Y_Z_GRAY_ASCII);
 			idf3D->NumCores(idf3D->MaiorValor());
 			idf3D->Path(mdiChild->getFilePath().toStdString());
 			idf3D->Write(stdstr);
@@ -1410,7 +1410,7 @@ void Lvp::idf() {
 }
 
 void Lvp::connectivity3D() {
-	CImagem3D * pm3Dcon = NULL;
+	CImagem3D<int> * pm3Dcon = NULL;
 	ImageViewer3D * child3D = NULL;
 	child3D = active3DImageViewer();
 	if ( ! child3D ) {
@@ -1720,7 +1720,7 @@ void Lvp::intrinsicPermeability() {
 	ImageViewer3D * child3D = NULL;
 	if ( (child3D = active3DImageViewer()) ) {
 		if ( ! child3D->pm3D ) {
-			child3D->pm3D = new CImagem3D( child3D->getFullFileName().toStdString() );
+			child3D->pm3D = new CImagem3D<int>( child3D->getFullFileName().toStdString() );
 		}
 		if ( child3D->pm3D ) {
 			CPermeabilidadeIntrinseca * objPerIn = NULL;
@@ -1952,7 +1952,7 @@ void Lvp::exImport() {
 			tipo = D4_X_Y_Z_BINARY;
 			qstr = tr(".imported%1.dbm").arg(QString::number(seqNumberImport++));
 	}
-	CImagem3D * pm3D = new CImagem3D( dialogImport->fullFileName.toStdString(), dialogImport->spinBoxWidth->value(), dialogImport->spinBoxHeight->value(), dialogImport->spinBoxNOI->value(), tipo );
+	CImagem3D<int> * pm3D = new CImagem3D<int>( dialogImport->fullFileName.toStdString(), dialogImport->spinBoxWidth->value(), dialogImport->spinBoxHeight->value(), dialogImport->spinBoxNOI->value(), tipo );
 	pm3D->Path(lastOpenPath.toStdString());
 	dialogImport->close();
 	if ( pm3D->Write(qstr.toStdString()) ) {
@@ -2116,7 +2116,7 @@ void Lvp::correlation3D ( CCorrelacao3D::Tipos tipo ){
 			if (progress.wasCanceled())
 				break;
 			if ( mdiChild->pm3D == NULL ) {
-				mdiChild->pm3D = new CImagem3D( mdiChild->getFullFileName().toStdString() );
+				mdiChild->pm3D = new CImagem3D<int>( mdiChild->getFullFileName().toStdString() );
 			}
 			if ( mdiChild->pm3D == NULL ) {
 				cerr << "Não foi possível alocar TCMatriz3D em Lvp::correlation3D()";
@@ -2530,7 +2530,7 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 		if (progress.wasCanceled())
 			break;
 		if ( ! mdiChild->pm3D ) {
-			mdiChild->pm3D = new CImagem3D( mdiChild->getFullFileName().toStdString() );
+			mdiChild->pm3D = new CImagem3D<int>( mdiChild->getFullFileName().toStdString() );
 		}
 		if ( ! mdiChild->pm3D ) {
 			cerr << "Não foi possível alocar TCMatriz3D em Lvp::distribution3D()" << endl;
@@ -2628,7 +2628,7 @@ void Lvp::porosity() {
 			foreach (ImageViewer3D *mdiChild, imagesList) {
 				QString qstr = mdiChild->getFullFileName();  // busca nome completo do arquivo.
 				if ( mdiChild->pm3D == NULL )
-					mdiChild->pm3D = new CImagem3D(qstr.toStdString());
+					mdiChild->pm3D = new CImagem3D<int>(qstr.toStdString());
 				poro = 0;
 				int nx = mdiChild->pm3D->NX();
 				int ny = mdiChild->pm3D->NY();
