@@ -4,7 +4,7 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
-GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QWidget *parent) : QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer), parent) { //QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
+GLWidget::GLWidget(TCMatriz3D<bool> * _pm3D, QString _fileName, int _viewtype, QWidget *parent) : QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer), parent) { //QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
     viewtype=_viewtype;
     distpoints = 0.001;
     pointsize = 1.0;
@@ -17,7 +17,7 @@ GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QW
     planZ = 0;
     pm3D = _pm3D;
     if (pm3D) {
-        if( pm3D->GetFormato() == 13 ) {
+				if( pm3D->GetFormato() == D1_X_Y_Z_ASCII ) {
             pore = 1;
             tonsList << 0 << 1;
         } else {
@@ -244,7 +244,7 @@ GLuint GLWidget::makeObject() {
     glMaterialfv(GL_FRONT, GL_DIFFUSE, logoDiffuseColor);
     */
     if( pm3D == NULL )
-				pm3D = new TCMatriz3D<int>(fullFileName.toStdString());
+				pm3D = new TCMatriz3D<bool>(fullFileName.toStdString());
     double w = distpoints;
     int nx = pm3D->NX();
     int ny = pm3D->NY();

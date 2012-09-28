@@ -29,7 +29,8 @@ public:
     };
 
     //GLWidget(QString _fileName, QWidget *parent = 0);
-		GLWidget(TCMatriz3D<int> *_pm3D, QString _fileName, int _viewtype=MPV, QWidget *parent = 0);
+		//GLWidget(TCMatriz3D<int> *_pm3D, QString _fileName, int _viewtype=MPV, QWidget *parent = 0);
+		GLWidget(TCMatriz3D<bool> *_pm3D, QString _fileName, int _viewtype=MPV, QWidget *parent = 0);
     ~GLWidget();
 
     QSize sizeHint() const;
@@ -81,7 +82,7 @@ private:
     QString fullFileName;
     QColor trolltechPurple;
     //GLfloat angle, fAspect;
-		TCMatriz3D<int> * pm3D;
+		TCMatriz3D<bool> * pm3D;
     int pore;
     int planX;
     int planY;

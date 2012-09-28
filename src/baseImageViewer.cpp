@@ -1,6 +1,6 @@
 #include "baseImageViewer.h"
 
-BaseImageViewer::BaseImageViewer( QMainWindow * _parent ): pm(NULL), pm3D(NULL), item(NULL), image(NULL), parent(_parent) {
+BaseImageViewer::BaseImageViewer( QMainWindow * _parent ): /*pm(NULL), pm3D(NULL),*/ item(NULL), image(NULL), parent(_parent) {
 	setAttribute(Qt::WA_DeleteOnClose);
 	setBackgroundRole(QPalette::Shadow);
 	imageLabel = new QLabel;

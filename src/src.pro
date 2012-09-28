@@ -2,10 +2,14 @@ QT += opengl
 
 SOURCES +=  lvp.cpp \
             main.cpp \
-            imageviewer.cpp \
             confEq.cpp \
-            imageViewer3D.cpp \
+            baseDnmImageviewer.cpp \
+            basePnmImageviewer.cpp \
             baseImageViewer.cpp \
+            dbmImageViewer.cpp \
+            dgmImageViewer.cpp \
+            pbmImageviewer.cpp \
+            pgmImageviewer.cpp \
             glwidget.cpp \
             reconstruction.cpp \
             ploter.cpp \
@@ -14,10 +18,14 @@ SOURCES +=  lvp.cpp \
             import.cpp
 
 HEADERS +=  lvp.h \
-            imageviewer.h \
             confEq.h \
-            imageViewer3D.h \
+            baseDnmImageviewer.h \
+            basePnmImageviewer.h \
             baseImageViewer.h \
+            dbmImageViewer.h \
+            dgmImageViewer.h \
+            pbmImageviewer.h \
+            pgmImageviewer.h \
             glwidget.h \
             reconstruction.h \
             ploter.h \

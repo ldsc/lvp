@@ -15,8 +15,10 @@
 #include "reconstructionES.h"
 #include "import.h"
 #include "baseImageViewer.h"
-#include "imageviewer.h"
-#include "imageViewer3D.h"
+#include "dbmImageViewer.h"
+#include "dgmImageViewer.h"
+#include "pbmImageviewer.h"
+#include "pgmImageviewer.h"
 #include "glwidget.h"
 #include "ploter.h"
 #include "textEditor.h"
@@ -202,9 +204,12 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void updateWindowMenu();
 		void zoomIn();
 		void zoomOut();
-		GLWidget * createGLWidget(ImageViewer3D * _mdiChild);
-		ImageViewer * createImageViewer();
-		ImageViewer3D * createImageViewer3D();
+		GLWidget * createGLWidget(DbmImageViewer *_mdiChild);
+		//GLWidget * createGLWidget(DgmImageViewer *_mdiChild);
+		PbmImageViewer * createPbmImageViewer();
+		PgmImageViewer * createPgmImageViewer();
+		DbmImageViewer * createDbmImageViewer();
+		DgmImageViewer * createDgmImageViewer();
 		Ploter * createPloter();
 		TextEditor * createTextEditor();
 
@@ -222,13 +227,21 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void writeSettings();
 		void createLanguageMenu();
 		BaseImageViewer *activeImageViewer();
-		ImageViewer3D *active3DImageViewer();
-		ImageViewer *active2DImageViewer();
+		BaseDnmImageViewer *active3DImageViewer();
+		BasePnmImageViewer *active2DImageViewer();
+		DbmImageViewer *activeDbmImageViewer();
+		DgmImageViewer *activeDgmImageViewer();
+		PbmImageViewer *activePbmImageViewer();
+		PgmImageViewer *activePgmImageViewer();
 		GLWidget *activeGLWidget();
 		Ploter *activePloter();
 		TextEditor *activeTextEditor();
-		QList<ImageViewer *> selectedImagesList();
-		QList<ImageViewer3D *> selected3DImagesList();
+		QList<BasePnmImageViewer *> selected2DImagesList();
+		QList<BaseDnmImageViewer *> selected3DImagesList();
+		QList<PbmImageViewer *> selectedPbmImagesList();
+		QList<PgmImageViewer *> selectedPgmImagesList();
+		QList<DbmImageViewer *> selectedDbmImagesList();
+		QList<DgmImageViewer *> selectedDgmImagesList();
 		QList<Ploter *> selectedPloterList();
 		QList<BaseImageViewer *> selectedAllImagesList();
 		QMdiSubWindow *findImageViewer(const QString &_fileName);
