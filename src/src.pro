@@ -7,6 +7,7 @@ SOURCES +=  lvp.cpp \
             basePnmImageviewer.cpp \
             baseImageViewer.cpp \
             dbmImageViewer.cpp \
+            dbmImageViewerInt.cpp \
             dgmImageViewer.cpp \
             pbmImageviewer.cpp \
             pgmImageviewer.cpp \
@@ -23,6 +24,7 @@ HEADERS +=  lvp.h \
             basePnmImageviewer.h \
             baseImageViewer.h \
             dbmImageViewer.h \
+            dbmImageViewerInt.h \
             dgmImageViewer.h \
             pbmImageviewer.h \
             pgmImageviewer.h \

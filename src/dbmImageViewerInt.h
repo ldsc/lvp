@@ -1,19 +1,17 @@
-#ifndef DGMIMAGEVIEWER_H
-#define DGMIMAGEVIEWER_H
+#ifndef DBMIMAGEVIEWERINT_H
+#define DBMIMAGEVIEWERINT_H
 
 #ifndef BASEDNMIMAGEVIEWER_H
 #include "baseDnmImageviewer.h"
 #endif
 
-template <typename T> class TCMatriz3D;
-
-class DgmImageViewer : public BaseDnmImageViewer
+class DbmImageViewerInt : public BaseDnmImageViewer
 {
 		Q_OBJECT
 		// Construtor / Destrutor
 	public:
-		DgmImageViewer ( QMainWindow * _parent );
-		virtual ~ DgmImageViewer ( ) {
+		DbmImageViewerInt ( QMainWindow * _parent );
+		virtual ~ DbmImageViewerInt ( ) {
 			if (pm) delete pm;
 			if (pm3D) delete pm3D;
 		}

@@ -53,7 +53,7 @@ bool DgmImageViewer::loadFile(const QString &fileName) {
 	return false;
 }
 
-bool DgmImageViewer::ChangePlan( unsigned int plano, TCMatriz3D<int>::E_eixo axis )
+bool DgmImageViewer::ChangePlan( unsigned int plano, E_eixo axis )
 {
 	if ( ! pm ) {
 		pm = new TCMatriz2D<int>(pm3D->NX(), pm3D->NY());
@@ -92,9 +92,8 @@ bool DgmImageViewer::save() {
 		pm3D = new TCImagem3D<int>(fullFileName.toStdString());
 		if ( pm3D )
 			return pm3D->Write(curFile.toStdString());
-		else
-			return false;
 	}
+	return false;
 }
 
 bool DgmImageViewer::saveAs() {

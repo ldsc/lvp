@@ -128,7 +128,7 @@ int GLWidget::getViewType(){
     return viewtype;
 }
 
-TCMatriz3D<int> *GLWidget::getPM3D() {
+TCMatriz3D<bool> *GLWidget::getPM3D() {
     return pm3D;
 }
 

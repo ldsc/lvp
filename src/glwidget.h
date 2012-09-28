@@ -56,7 +56,7 @@ public slots:
     int getPlanZ( );
     int getPore( );
     int getViewType( );
-		TCMatriz3D<int> * getPM3D();
+		TCMatriz3D<bool> *getPM3D();
 
 protected:
     void initializeGL();                        //reimplementada de QGLWidget

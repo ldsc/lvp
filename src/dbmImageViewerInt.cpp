@@ -1,23 +1,23 @@
-#include "dbmImageViewer.h"
+#include "dbmImageViewerInt.h"
 
-DbmImageViewer::DbmImageViewer(QMainWindow * _parent)
+DbmImageViewerInt::DbmImageViewerInt(QMainWindow * _parent)
 	: BaseDnmImageViewer( _parent ), pm(NULL), pm3D(NULL) {
 }
 
-bool DbmImageViewer::loadFile(const QString &fileName) {
+bool DbmImageViewerInt::loadFile(const QString &fileName) {
 	if (!fileName.isEmpty()) {
 		if ( pm3D ) {
 			delete pm3D;
 			pm3D = NULL;
 		}
-		pm3D = new TCImagem3D<bool>( fileName.toStdString() ); //cria matriz 3D só para pegar o valor da dimensão NZ.
+		pm3D = new TCImagem3D<int>( fileName.toStdString() ); //cria matriz 3D só para pegar o valor da dimensão NZ.
 		if ( ! pm3D )
 			return false;
 		nx = pm3D->NX();
 		ny = pm3D->NY();
 		nz = pm3D->NZ();
 		if ( ! pm ) {
-			pm = new TCMatriz2D<bool>(pm3D->NX(), pm3D->NY());
+			pm = new TCMatriz2D<int>(pm3D->NX(), pm3D->NY());
 			if ( ! pm )
 				return false;
 		}
@@ -52,9 +52,9 @@ bool DbmImageViewer::loadFile(const QString &fileName) {
 	return false;
 }
 
-bool DbmImageViewer::ChangePlan( unsigned int plano, E_eixo axis ) {
+bool DbmImageViewerInt::ChangePlan( unsigned int plano, E_eixo axis ) {
 	if ( ! pm ) {
-		pm = new TCMatriz2D<bool>(pm3D->NX(), pm3D->NY());
+		pm = new TCMatriz2D<int>(pm3D->NX(), pm3D->NY());
 		if ( ! pm )
 			return false;
 		pm->Path(pm3D->Path());
@@ -82,18 +82,18 @@ bool DbmImageViewer::ChangePlan( unsigned int plano, E_eixo axis ) {
 	return false;
 }
 
-bool DbmImageViewer::save() {
+bool DbmImageViewerInt::save() {
 	if (isNew) {
 		return saveAs();
 	} else if ( ! pm3D ) {
-		pm3D = new TCImagem3D<bool>(fullFileName.toStdString());
+		pm3D = new TCImagem3D<int>(fullFileName.toStdString());
 		if ( pm3D )
 			return pm3D->Write(curFile.toStdString());
 	}
 	return false;
 }
 
-bool DbmImageViewer::saveAs() {
+bool DbmImageViewerInt::saveAs() {
 	QString fileName = QFileDialog::getSaveFileName(parent, tr("Save As"), fullFileName, tr("dbm Images (*.dbm)"));
 	//QString fileName = QFileInfo(file).canonicalFilePath();
 	if (fileName.isEmpty()) {
@@ -101,7 +101,7 @@ bool DbmImageViewer::saveAs() {
 		return false;
 	}
 	if ( ! pm3D )
-		pm3D = new TCImagem3D<bool>(fullFileName.toStdString());
+		pm3D = new TCImagem3D<int>(fullFileName.toStdString());
 	if ( ! pm3D ) {
 		QMessageBox::information(parent, tr("LVP"), tr("Error! - Can't create image."));
 		return false;

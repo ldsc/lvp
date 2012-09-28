@@ -4,7 +4,7 @@
 #include "ui_dialogConfEq.h"
 #include "baseImageViewer.h"
 #include "pbmImageviewer.h"
-#include "dbmImageViewer.h"
+#include "dbmImageViewerInt.h"
 
 class QMainWindow;
 
@@ -15,7 +15,7 @@ class ConfEq : public QDialog, public Ui::DialogConfEq
  public:
 		ConfEq( QMainWindow * _parent, BaseImageViewer *_obj );
 
-		~ConfEq(){ };
+		~ConfEq(){ }
 
 //      QCheckBox *checkBoxSalvarP;
 

@@ -7,6 +7,7 @@
 
 class BaseDnmImageViewer : public BaseImageViewer
 {
+	Q_OBJECT
 		// Construtor / Destrutor
 	public:
 		BaseDnmImageViewer( QMainWindow * _parent );
@@ -14,11 +15,11 @@ class BaseDnmImageViewer : public BaseImageViewer
 
 		//Atributos
 	public:
-		TCMatriz3D<bool>::E_eixo direcao;
+		E_eixo direcao;
 		int curPlan;
 		int nz;
 
-	private:
+	protected:
 		QString curPlanoFile;
 
 		//Métodos

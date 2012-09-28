@@ -2,7 +2,7 @@
 
 BaseDnmImageViewer::BaseDnmImageViewer(QMainWindow * _parent)
 	: BaseImageViewer( _parent ) {
-	direcao = TCMatriz3D<bool>::EIXO_Z;
+	direcao = EIXO_Z;
 	curPlan = 0;
 }
 

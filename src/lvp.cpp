@@ -435,17 +435,17 @@ void Lvp::updateMenus() {
 	if ( hasImageViewer3D ) {								//se a imagem ativa for uma imagem 3D
 		BaseDnmImageViewer * childImage = active3DImageViewer( );		//pega a imagem 3D ativa
 		switch (childImage->direcao) {
-			case TCMatriz3D<bool>::EIXO_X:
+			case EIXO_X:
 				radioButtonX->setChecked(true);
 				spinBoxPlano3D->setMaximum( childImage->nx - 1 ); //seta o valor máximo do spinbox orizontal de acordo com a dimensão z da imagem.
 				horizontalSliderPlano3D->setMaximum( childImage->nx - 1 );	//seta o valor máximo do slider orizontal de acordo com a dimensão z da imagem.
 				break;
-			case TCMatriz3D<bool>::EIXO_Y:
+			case EIXO_Y:
 				radioButtonY->setChecked(true);
 				spinBoxPlano3D->setMaximum( childImage->ny - 1 ); //seta o valor máximo do spinbox orizontal de acordo com a dimensão z da imagem.
 				horizontalSliderPlano3D->setMaximum( childImage->ny - 1 );	//seta o valor máximo do slider orizontal de acordo com a dimensão z da imagem.
 				break;
-			case TCMatriz3D<bool>::EIXO_Z:
+			case EIXO_Z:
 				radioButtonZ->setChecked(true);
 				spinBoxPlano3D->setMaximum( childImage->nz - 1 ); //seta o valor máximo do spinbox orizontal de acordo com a dimensão z da imagem.
 				horizontalSliderPlano3D->setMaximum( childImage->nz - 1 );	//seta o valor máximo do slider orizontal de acordo com a dimensão z da imagem.
@@ -529,6 +529,18 @@ void Lvp::updateWindowMenu() {
 			action->setChecked(childImage == activeImageViewer());
 			connect(action, SIGNAL(triggered()), windowMapper, SLOT(map()));
 			windowMapper->setMapping(action, windows.at(i));
+		} else if (qobject_cast<DbmImageViewerInt *>(windows.at(i)->widget()) != 0) {
+			childImage = qobject_cast<DbmImageViewerInt *>(windows.at(i)->widget());
+			if (i < 9) {
+				text = tr("&%1 %2").arg(i + 1).arg(childImage->getFileName());
+			} else {
+				text = tr("%1 %2").arg(i + 1).arg(childImage->getFileName());
+			}
+			action = menuWindow->addAction(text);
+			action->setCheckable(true);
+			action->setChecked(childImage == activeImageViewer());
+			connect(action, SIGNAL(triggered()), windowMapper, SLOT(map()));
+			windowMapper->setMapping(action, windows.at(i));
 		} else if (qobject_cast<DgmImageViewer *>(windows.at(i)->widget()) != 0) {
 			childImage = qobject_cast<DgmImageViewer *>(windows.at(i)->widget());
 			if (i < 9) {
@@ -583,6 +595,11 @@ void Lvp::updateDockLista() {
 			QListWidgetItem *item = new QListWidgetItem(child->getFileName(), listWidget);
 			child->item = item;
 			item->setSelected(child == activeDbmImageViewer());
+			hasImageViewer3D = true;
+		} else if ( DbmImageViewerInt *child = qobject_cast<DbmImageViewerInt *>(windows.at(i)->widget()) ) {
+			QListWidgetItem *item = new QListWidgetItem(child->getFileName(), listWidget);
+			child->item = item;
+			item->setSelected(child == activeDbmImageViewerInt());
 			hasImageViewer3D = true;
 		} else if ( DgmImageViewer *child = qobject_cast<DgmImageViewer *>(windows.at(i)->widget()) ) {
 			QListWidgetItem *item = new QListWidgetItem(child->getFileName(), listWidget);
@@ -813,7 +830,7 @@ PgmImageViewer *Lvp::createPgmImageViewer() {
 	return NULL;
 }
 
-DbmImageViewer * Lvp::createDbmImageViewer() {
+DbmImageViewer *Lvp::createDbmImageViewer() {
 	DbmImageViewer *childim = NULL;
 	childim = new DbmImageViewer( this );
 	if ( childim ) {
@@ -1307,7 +1324,7 @@ void Lvp::mathematicalMorphology3D( MorphType mtype ){
 	CFEMorfologiaMatematica3D * filtro = NULL;
 	QString qstr;
 	//CBCDiscreta *maskd = dynamic_cast < CBCDiscreta * > ( mask );
-	QList<DbmImageViewer *> imagesList = selectedDbmImagesList(); //lista de ponteiros para imagens selecionadas.
+	QList<DbmImageViewerInt *> imagesList = selectedDbmImagesListInt(); //lista de ponteiros para imagens selecionadas.
 	bool ok;
 	int tamStruElem = QInputDialog::getInteger(this, tr(":. LVP"), tr("Enter the Structuring Element size:"), 1, 0, 99, 1, &ok);
 	if (ok) {
@@ -1336,7 +1353,7 @@ void Lvp::mathematicalMorphology3D( MorphType mtype ){
 				QProgressDialog progress("Applying 3D filter...", "&Cancel", 0, numFiles, this);
 				progress.setWindowModality(Qt::WindowModal);
 
-				foreach (DbmImageViewer *mdiChild, imagesList) {
+				foreach (DbmImageViewerInt *mdiChild, imagesList) {
 					progress.setValue(cont++);
 					if (progress.wasCanceled())
 						break;
@@ -2000,13 +2017,13 @@ void Lvp::rotate() {
 				msgBox.setDefaultButton(xButton);
 				msgBox.exec();
 
-				TCMatriz3D<int>::E_eixo axis;
+				E_eixo axis;
 				if (msgBox.clickedButton() == xButton) {
-					axis = TCMatriz3D<int>::EIXO_X;
+					axis = EIXO_X;
 				} else if (msgBox.clickedButton() == yButton) {
-					axis = TCMatriz3D<int>::EIXO_Y;
+					axis = EIXO_Y;
 				} else if (msgBox.clickedButton() == zButton) {
-					axis = TCMatriz3D<int>::EIXO_Z;
+					axis = EIXO_Z;
 				} else {
 					delete pm;
 					return;
@@ -2178,19 +2195,27 @@ void Lvp::exChangePlanZ( int _plan ) {
 
 void Lvp::exChangePlan( int _plan ) {
 	if (DbmImageViewer *mdiChild = activeDbmImageViewer()) {
-		TCMatriz3D<int>::E_eixo axis= TCMatriz3D<int>::EIXO_X;
+		E_eixo axis= EIXO_X;
 		if (radioButtonY->isChecked())
-			axis = TCMatriz3D<int>::EIXO_Y;
+			axis = EIXO_Y;
 		else if (radioButtonZ->isChecked())
-			axis = TCMatriz3D<int>::EIXO_Z;
+			axis = EIXO_Z;
+		if ( ! mdiChild->ChangePlan( _plan, axis ) )
+			cerr << "erro: exChangePlan" << endl;
+	} else if (DbmImageViewerInt *mdiChild = activeDbmImageViewerInt()) {
+		E_eixo axis= EIXO_X;
+		if (radioButtonY->isChecked())
+			axis = EIXO_Y;
+		else if (radioButtonZ->isChecked())
+			axis = EIXO_Z;
 		if ( ! mdiChild->ChangePlan( _plan, axis ) )
 			cerr << "erro: exChangePlan" << endl;
 	} else if (DgmImageViewer *mdiChild = activeDgmImageViewer()) {
-		TCMatriz3D<int>::E_eixo axis= TCMatriz3D<int>::EIXO_X;
+		E_eixo axis= EIXO_X;
 		if (radioButtonY->isChecked())
-			axis = TCMatriz3D<int>::EIXO_Y;
+			axis = EIXO_Y;
 		else if (radioButtonZ->isChecked())
-			axis = TCMatriz3D<int>::EIXO_Z;
+			axis = EIXO_Z;
 		if ( ! mdiChild->ChangePlan( _plan, axis ) )
 			cerr << "erro: exChangePlan" << endl;
 	}
@@ -2198,11 +2223,23 @@ void Lvp::exChangePlan( int _plan ) {
 
 void Lvp::exChangeAxis( ) {
 	if ( DbmImageViewer *mdiChild = activeDbmImageViewer() ) {
-		TCMatriz3D<int>::E_eixo axis = TCMatriz3D<int>::EIXO_X;
+		E_eixo axis = EIXO_X;
 		if (radioButtonY->isChecked())
-			axis = TCMatriz3D<int>::EIXO_Y;
+			axis = EIXO_Y;
 		else if (radioButtonZ->isChecked())
-			axis = TCMatriz3D<int>::EIXO_Z;
+			axis = EIXO_Z;
+
+		if ( mdiChild->ChangePlan( spinBoxPlano3D->value(), axis ) ) {
+			updateMenus();
+		} else {
+			cerr << "erro: exChangePlanAxis" << endl;
+		}
+	} else if ( DbmImageViewerInt *mdiChild = activeDbmImageViewerInt() ) {
+		E_eixo axis = EIXO_X;
+		if (radioButtonY->isChecked())
+			axis = EIXO_Y;
+		else if (radioButtonZ->isChecked())
+			axis = EIXO_Z;
 
 		if ( mdiChild->ChangePlan( spinBoxPlano3D->value(), axis ) ) {
 			updateMenus();
@@ -2210,11 +2247,11 @@ void Lvp::exChangeAxis( ) {
 			cerr << "erro: exChangePlanAxis" << endl;
 		}
 	} else 	if ( DgmImageViewer *mdiChild = activeDgmImageViewer() ) {
-		TCMatriz3D<int>::E_eixo axis = TCMatriz3D<int>::EIXO_X;
+		E_eixo axis = EIXO_X;
 		if (radioButtonY->isChecked())
-			axis = TCMatriz3D<int>::EIXO_Y;
+			axis = EIXO_Y;
 		else if (radioButtonZ->isChecked())
-			axis = TCMatriz3D<int>::EIXO_Z;
+			axis = EIXO_Z;
 
 		if ( mdiChild->ChangePlan( spinBoxPlano3D->value(), axis ) ) {
 			updateMenus();
@@ -2306,8 +2343,7 @@ void Lvp::correlation3D ( CCorrelacao3D::Tipos tipo ){
 
 void Lvp::correlationFFT() {
 	int indice;
-	QList<ImageViewer *> imagesList = selectedImagesList(); //lista de ponteiros para imagens selecionadas.
-
+	QList<PbmImageViewer *> imagesList = selectedPbmImagesList(); //lista de ponteiros para imagens selecionadas.
 	QMessageBox msgBox(this);
 	msgBox.setWindowTitle(tr("LVP - Correlation FFT"));
 	msgBox.setText(tr("Pore is:"));
@@ -2330,13 +2366,13 @@ void Lvp::correlationFFT() {
 	progress.setWindowModality(Qt::WindowModal);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	CCorrelacaoFFT *cor = NULL;
-	foreach (ImageViewer *mdiChild, imagesList) {
+	foreach (PbmImageViewer *mdiChild, imagesList) {
 		progress.setValue(cont);
 		if (progress.wasCanceled())
 			break;
 		if ( mdiChild->pm == NULL ) {
 			string stdstr = mdiChild->getFullFileName().toStdString();	// converte nome do arquivo para string std.
-			mdiChild->pm = new TCMatriz2D<int>(stdstr);
+			mdiChild->pm = new TCMatriz2D<bool>(stdstr);
 		}
 		if ( mdiChild->pm == NULL ) {
 			cerr << "Não foi possível alocar TCMatriz2D<int> em Lvp::correlationFFT()";
@@ -2368,7 +2404,7 @@ void Lvp::correlationFFT() {
 
 void Lvp::correlationSpatial() {
 	int indice;
-	QList<ImageViewer *> imagesList = selectedImagesList(); //lista de ponteiros para imagens selecionadas.
+	QList<PbmImageViewer *> imagesList = selectedPbmImagesList(); //lista de ponteiros para imagens selecionadas.
 
 	QMessageBox msgBox(this);
 	msgBox.setWindowTitle(tr("LVP - Correlation Spatial"));
@@ -2393,13 +2429,13 @@ void Lvp::correlationSpatial() {
 	progress.setWindowModality(Qt::WindowModal);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	CCorrelacaoEspacial *cor = NULL;
-	foreach (ImageViewer *mdiChild, imagesList) {
+	foreach (PbmImageViewer *mdiChild, imagesList) {
 		progress.setValue(cont);
 		if (progress.wasCanceled())
 			break;
 		if ( mdiChild->pm == NULL ) {
 			string stdstr = mdiChild->getFullFileName().toStdString();	// converte nome do arquivo para string std.
-			mdiChild->pm = new TCMatriz2D<int>(stdstr);
+			mdiChild->pm = new TCMatriz2D<bool>(stdstr);
 		}
 		if ( mdiChild->pm == NULL ) {
 			cerr << "Não foi possível alocar TCMatriz2D<int> em Lvp::correlationSpatial()";
@@ -2463,7 +2499,9 @@ void Lvp::dtsEuclidian () {
 }
 
 void Lvp::distribution (CBaseDistribuicao::Tipos tipo, Metrics2D m2d) {
-	QList<ImageViewer *> imagesList = selectedImagesList(); //lista de ponteiros para imagens selecionadas.
+	tipo=CBaseDistribuicao::dts; m2d=m2DSpatial; //evitar warming. apagar depois...
+	QMessageBox::information(this, tr("LVP"), tr("Funcionalidade não implementada!"));
+	/*QList<PbmImageViewer *> imagesList = selectedPbmImagesList(); //lista de ponteiros para imagens selecionadas.
 	if ( imagesList.isEmpty() )
 		return;
 	string stdstr;
@@ -2520,12 +2558,12 @@ void Lvp::distribution (CBaseDistribuicao::Tipos tipo, Metrics2D m2d) {
 	int cont = 0;
 	QProgressDialog progress("Calculating distribution...", "&Cancel", 0, numFiles, this);
 	progress.setWindowModality(Qt::WindowModal);
-	foreach (ImageViewer *mdiChild, imagesList) {
+	foreach (PbmImageViewer *mdiChild, imagesList) {
 		progress.setValue(cont);
 		if (progress.wasCanceled())
 			break;
 		if ( ! mdiChild->pm ) {
-			mdiChild->pm = new TCMatriz2D<int>( mdiChild->getFullFileName().toStdString() );
+			mdiChild->pm = new TCMatriz2D<bool>( mdiChild->getFullFileName().toStdString() );
 		}
 		if ( ! mdiChild->pm ) {
 			cerr << "Não foi possível alocar TCMatriz2D<int> em Lvp::distribution()" << endl;
@@ -2559,6 +2597,7 @@ void Lvp::distribution (CBaseDistribuicao::Tipos tipo, Metrics2D m2d) {
 	}
 	progress.setValue(numFiles);
 	QApplication::restoreOverrideCursor();
+	*/
 }
 
 void Lvp::dtpSpatial3D () {
@@ -2602,7 +2641,10 @@ void Lvp::dtsEuclidian3D () {
 }
 
 void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
-	QList<ImageViewer3D *> imagesList = selected3DImagesList (); //lista de ponteiros para imagens selecionadas.
+	tipo=CBaseDistribuicao::dts; m3d=m3DSpatial; //evitar warming. apagar depois...
+	QMessageBox::information(this, tr("LVP"), tr("Funcionalidade não implementada!"));
+/*
+	QList<DbmImageViewer *> imagesList = selectedDbmImagesList (); //lista de ponteiros para imagens selecionadas.
 	if ( imagesList.isEmpty() )
 		return;
 	string stdstr;
@@ -2675,7 +2717,7 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 	QProgressDialog progress("Calculating 3D distribution...", "&Cancel", 0, numFiles, this);
 	progress.setWindowModality(Qt::WindowModal);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
-	foreach (ImageViewer3D *mdiChild, imagesList) {
+	foreach (DbmImageViewer *mdiChild, imagesList) {
 		progress.setValue(cont);
 		if (progress.wasCanceled())
 			break;
@@ -2719,6 +2761,7 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 	}
 	progress.setValue(numFiles);
 	QApplication::restoreOverrideCursor();
+	*/
 }
 
 void Lvp::porosity() {
@@ -2737,9 +2780,8 @@ void Lvp::porosity() {
 	QPushButton *blackButton = msgBox.addButton(tr("&Black (1)"), QMessageBox::ActionRole);
 	msgBox.setDefaultButton(blackButton);
 
-	if ( BaseImageViewer *mdiChild = activeImageViewer() ) {
-		if ( qobject_cast<ImageViewer *>(mdiChild) != 0 ) { // imagem 2D
-			QList<ImageViewer *> imagesList = selectedImagesList(); //lista de ponteiros para imagens selecionadas.
+		if ( activePbmImageViewer() != 0 ) { // imagem 2D
+			QList<PbmImageViewer *> imagesList = selectedPbmImagesList(); //lista de ponteiros para imagens selecionadas.
 			msgBox.exec();
 			if (msgBox.clickedButton() == blackButton) {
 				indice = 1;
@@ -2748,10 +2790,10 @@ void Lvp::porosity() {
 			} else {
 				return;
 			}
-			foreach (ImageViewer *mdiChild, imagesList) {
+			foreach (PbmImageViewer *mdiChild, imagesList) {
 				QString qstr = mdiChild->getFullFileName();  // busca nome completo do arquivo.
 				if ( mdiChild->pm == NULL )
-					mdiChild->pm = new TCMatriz2D<int>(qstr.toStdString());
+					mdiChild->pm = new TCMatriz2D<bool>(qstr.toStdString());
 				poro = 0;
 				int nx = mdiChild->pm->NX();
 				int ny = mdiChild->pm->NY();
@@ -2765,8 +2807,8 @@ void Lvp::porosity() {
 				msgTmp = tr("Porosity of the image \"%1\"\t= %2\%\n").arg(mdiChild->getFileName()).arg(porosityValue);
 				msg += msgTmp;
 			}
-		} else if ( qobject_cast<ImageViewer3D *>(mdiChild) != 0 ) { // imagem 3D
-			QList<ImageViewer3D *> imagesList = selected3DImagesList(); //lista de ponteiros para imagens 3D selecionadas.
+		} else if ( activeDbmImageViewer() != 0 ) { // imagem 3D
+			QList<DbmImageViewer *> imagesList = selectedDbmImagesList(); //lista de ponteiros para imagens 3D selecionadas.
 			msgBox.exec();
 			if (msgBox.clickedButton() == blackButton) {
 				indice = 1;
@@ -2775,10 +2817,10 @@ void Lvp::porosity() {
 			} else {
 				return;
 			}
-			foreach (ImageViewer3D *mdiChild, imagesList) {
+			foreach (DbmImageViewer *mdiChild, imagesList) {
 				QString qstr = mdiChild->getFullFileName();  // busca nome completo do arquivo.
 				if ( mdiChild->pm3D == NULL )
-					mdiChild->pm3D = new TCImagem3D<int>(qstr.toStdString());
+					mdiChild->pm3D = new TCImagem3D<bool>(qstr.toStdString());
 				poro = 0;
 				int nx = mdiChild->pm3D->NX();
 				int ny = mdiChild->pm3D->NY();
@@ -2794,7 +2836,6 @@ void Lvp::porosity() {
 				msgTmp = tr("Porosity of the image \"%1\"\t= %2\%\n").arg(mdiChild->getFileName()).arg(porosityValue);
 				msg += msgTmp;
 			}
-		}
 		if ( cont > 1 ) {
 			msgTmp = tr("\nAverage = %1\%\n").arg( sumPorority / cont );
 			msg += msgTmp;
@@ -2867,6 +2908,21 @@ QList<DbmImageViewer *> Lvp::selectedDbmImagesList() {
 	return list;
 }
 
+// Retorna a lista de imagens dbm (int) selecionadas em Images List
+QList<DbmImageViewerInt *> Lvp::selectedDbmImagesListInt() {
+	QList<DbmImageViewerInt *> list; //lista de imagens selecionadas.
+	DbmImageViewerInt *mdiChild;
+	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
+		if ( qobject_cast<DbmImageViewerInt *>(window->widget()) != 0 ) {
+			mdiChild = qobject_cast<DbmImageViewerInt *>(window->widget());
+			if (mdiChild->item->isSelected()) {
+				list.append(mdiChild);
+			}
+		}
+	}
+	return list;
+}
+
 // Retorna a lista de imagens dgm selecionadas em Images List
 QList<DgmImageViewer *> Lvp::selectedDgmImagesList() {
 	QList<DgmImageViewer *> list; //lista de imagens selecionadas.
@@ -2918,13 +2974,23 @@ QList<BaseImageViewer *> Lvp::selectedAllImagesList() {
 	QList<BaseImageViewer *> list; //lista de imagens selecionadas.
 	BaseImageViewer *mdiChild;
 	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
-		if ( qobject_cast<ImageViewer *>(window->widget()) != 0 ) {
-			mdiChild = qobject_cast<ImageViewer *>(window->widget());
+		if ( qobject_cast<PbmImageViewer *>(window->widget()) != 0 ) {
+			mdiChild = qobject_cast<PbmImageViewer *>(window->widget());
 			if (mdiChild->item->isSelected()) {
 				list.append(mdiChild);
 			}
-		} else if ( qobject_cast<ImageViewer3D *>(window->widget()) != 0 ) {
-			mdiChild = qobject_cast<ImageViewer3D *>(window->widget());
+		} else if ( qobject_cast<PgmImageViewer *>(window->widget()) != 0 ) {
+			mdiChild = qobject_cast<PgmImageViewer *>(window->widget());
+			if (mdiChild->item->isSelected()) {
+				list.append(mdiChild);
+			}
+		} else if ( qobject_cast<DbmImageViewer *>(window->widget()) != 0 ) {
+			mdiChild = qobject_cast<DbmImageViewer *>(window->widget());
+			if (mdiChild->item->isSelected()) {
+				list.append(mdiChild);
+			}
+		} else if ( qobject_cast<DbmImageViewerInt *>(window->widget()) != 0 ) {
+			mdiChild = qobject_cast<DbmImageViewerInt *>(window->widget());
 			if (mdiChild->item->isSelected()) {
 				list.append(mdiChild);
 			}
@@ -2937,6 +3003,8 @@ BaseImageViewer * Lvp::activeImageViewer() {
 	if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow()) {
 		if ( qobject_cast<DbmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<DbmImageViewer *>(activeSubWindow->widget());
+		else if ( qobject_cast<DbmImageViewerInt *>(activeSubWindow->widget()) != 0 )
+			return qobject_cast<DbmImageViewerInt *>(activeSubWindow->widget());
 		else if ( qobject_cast<DgmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<DgmImageViewer *>(activeSubWindow->widget());
 		else if ( qobject_cast<PbmImageViewer *>(activeSubWindow->widget()) != 0 )
@@ -2961,13 +3029,23 @@ BaseDnmImageViewer * Lvp::active3DImageViewer() {
 	if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow()) {
 		if ( qobject_cast<DbmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<DbmImageViewer *>(activeSubWindow->widget());
+		else if ( qobject_cast<DbmImageViewerInt *>(activeSubWindow->widget()) != 0 )
+			return qobject_cast<DbmImageViewerInt *>(activeSubWindow->widget());
 		else if ( qobject_cast<DgmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<DgmImageViewer *>(activeSubWindow->widget());
 	}
 	return 0;
 }
 
-DbmImageViewer * Lvp::activeDbmImageViewer() {
+DgmImageViewer * Lvp::activeDgmImageViewer() {
+	if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow()) {
+		if ( qobject_cast<DgmImageViewer *>(activeSubWindow->widget()) != 0 )
+			return qobject_cast<DgmImageViewer *>(activeSubWindow->widget());
+	}
+	return 0;
+}
+
+DbmImageViewer *Lvp::activeDbmImageViewer() {
 	if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow()) {
 		if ( qobject_cast<DbmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<DbmImageViewer *>(activeSubWindow->widget());
@@ -2975,13 +3053,14 @@ DbmImageViewer * Lvp::activeDbmImageViewer() {
 	return 0;
 }
 
-DgmImageViewer * Lvp::activeDbmImageViewer() {
+DbmImageViewerInt *Lvp::activeDbmImageViewerInt() {
 	if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow()) {
-		if ( qobject_cast<DgmImageViewer *>(activeSubWindow->widget()) != 0 )
-			return qobject_cast<DgmImageViewer *>(activeSubWindow->widget());
+		if ( qobject_cast<DbmImageViewerInt *>(activeSubWindow->widget()) != 0 )
+			return qobject_cast<DbmImageViewerInt *>(activeSubWindow->widget());
 	}
 	return 0;
 }
+
 
 PbmImageViewer * Lvp::activePbmImageViewer() {
 	if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow()) {
@@ -3035,12 +3114,27 @@ void Lvp::setActiveSubWindow(QListWidgetItem *item) {
 	if (!item)
 		return;
 	foreach (QMdiSubWindow * window, mdiArea->subWindowList()) {
-		if ( ImageViewer * mdiChild = qobject_cast<ImageViewer *>(window->widget()) ) {
+		if ( PbmImageViewer * mdiChild = qobject_cast<PbmImageViewer *>(window->widget()) ) {
 			if (item == mdiChild->item) {
 				mdiArea->setActiveSubWindow(window);
 				break;
 			}
-		} else if ( ImageViewer3D * mdiChild = qobject_cast<ImageViewer3D *>(window->widget()) ) {
+		} else if ( PgmImageViewer * mdiChild = qobject_cast<PgmImageViewer *>(window->widget()) ) {
+			if (item == mdiChild->item) {
+				mdiArea->setActiveSubWindow(window);
+				break;
+			}
+		} else if ( DbmImageViewer * mdiChild = qobject_cast<DbmImageViewer *>(window->widget()) ) {
+			if (item == mdiChild->item) {
+				mdiArea->setActiveSubWindow(window);
+				break;
+			}
+		} else if ( DbmImageViewerInt * mdiChild = qobject_cast<DbmImageViewerInt *>(window->widget()) ) {
+			if (item == mdiChild->item) {
+				mdiArea->setActiveSubWindow(window);
+				break;
+			}
+		} else if ( DgmImageViewer * mdiChild = qobject_cast<DgmImageViewer *>(window->widget()) ) {
 			if (item == mdiChild->item) {
 				mdiArea->setActiveSubWindow(window);
 				break;
@@ -3067,10 +3161,16 @@ QMdiSubWindow *Lvp::findImageViewer(const QString &_fileName) {
 	BaseImageViewer *mdiChild;
 	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
 		mdiChild = NULL;
-		if (qobject_cast<ImageViewer *>(window->widget()) != 0)
-			mdiChild = qobject_cast<ImageViewer *>(window->widget());
-		else if (qobject_cast<ImageViewer3D *>(window->widget()) != 0)
-			mdiChild = qobject_cast<ImageViewer3D *>(window->widget());
+		if (qobject_cast<PbmImageViewer *>(window->widget()) != 0)
+			mdiChild = qobject_cast<PbmImageViewer *>(window->widget());
+		else if (qobject_cast<PgmImageViewer *>(window->widget()) != 0)
+			mdiChild = qobject_cast<PgmImageViewer *>(window->widget());
+		else if (qobject_cast<DbmImageViewer *>(window->widget()) != 0)
+			mdiChild = qobject_cast<DbmImageViewer *>(window->widget());
+		else if (qobject_cast<DbmImageViewerInt *>(window->widget()) != 0)
+			mdiChild = qobject_cast<DbmImageViewerInt *>(window->widget());
+		else if (qobject_cast<DgmImageViewer *>(window->widget()) != 0)
+			mdiChild = qobject_cast<DgmImageViewer *>(window->widget());
 		if (mdiChild)
 			if (mdiChild->getFullFileName() == canonicalFilePath)
 				return window;

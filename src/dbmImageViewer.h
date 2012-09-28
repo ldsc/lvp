@@ -5,8 +5,6 @@
 #include "baseDnmImageviewer.h"
 #endif
 
-template <typename T> class TCMatriz3D;
-
 class DbmImageViewer : public BaseDnmImageViewer
 {
 		Q_OBJECT
@@ -28,7 +26,7 @@ class DbmImageViewer : public BaseDnmImageViewer
 		virtual bool loadFile(const QString &fileName);
 		virtual bool save();
 		virtual bool saveAs();
-		bool ChangePlan( unsigned int plano, TCMatriz3D<int>::E_eixo axis );
+		bool ChangePlan( unsigned int plano, E_eixo axis );
 
 };
 
