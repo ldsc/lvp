@@ -730,7 +730,7 @@ void Lvp::open3DVisualization( ) {
 			child->show();
 			statusBar()->showMessage(tr("File loaded"), 2000);
 		}
-	}/* else if (DgmImageViewer *mdiChild = activeDgmImageViewer()) {
+	} else if (DgmImageViewer *mdiChild = activeDgmImageViewer()) {
 		QMdiSubWindow *existing = findGLWidget(mdiChild->getFullFileName());
 		if (existing) {
 			GLWidget * child = qobject_cast<GLWidget *>(existing->widget());
@@ -742,7 +742,7 @@ void Lvp::open3DVisualization( ) {
 			child->show();
 			statusBar()->showMessage(tr("File loaded"), 2000);
 		}
-	}*/ else if (GLWidget *mdiChild = activeGLWidget()){
+	} else if (GLWidget *mdiChild = activeGLWidget()){
 		mdiChild->setViewType(GLWidget::VIEW3D);
 	}
 	updateMenus();
@@ -852,7 +852,6 @@ GLWidget * Lvp::createGLWidget(DbmImageViewer *_mdiChild) {
 	return NULL;
 }
 
-/*
 GLWidget * Lvp::createGLWidget(DgmImageViewer *_mdiChild) {
 	GLWidget *childim = NULL;
 	childim = new GLWidget(_mdiChild->pm3D, _mdiChild->getFullFileName(), GLWidget::MPV, this);
@@ -862,7 +861,6 @@ GLWidget * Lvp::createGLWidget(DgmImageViewer *_mdiChild) {
 	}
 	return NULL;
 }
-*/
 
 Ploter * Lvp::createPloter() {
 	Ploter *childPloter = NULL;

@@ -11,10 +11,10 @@
 #include <QVariant>
 #include <Matriz/TCMatriz3D.h>
 
-QT_BEGIN_NAMESPACE;
+QT_BEGIN_NAMESPACE
 class QPaintEvent;
 class QWidget;
-QT_END_NAMESPACE;
+QT_END_NAMESPACE
 
 template <typename T> class TCMatriz3D;
 
@@ -29,7 +29,7 @@ public:
     };
 
     //GLWidget(QString _fileName, QWidget *parent = 0);
-		//GLWidget(TCMatriz3D<int> *_pm3D, QString _fileName, int _viewtype=MPV, QWidget *parent = 0);
+		GLWidget(TCMatriz3D<int> *_pm3D, QString _fileName, int _viewtype=MPV, QWidget *parent = 0);
 		GLWidget(TCMatriz3D<bool> *_pm3D, QString _fileName, int _viewtype=MPV, QWidget *parent = 0);
     ~GLWidget();
 
@@ -57,6 +57,7 @@ public slots:
     int getPore( );
     int getViewType( );
 		TCMatriz3D<bool> *getPM3D();
+		TCMatriz3D<int> *getPM3Di();
 
 protected:
     void initializeGL();                        //reimplementada de QGLWidget
@@ -78,10 +79,14 @@ private:
     int xRot;
     int yRot;
     int zRot;
+		int nx;
+		int ny;
+		int nz;
     QPoint lastPos;
     QString fullFileName;
     QColor trolltechPurple;
     //GLfloat angle, fAspect;
+		TCMatriz3D<int> * pm3Di;
 		TCMatriz3D<bool> * pm3D;
     int pore;
     int planX;

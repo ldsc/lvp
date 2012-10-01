@@ -206,7 +206,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void zoomIn();
 		void zoomOut();
 		GLWidget * createGLWidget(DbmImageViewer *_mdiChild);
-		//GLWidget * createGLWidget(DgmImageViewer *_mdiChild);
+		GLWidget * createGLWidget(DgmImageViewer *_mdiChild);
 		PbmImageViewer * createPbmImageViewer();
 		PgmImageViewer * createPgmImageViewer();
 		DbmImageViewer * createDbmImageViewer();
