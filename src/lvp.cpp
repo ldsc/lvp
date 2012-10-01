@@ -158,34 +158,10 @@ Lvp::Lvp() {
 	dockWidgetListaTextEditor->setWidget(listWidgetEditor);
 	dockWidgetListaTextEditor->setVisible( false );
 
-	//Conexões de sinais com slots
-	windowMapper = new QSignalMapper(this);
-	connect( windowMapper, SIGNAL( mapped(QWidget *) ),	this, SLOT( setActiveSubWindow(QWidget *)) );
-	connect( listWidget, SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
-	connect( listWidget3D, SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
-	connect( listWidgetChart, SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
-	connect( listWidgetEditor, SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
-	//connect( listWidget, SIGNAL( itemClicked(QListWidgetItem *) ), this, SLOT( updateMenus()) );
-	//connect( listWidget3D, SIGNAL( itemClicked(QListWidgetItem *) ), this, SLOT( updateMenus()) );
-	//connect( listWidgetChart, SIGNAL( itemClicked(QListWidgetItem *) ), this, SLOT( updateMenus()) );
-	//connect( listWidgetEditor, SIGNAL( itemClicked(QListWidgetItem *) ), this, SLOT( updateMenus()) );
-	connect( mdiArea, SIGNAL( subWindowActivated(QMdiSubWindow *) ), this, SLOT( updateMenus()) );
-	connect( mdiArea, SIGNAL( subWindowActivated(QMdiSubWindow *) ), this, SLOT( updateDockLista()) );
-
-	connect( spinBox_x, SIGNAL( valueChanged(int) ), this, SLOT( exChangePlanX(int)) );
-	connect( spinBox_y, SIGNAL( valueChanged(int) ), this, SLOT( exChangePlanY(int)) );
-	connect( spinBox_z, SIGNAL( valueChanged(int) ), this, SLOT( exChangePlanZ(int)) );
-
-	connect( spinBoxPlano3D, SIGNAL( valueChanged(int) ), this, SLOT( exChangePlan(int)) );
-	connect( spinBoxPlano3D, SIGNAL( valueChanged(int) ), horizontalSliderPlano3D, SLOT(setValue(int)) );
-	connect( horizontalSliderPlano3D, SIGNAL( valueChanged(int) ), spinBoxPlano3D, SLOT(setValue(int)) );
-
-	connect( radioButtonX, SIGNAL( released() ), this, SLOT( exChangeAxis()) );
-	connect( radioButtonY, SIGNAL( released() ), this, SLOT( exChangeAxis()) );
-	connect( radioButtonZ, SIGNAL( released() ), this, SLOT( exChangeAxis()) );
-
+	//Objeto para salvar as preferências do usuário
 	settings = new QSettings("LENEP", "LVP");
 
+	//Traduções do software
 	qApp->installTranslator(&appTranslator);
 	qmPath = qApp->applicationDirPath() + "/translations";
 
@@ -205,13 +181,35 @@ Lvp::Lvp() {
 	setUnifiedTitleAndToolBarOnMac(true);
 }
 
+//Conexões de sinais com slots
 void Lvp::createActions() {
+	windowMapper = new QSignalMapper(this);
+	connect( windowMapper,									SIGNAL( mapped(QWidget *) ),										this, SLOT( setActiveSubWindow(QWidget *)) );
+	connect( listWidget,										SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
+	connect( listWidget3D,									SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
+	connect( listWidgetChart,								SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
+	connect( listWidgetEditor,							SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
+	connect( mdiArea,												SIGNAL( subWindowActivated(QMdiSubWindow *) ),	this, SLOT( updateMenus()) );
+	connect( mdiArea,												SIGNAL( subWindowActivated(QMdiSubWindow *) ),	this, SLOT( updateDockLista()) );
+	connect( spinBox_x,											SIGNAL( valueChanged(int) ),										this, SLOT( exChangePlanX(int)) );
+	connect( spinBox_y,											SIGNAL( valueChanged(int) ),										this, SLOT( exChangePlanY(int)) );
+	connect( spinBox_z,											SIGNAL( valueChanged(int) ),										this, SLOT( exChangePlanZ(int)) );
+	connect( spinBoxPlano3D,								SIGNAL( valueChanged(int) ),										this, SLOT( exChangePlan(int)) );
+	connect( spinBoxPlano3D,								SIGNAL( valueChanged(int) ), horizontalSliderPlano3D, SLOT(setValue(int)) );
+	connect( horizontalSliderPlano3D,				SIGNAL( valueChanged(int) ), spinBoxPlano3D,					SLOT(setValue(int)) );
+	connect( radioButtonX,									SIGNAL( released() ),		this,			SLOT( exChangeAxis()) );
+	connect( radioButtonY,									SIGNAL( released() ),		this,			SLOT( exChangeAxis()) );
+	connect( radioButtonZ,									SIGNAL( released() ),		this,			SLOT( exChangeAxis()) );
+	connect( menuWindow,                    SIGNAL( aboutToShow()), this,			SLOT( updateWindowMenu()					) );
+	connect( pushButtonAddCurve,            SIGNAL( clicked()   ),  this,			SLOT( addCurve()									) );
+	connect( pushButtonAverage,             SIGNAL( clicked()   ),  this,			SLOT( average()										) );
+	connect( pushButtonAccumulated,         SIGNAL( clicked()   ),	this,			SLOT( accumulated()               ) );
+	connect( pushButtonSource,							SIGNAL( clicked()   ),  this,			SLOT( openTextEditor()            ) );
 	connect( actionOpen,                    SIGNAL( triggered() ), 	this,			SLOT( open()											) );
 	connect( actionSave,                    SIGNAL( triggered() ), 	this,			SLOT( save()											) );
 	connect( actionSaveAs,                  SIGNAL( triggered() ), 	this,			SLOT( saveAs()										) );
 	connect( actionCopy,                    SIGNAL( triggered() ), 	this,			SLOT( copy()											) );
 	connect( actionAbaut,                   SIGNAL( triggered() ), 	this,			SLOT( about()											) );
-	connect( menuWindow,                    SIGNAL(aboutToShow()),  this,			SLOT( updateWindowMenu()					) );
 	connect( actionPrint,                   SIGNAL( triggered() ), 	this,			SLOT( print()											) );
 	connect( actionSource,                  SIGNAL( triggered() ), 	this,			SLOT( openTextEditor()						) );
 	connect( actionZoomIn,                  SIGNAL( triggered() ), 	this,			SLOT( zoomIn()										) );
@@ -274,10 +272,6 @@ void Lvp::createActions() {
 	connect( actionRotate,                  SIGNAL( triggered() ),  this,			SLOT( rotate()										) );
 	connect( actionRelativePermeability,    SIGNAL( triggered() ),  this,			SLOT( relativePermeability()      ) );
 	connect( actionIntrinsicPermeability,   SIGNAL( triggered() ),  this,			SLOT( intrinsicPermeability()     ) );
-	connect( pushButtonAddCurve,            SIGNAL( clicked()   ),  this,			SLOT( addCurve()									) );
-	connect( pushButtonAverage,             SIGNAL( clicked()   ),  this,			SLOT( average()										) );
-	connect( pushButtonAccumulated,         SIGNAL( clicked()   ),	this,			SLOT( accumulated()               ) );
-	connect( pushButtonSource,							SIGNAL( clicked()   ),  this,			SLOT( openTextEditor()            ) );
 	connect( actionInverter,                SIGNAL( triggered() ),  this,			SLOT( invertPoro()								) );
 	connect( actionInversion,               SIGNAL( triggered() ),  this,			SLOT( inversion()									) );
 	connect( actionInversion3D,             SIGNAL( triggered() ),  this,			SLOT( inversion3D() 		          ) );
@@ -671,10 +665,8 @@ void Lvp::open(string _file, bool novo) {
 				}
 				if ( childPloter->loadFile(fileName) ) {
 					childPloter->show();
-					//cerr << "abriu" << endl;
-					statusBar()->showMessage(tr("File loaded"), 2000);
+					statusBar()->showMessage(tr("File %1 loaded!").arg(fileName), 2000);
 				} else {
-					//cerr << "não abriu" << endl;
 					statusBar()->showMessage(tr("Error"), 2000);
 					//childPloter->close();
 				}
@@ -711,7 +703,7 @@ void Lvp::open(string _file, bool novo) {
 					child->imageLabel->adjustSize();
 				}
 				child->show();
-				statusBar()->showMessage(tr("File loaded"), 2000);
+				statusBar()->showMessage(tr("File %1 loaded!").arg(fileName), 2000);
 			} else {
 				statusBar()->showMessage(tr("Error"), 2000);
 				child->close();

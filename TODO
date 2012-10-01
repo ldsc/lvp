@@ -8,3 +8,4 @@
 
 [ ] Modificar Glwidget para trabalhar com imagens DGM. Descomentar código em Lvp::open3DVisualization( )
 [ ] Modificar filtros para trabalharem com o tipo bool
+[ ] Implementar editor exadecimal
