@@ -1121,7 +1121,7 @@ void Lvp::lowPass() {
 				break;
 			QString qstr = mdiChild->getFullFileName();
 			TCMatriz2D<int> * pm = new TCMatriz2D<int>(qstr.toStdString());
-			CFiltro * filtro = new CFEPassaBaixa(pm,tamMask);
+			CFiltro<int> * filtro = new CFEPassaBaixa(pm,tamMask);
 			filtro->Go(pm,tamMask);
 			qstr = tr(".lp-%1").arg( mdiChild->getFileName() );
 			qstr = validateFileName( mdiChild->getFilePath() + qstr );
@@ -1159,7 +1159,7 @@ void Lvp::highPass() {
 				break;
 			QString qstr = mdiChild->getFullFileName();
 			TCMatriz2D<int> * pm = new TCMatriz2D<int>(qstr.toStdString());
-			CFiltro * filtro = new CFEPassaAlta(pm,tamMask);
+			CFiltro<int> * filtro = new CFEPassaAlta(pm,tamMask);
 			filtro->Go(pm,tamMask);
 			qstr = tr(".hp-%1").arg( mdiChild->getFileName() );
 			qstr = validateFileName( mdiChild->getFilePath() + qstr );
@@ -1176,7 +1176,7 @@ void Lvp::highPass() {
 				break;
 			QString qstr = mdiChild->getFullFileName();
 			TCMatriz2D<int> * pm = new TCMatriz2D<int>(qstr.toStdString());
-			CFiltro * filtro = new CFEPassaAlta(pm,tamMask);
+			CFiltro<int> * filtro = new CFEPassaAlta(pm,tamMask);
 			filtro->Go(pm,tamMask);
 			qstr = tr(".hp-%1").arg( mdiChild->getFileName() );
 			qstr = validateFileName( mdiChild->getFilePath() + qstr );
@@ -1209,7 +1209,7 @@ void Lvp::closing() {
 
 void Lvp::mathematicalMorphology( MorphType mtype ) {
 	TCMatriz2D<int> * pm = NULL;
-	CFEMorfologiaMatematica * filtro = NULL;
+	CFEMorfologiaMatematica<int> * filtro = NULL;
 	QString qstr;
 	//CBCDiscreta *maskd = dynamic_cast < CBCDiscreta * > ( mask );
 	QList<PbmImageViewer *> imagesList = selectedPbmImagesList(); //lista de ponteiros para imagens selecionadas.
@@ -1248,14 +1248,14 @@ void Lvp::mathematicalMorphology( MorphType mtype ) {
 					qstr = mdiChild->getFullFileName();
 					pm = new TCMatriz2D<int>(qstr.toStdString());
 					if (tipos.at(0)==tipo){ //Espacial
-						filtro = new CFEMorfologiaMatematica(pm,tamStruElem, indice, fundo);
+						filtro = new CFEMorfologiaMatematica<int>(pm,tamStruElem, indice, fundo);
 					} else {
 						if (tipos.at(1)==tipo){ //IDFd34
-							filtro = new CFEMMIDFd34(pm, indice, fundo);
+							filtro = new CFEMMIDFd34<int>(pm, indice, fundo);
 						} else if (tipos.at(2)==tipo){ //IDFd5711
-							filtro = new CFEMMIDFd5711(pm, indice, fundo);
+							filtro = new CFEMMIDFd5711<int>(pm, indice, fundo);
 						} else { //Euclidiana
-							filtro = new CFEMMIDFEuclidiana(pm, indice, fundo);
+							filtro = new CFEMMIDFEuclidiana<int>(pm, indice, fundo);
 						}
 						filtro->Go(pm,tamStruElem);
 					}
