@@ -12,21 +12,21 @@
 #include <Distribuicao/CDistribuicao3D.h>
 #include <Filtro/FEspacial/CFEPassaAlta.h>
 #include <Filtro/FEspacial/CFEPassaBaixa.h>
-#include <Filtro/FEspacial/FEMorfologiaMatematica/CFEMorfologiaMatematica.h>
-#include <Filtro/FEspacial/FEMorfologiaMatematica/CFEMMIDFd4.h>
-#include <Filtro/FEspacial/FEMorfologiaMatematica/CFEMMIDFd8.h>
-#include <Filtro/FEspacial/FEMorfologiaMatematica/CFEMMIDFd34.h>
-#include <Filtro/FEspacial/FEMorfologiaMatematica/CFEMMIDFd5711.h>
-#include <Filtro/FEspacial/FEMorfologiaMatematica/CFEMMIDFEuclidiana.h>
+#include <Filtro/FEspacial/FEMorfologiaMatematica/TCFEMorfologiaMatematica.h>
+#include <Filtro/FEspacial/FEMorfologiaMatematica/TCFEMMIDFd4.h>
+#include <Filtro/FEspacial/FEMorfologiaMatematica/TCFEMMIDFd8.h>
+#include <Filtro/FEspacial/FEMorfologiaMatematica/TCFEMMIDFd34.h>
+#include <Filtro/FEspacial/FEMorfologiaMatematica/TCFEMMIDFd5711.h>
+#include <Filtro/FEspacial/FEMorfologiaMatematica/TCFEMMIDFEuclidiana.h>
 #include <Filtro/FEspacial/FEInversao/CFEInversao.h>
 #include <Filtro/FEspacial/FEEsqueleto/CFEEsqueletoV1.h>
 #include <Filtro/FEspacial/FEEsqueleto/CFEEsqueletoV2.h>
 #include <Filtro/FEspacial/FEEsqueleto/CFEEsqueletoV3.h>
 #include <Filtro/FEspacial/FEEsqueleto/CFEEsqueletoV4.h>
 #include <Filtro/FEspacial/FEEsqueleto/CFEEZhangSuen.h>
-#include <Filtro/FEspacial3D/FEMorfologiaMatematica3D/CFEMorfologiaMatematica3D.h>
-#include <Filtro/FEspacial3D/FEMorfologiaMatematica3D/CFEMMIDFd3453D.h>
-#include <Filtro/FEspacial3D/FEMorfologiaMatematica3D/CFEMMIDFEuclidiana3D.h>
+#include <Filtro/FEspacial3D/FEMorfologiaMatematica3D/TCFEMorfologiaMatematica3D.h>
+#include <Filtro/FEspacial3D/FEMorfologiaMatematica3D/TCFEMMIDFd3453D.h>
+#include <Filtro/FEspacial3D/FEMorfologiaMatematica3D/TCFEMMIDFEuclidiana3D.h>
 #include <Filtro/FEspacial3D/FEConectividade3D/CFEConectividade3D.h>
 #include <Filtro/FEspacial3D/FEInversao3D/CFEInversao3D.h>
 #include <Matriz/TCMatriz2D.h>
@@ -1104,7 +1104,7 @@ void Lvp::lowPass() {
 				break;
 			QString qstr = mdiChild->getFullFileName();
 			TCMatriz2D<bool> * pm = new TCMatriz2D<bool>(qstr.toStdString());
-			CFiltro * filtro = new CFEPassaBaixa(pm,tamMask);
+			TCFiltro * filtro = new CFEPassaBaixa(pm,tamMask);
 			filtro->Go(pm,tamMask);
 			qstr = tr(".lp-%1").arg( mdiChild->getFileName() );
 			qstr = validateFileName( mdiChild->getFilePath() + qstr );
@@ -1121,7 +1121,7 @@ void Lvp::lowPass() {
 				break;
 			QString qstr = mdiChild->getFullFileName();
 			TCMatriz2D<int> * pm = new TCMatriz2D<int>(qstr.toStdString());
-			CFiltro<int> * filtro = new CFEPassaBaixa(pm,tamMask);
+			TCFiltro<int> * filtro = new CFEPassaBaixa(pm,tamMask);
 			filtro->Go(pm,tamMask);
 			qstr = tr(".lp-%1").arg( mdiChild->getFileName() );
 			qstr = validateFileName( mdiChild->getFilePath() + qstr );
@@ -1159,7 +1159,7 @@ void Lvp::highPass() {
 				break;
 			QString qstr = mdiChild->getFullFileName();
 			TCMatriz2D<int> * pm = new TCMatriz2D<int>(qstr.toStdString());
-			CFiltro<int> * filtro = new CFEPassaAlta(pm,tamMask);
+			TCFiltro<int> * filtro = new CFEPassaAlta(pm,tamMask);
 			filtro->Go(pm,tamMask);
 			qstr = tr(".hp-%1").arg( mdiChild->getFileName() );
 			qstr = validateFileName( mdiChild->getFilePath() + qstr );
@@ -1176,7 +1176,7 @@ void Lvp::highPass() {
 				break;
 			QString qstr = mdiChild->getFullFileName();
 			TCMatriz2D<int> * pm = new TCMatriz2D<int>(qstr.toStdString());
-			CFiltro<int> * filtro = new CFEPassaAlta(pm,tamMask);
+			TCFiltro<int> * filtro = new CFEPassaAlta(pm,tamMask);
 			filtro->Go(pm,tamMask);
 			qstr = tr(".hp-%1").arg( mdiChild->getFileName() );
 			qstr = validateFileName( mdiChild->getFilePath() + qstr );
@@ -1209,7 +1209,7 @@ void Lvp::closing() {
 
 void Lvp::mathematicalMorphology( MorphType mtype ) {
 	TCMatriz2D<int> * pm = NULL;
-	CFEMorfologiaMatematica<int> * filtro = NULL;
+	TCFEMorfologiaMatematica<int> * filtro = NULL;
 	QString qstr;
 	//CBCDiscreta *maskd = dynamic_cast < CBCDiscreta * > ( mask );
 	QList<PbmImageViewer *> imagesList = selectedPbmImagesList(); //lista de ponteiros para imagens selecionadas.
@@ -1248,14 +1248,14 @@ void Lvp::mathematicalMorphology( MorphType mtype ) {
 					qstr = mdiChild->getFullFileName();
 					pm = new TCMatriz2D<int>(qstr.toStdString());
 					if (tipos.at(0)==tipo){ //Espacial
-						filtro = new CFEMorfologiaMatematica<int>(pm,tamStruElem, indice, fundo);
+						filtro = new TCFEMorfologiaMatematica<int>(pm,tamStruElem, indice, fundo);
 					} else {
 						if (tipos.at(1)==tipo){ //IDFd34
-							filtro = new CFEMMIDFd34<int>(pm, indice, fundo);
+							filtro = new TCFEMMIDFd34<int>(pm, indice, fundo);
 						} else if (tipos.at(2)==tipo){ //IDFd5711
-							filtro = new CFEMMIDFd5711<int>(pm, indice, fundo);
+							filtro = new TCFEMMIDFd5711<int>(pm, indice, fundo);
 						} else { //Euclidiana
-							filtro = new CFEMMIDFEuclidiana<int>(pm, indice, fundo);
+							filtro = new TCFEMMIDFEuclidiana<int>(pm, indice, fundo);
 						}
 						filtro->Go(pm,tamStruElem);
 					}
@@ -1311,7 +1311,7 @@ void Lvp::closing3D() {
 
 void Lvp::mathematicalMorphology3D( MorphType mtype ){
 	TCMatriz3D<int> * pm = NULL;
-	CFEMorfologiaMatematica3D * filtro = NULL;
+	TCFEMorfologiaMatematica3D<int> * filtro = NULL;
 	QString qstr;
 	//CBCDiscreta *maskd = dynamic_cast < CBCDiscreta * > ( mask );
 	QList<DbmImageViewerInt *> imagesList = selectedDbmImagesListInt(); //lista de ponteiros para imagens selecionadas.
@@ -1350,12 +1350,12 @@ void Lvp::mathematicalMorphology3D( MorphType mtype ){
 					qstr = mdiChild->getFullFileName();
 					pm = new TCMatriz3D<int>(qstr.toStdString());
 					if (tipos.at(0)==tipo) { //Espacial
-						filtro = new CFEMorfologiaMatematica3D(pm,tamStruElem, indice, fundo);
+						filtro = new TCFEMorfologiaMatematica3D<int>(pm,tamStruElem, indice, fundo);
 					} else {
 						if (tipos.at(1)==tipo) { //IDFd345
-							filtro = new CFEMMIDFd3453D(pm, indice, fundo);
+							filtro = new TCFEMMIDFd3453D<int>(pm, indice, fundo);
 						} else { //Euclidiana
-							filtro = new CFEMMIDFEuclidiana3D(pm, indice, fundo);
+							filtro = new TCFEMMIDFEuclidiana3D<int>(pm, indice, fundo);
 						}
 						filtro->Go (pm,tamStruElem);
 					}
