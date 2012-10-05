@@ -4,7 +4,7 @@
 #include "ui_dialogConfEq.h"
 #include "baseImageViewer.h"
 #include "pbmImageviewer.h"
-#include "dbmImageViewerInt.h"
+#include "dbmImageViewer.h"
 
 class QMainWindow;
 

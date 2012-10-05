@@ -394,6 +394,7 @@ void Lvp::updateMenus() {
 	radioButtonZ->setEnabled(hasImageViewer3D);
 	spinBoxPlano3D->setEnabled(hasImageViewer3D);
 	horizontalSliderPlano3D->setEnabled(hasImageViewer3D);
+	actionSave->setEnabled(false);
 	if (hasTextEditor) {
 		actionSave->setEnabled( hasTextEditor && activeTextEditor()->document()->isModified() );
 	} else if(hasHexEditor) {
@@ -536,18 +537,6 @@ void Lvp::updateWindowMenu() {
 			action->setChecked(childImage == activeImageViewer());
 			connect(action, SIGNAL(triggered()), windowMapper, SLOT(map()));
 			windowMapper->setMapping(action, windows.at(i));
-		} else if (qobject_cast<DbmImageViewerInt *>(windows.at(i)->widget()) != 0) {
-			childImage = qobject_cast<DbmImageViewerInt *>(windows.at(i)->widget());
-			if (i < 9) {
-				text = tr("&%1 %2").arg(i + 1).arg(childImage->getFileName());
-			} else {
-				text = tr("%1 %2").arg(i + 1).arg(childImage->getFileName());
-			}
-			action = menuWindow->addAction(text);
-			action->setCheckable(true);
-			action->setChecked(childImage == activeImageViewer());
-			connect(action, SIGNAL(triggered()), windowMapper, SLOT(map()));
-			windowMapper->setMapping(action, windows.at(i));
 		} else if (qobject_cast<DgmImageViewer *>(windows.at(i)->widget()) != 0) {
 			childImage = qobject_cast<DgmImageViewer *>(windows.at(i)->widget());
 			if (i < 9) {
@@ -602,11 +591,6 @@ void Lvp::updateDockLista() {
 			QListWidgetItem *item = new QListWidgetItem(child->getFileName(), listWidget3D);
 			child->item = item;
 			item->setSelected(child == activeDbmImageViewer());
-			hasImageViewer3D = true;
-		} else if ( DbmImageViewerInt *child = qobject_cast<DbmImageViewerInt *>(windows.at(i)->widget()) ) {
-			QListWidgetItem *item = new QListWidgetItem(child->getFileName(), listWidget3D);
-			child->item = item;
-			item->setSelected(child == activeDbmImageViewerInt());
 			hasImageViewer3D = true;
 		} else if ( DgmImageViewer *child = qobject_cast<DgmImageViewer *>(windows.at(i)->widget()) ) {
 			QListWidgetItem *item = new QListWidgetItem(child->getFileName(), listWidget3D);
@@ -1005,7 +989,10 @@ void Lvp::closeEvent(QCloseEvent *event) {
 void Lvp::save() {
 	if ( activeTextEditor() != 0 ) {
 		activeTextEditor()->save();
+	} else 	if ( activeHexEditor() != 0 ) {
+		activeHexEditor()->save();
 	}
+	updateActionSave();
 }
 
 void Lvp::saveAs() {
@@ -1017,6 +1004,8 @@ void Lvp::saveAs() {
 		//cerr << "lastOpenPath depois: " << lastOpenPath.toStdString() << endl;
 	} else if ( activeTextEditor() != 0 ) {
 		activeTextEditor()->saveAs();
+	} else 	if ( activeHexEditor() != 0 ) {
+		activeHexEditor()->saveAs();
 	}
 	updateDockLista();
 }
@@ -2299,14 +2288,6 @@ void Lvp::exChangePlan( int _plan ) {
 			axis = EIXO_Z;
 		if ( ! mdiChild->ChangePlan( _plan, axis ) )
 			cerr << "erro: exChangePlan" << endl;
-	} else if (DbmImageViewerInt *mdiChild = activeDbmImageViewerInt()) {
-		E_eixo axis= EIXO_X;
-		if (radioButtonY->isChecked())
-			axis = EIXO_Y;
-		else if (radioButtonZ->isChecked())
-			axis = EIXO_Z;
-		if ( ! mdiChild->ChangePlan( _plan, axis ) )
-			cerr << "erro: exChangePlan" << endl;
 	} else if (DgmImageViewer *mdiChild = activeDgmImageViewer()) {
 		E_eixo axis= EIXO_X;
 		if (radioButtonY->isChecked())
@@ -2320,18 +2301,6 @@ void Lvp::exChangePlan( int _plan ) {
 
 void Lvp::exChangeAxis( ) {
 	if ( DbmImageViewer *mdiChild = activeDbmImageViewer() ) {
-		E_eixo axis = EIXO_X;
-		if (radioButtonY->isChecked())
-			axis = EIXO_Y;
-		else if (radioButtonZ->isChecked())
-			axis = EIXO_Z;
-
-		if ( mdiChild->ChangePlan( spinBoxPlano3D->value(), axis ) ) {
-			updateMenus();
-		} else {
-			cerr << "erro: exChangePlanAxis" << endl;
-		}
-	} else if ( DbmImageViewerInt *mdiChild = activeDbmImageViewerInt() ) {
 		E_eixo axis = EIXO_X;
 		if (radioButtonY->isChecked())
 			axis = EIXO_Y;
@@ -3005,21 +2974,6 @@ QList<DbmImageViewer *> Lvp::selectedDbmImagesList() {
 	return list;
 }
 
-// Retorna a lista de imagens dbm (int) selecionadas em Images List
-QList<DbmImageViewerInt *> Lvp::selectedDbmImagesListInt() {
-	QList<DbmImageViewerInt *> list; //lista de imagens selecionadas.
-	DbmImageViewerInt *mdiChild;
-	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
-		if ( qobject_cast<DbmImageViewerInt *>(window->widget()) != 0 ) {
-			mdiChild = qobject_cast<DbmImageViewerInt *>(window->widget());
-			if (mdiChild->item->isSelected()) {
-				list.append(mdiChild);
-			}
-		}
-	}
-	return list;
-}
-
 // Retorna a lista de imagens dgm selecionadas em Images List
 QList<DgmImageViewer *> Lvp::selectedDgmImagesList() {
 	QList<DgmImageViewer *> list; //lista de imagens selecionadas.
@@ -3086,11 +3040,6 @@ QList<BaseImageViewer *> Lvp::selectedAllImagesList() {
 			if (mdiChild->item->isSelected()) {
 				list.append(mdiChild);
 			}
-		} else if ( qobject_cast<DbmImageViewerInt *>(window->widget()) != 0 ) {
-			mdiChild = qobject_cast<DbmImageViewerInt *>(window->widget());
-			if (mdiChild->item->isSelected()) {
-				list.append(mdiChild);
-			}
 		}
 	}
 	return list;
@@ -3100,8 +3049,6 @@ BaseImageViewer * Lvp::activeImageViewer() {
 	if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow()) {
 		if ( qobject_cast<DbmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<DbmImageViewer *>(activeSubWindow->widget());
-		else if ( qobject_cast<DbmImageViewerInt *>(activeSubWindow->widget()) != 0 )
-			return qobject_cast<DbmImageViewerInt *>(activeSubWindow->widget());
 		else if ( qobject_cast<DgmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<DgmImageViewer *>(activeSubWindow->widget());
 		else if ( qobject_cast<PbmImageViewer *>(activeSubWindow->widget()) != 0 )
@@ -3126,8 +3073,6 @@ BaseDnmImageViewer * Lvp::active3DImageViewer() {
 	if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow()) {
 		if ( qobject_cast<DbmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<DbmImageViewer *>(activeSubWindow->widget());
-		else if ( qobject_cast<DbmImageViewerInt *>(activeSubWindow->widget()) != 0 )
-			return qobject_cast<DbmImageViewerInt *>(activeSubWindow->widget());
 		else if ( qobject_cast<DgmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<DgmImageViewer *>(activeSubWindow->widget());
 	}
@@ -3149,15 +3094,6 @@ DbmImageViewer *Lvp::activeDbmImageViewer() {
 	}
 	return 0;
 }
-
-DbmImageViewerInt *Lvp::activeDbmImageViewerInt() {
-	if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow()) {
-		if ( qobject_cast<DbmImageViewerInt *>(activeSubWindow->widget()) != 0 )
-			return qobject_cast<DbmImageViewerInt *>(activeSubWindow->widget());
-	}
-	return 0;
-}
-
 
 PbmImageViewer * Lvp::activePbmImageViewer() {
 	if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow()) {
@@ -3234,11 +3170,6 @@ void Lvp::setActiveSubWindow(QListWidgetItem *item) {
 				mdiArea->setActiveSubWindow(window);
 				break;
 			}
-		} else if ( DbmImageViewerInt * mdiChild = qobject_cast<DbmImageViewerInt *>(window->widget()) ) {
-			if (item == mdiChild->item) {
-				mdiArea->setActiveSubWindow(window);
-				break;
-			}
 		} else if ( DgmImageViewer * mdiChild = qobject_cast<DgmImageViewer *>(window->widget()) ) {
 			if (item == mdiChild->item) {
 				mdiArea->setActiveSubWindow(window);
@@ -3290,8 +3221,6 @@ QMdiSubWindow *Lvp::findImageViewer(const QString &_fileName) {
 			mdiChild = qobject_cast<PgmImageViewer *>(window->widget());
 		else if (qobject_cast<DbmImageViewer *>(window->widget()) != 0)
 			mdiChild = qobject_cast<DbmImageViewer *>(window->widget());
-		else if (qobject_cast<DbmImageViewerInt *>(window->widget()) != 0)
-			mdiChild = qobject_cast<DbmImageViewerInt *>(window->widget());
 		else if (qobject_cast<DgmImageViewer *>(window->widget()) != 0)
 			mdiChild = qobject_cast<DgmImageViewer *>(window->widget());
 		if (mdiChild)

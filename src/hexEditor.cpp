@@ -7,6 +7,7 @@
 /*****************************************************************************/
 HexEditor::HexEditor(QMainWindow *_parent) : QHexEdit(_parent) {
 	//init();
+	setAttribute(Qt::WA_DeleteOnClose);
 	parent = _parent;
 	setCurrentFile("");
 	isUntitled = true;

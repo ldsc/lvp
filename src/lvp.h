@@ -16,7 +16,6 @@
 #include "import.h"
 #include "baseImageViewer.h"
 #include "dbmImageViewer.h"
-#include "dbmImageViewerInt.h"
 #include "dgmImageViewer.h"
 #include "pbmImageviewer.h"
 #include "pgmImageviewer.h"
@@ -244,7 +243,6 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		BaseDnmImageViewer *active3DImageViewer();
 		BasePnmImageViewer *active2DImageViewer();
 		DbmImageViewer *activeDbmImageViewer();
-		DbmImageViewerInt *activeDbmImageViewerInt();
 		DgmImageViewer *activeDgmImageViewer();
 		PbmImageViewer *activePbmImageViewer();
 		PgmImageViewer *activePgmImageViewer();
@@ -257,7 +255,6 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		QList<PbmImageViewer *> selectedPbmImagesList();
 		QList<PgmImageViewer *> selectedPgmImagesList();
 		QList<DbmImageViewer *> selectedDbmImagesList();
-		QList<DbmImageViewerInt *> selectedDbmImagesListInt();
 		QList<DgmImageViewer *> selectedDgmImagesList();
 		QList<Ploter *> selectedPloterList();
 		QList<BaseImageViewer *> selectedAllImagesList();
@@ -274,7 +271,6 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		QLabel *lbAddress, *lbAddressName;
 		QLabel *lbOverwriteMode, *lbOverwriteModeName;
 		QLabel *lbSize, *lbSizeName;
-
 };
 
 #endif
