@@ -176,6 +176,7 @@ Lvp::Lvp() {
 	createActions();
 	updateMenus();
 	createLanguageMenu();
+	createStatusBar();
 
 	retranslateUi(this);
 	setUnifiedTitleAndToolBarOnMac(true);
@@ -204,14 +205,14 @@ void Lvp::createActions() {
 	connect( pushButtonAddCurve,            SIGNAL( clicked()   ),  this,			SLOT( addCurve()									) );
 	connect( pushButtonAverage,             SIGNAL( clicked()   ),  this,			SLOT( average()										) );
 	connect( pushButtonAccumulated,         SIGNAL( clicked()   ),	this,			SLOT( accumulated()               ) );
-	connect( pushButtonSource,							SIGNAL( clicked()   ),  this,			SLOT( openTextEditor()            ) );
+	connect( pushButtonSource,							SIGNAL( clicked()   ),  this,			SLOT( openEditor()            ) );
 	connect( actionOpen,                    SIGNAL( triggered() ), 	this,			SLOT( open()											) );
 	connect( actionSave,                    SIGNAL( triggered() ), 	this,			SLOT( save()											) );
 	connect( actionSaveAs,                  SIGNAL( triggered() ), 	this,			SLOT( saveAs()										) );
 	connect( actionCopy,                    SIGNAL( triggered() ), 	this,			SLOT( copy()											) );
 	connect( actionAbaut,                   SIGNAL( triggered() ), 	this,			SLOT( about()											) );
 	connect( actionPrint,                   SIGNAL( triggered() ), 	this,			SLOT( print()											) );
-	connect( actionSource,                  SIGNAL( triggered() ), 	this,			SLOT( openTextEditor()						) );
+	connect( actionSource,                  SIGNAL( triggered() ), 	this,			SLOT( openEditor()						) );
 	connect( actionZoomIn,                  SIGNAL( triggered() ), 	this,			SLOT( zoomIn()										) );
 	connect( actionZoomOut,                 SIGNAL( triggered() ), 	this,			SLOT( zoomOut()										) );
 	connect( actionNormalSize,              SIGNAL( triggered() ), 	this,			SLOT( normalSize()								) );
@@ -288,7 +289,8 @@ void Lvp::updateMenus() {
 	bool hasImageViewer3D		= false;
 	bool hasGLWidget				= false;
 	bool hasPloter					= false;
-	bool hasEditor					= false;
+	bool hasTextEditor			= false;
+	bool hasHexEditor				= false;
 	QString ext = "";
 	if ( active2DImageViewer() != 0 ) {
 		hasImageViewer = true;
@@ -304,9 +306,10 @@ void Lvp::updateMenus() {
 		hasPloter = true;
 		ext = activePloter()->getFileExt();
 	} else if ( activeTextEditor() != 0 ) {
-		hasEditor = true;
+		hasTextEditor = true;
+	} else if ( activeHexEditor() != 0 ) {
+		hasHexEditor = true;
 	}
-	actionSource->setEnabled( hasImageViewer || hasImageViewer3D || hasPloter );
 	actionDTSspatial->setVisible(hasImageViewer);
 	actionDTSspatial3D->setVisible(hasImageViewer3D);
 	actionDTSd34->setVisible(hasImageViewer);
@@ -366,9 +369,9 @@ void Lvp::updateMenus() {
 	actionRelativePermeability->setEnabled(hasImageViewer3D);
 	actionIntrinsicPermeability->setEnabled(hasImageViewer3D);
 	actionRotate->setEnabled( hasImageViewer3D || hasImageViewer );
-	actionSave->setEnabled( hasEditor && activeTextEditor()->document()->isModified() );
-	actionSaveAs->setEnabled( hasImageViewer || hasImageViewer3D || hasPloter || hasEditor );
+	actionSaveAs->setEnabled( hasImageViewer || hasImageViewer3D || hasPloter || hasTextEditor || hasHexEditor );
 	actionSeparator->setVisible(mdiArea->subWindowList().size() > 0);
+	actionSource->setEnabled( hasImageViewer || hasImageViewer3D || hasPloter );
 	actionTitle->setEnabled(mdiArea->subWindowList().size() > 0);
 	actionViewMode->setEnabled(mdiArea->subWindowList().size() > 0);
 	actionZoomIn->setEnabled(!actionFitToWindow->isChecked() && ( hasImageViewer || hasImageViewer3D ) && (activeImageViewer()->scaleFactor < 3.0));
@@ -391,7 +394,11 @@ void Lvp::updateMenus() {
 	radioButtonZ->setEnabled(hasImageViewer3D);
 	spinBoxPlano3D->setEnabled(hasImageViewer3D);
 	horizontalSliderPlano3D->setEnabled(hasImageViewer3D);
-	if ( hasGLWidget ){
+	if (hasTextEditor) {
+		actionSave->setEnabled( hasTextEditor && activeTextEditor()->document()->isModified() );
+	} else if(hasHexEditor) {
+		actionSave->setEnabled( hasTextEditor && activeHexEditor()->IsModified() );
+	} else if ( hasGLWidget ) {
 		GLWidget * childImage = activeGLWidget();
 		if(childImage->getViewType()==GLWidget::MPV){ //se o tipo de visualização for multiplanar
 			spinBox_x->setEnabled(true);
@@ -775,37 +782,109 @@ void Lvp::openMPV( ) {
 	updateDockLista();
 }
 
-void Lvp::openTextEditor(){
+void Lvp::openEditor(){
 	QMdiSubWindow *existing = 0;
 	QString fileName;
-	if (BasePnmImageViewer *mdiChild = active2DImageViewer()) {
-		fileName = mdiChild->getFullFileName();
-		existing = findTextEditor( fileName );
-		goto openEditor;
-	} else 	if (BaseDnmImageViewer *mdiChild = active3DImageViewer()) {
-		fileName = mdiChild->getFullFileName();
-		existing = findTextEditor( fileName );
-		goto openEditor;
+	if( PbmImageViewer * childImage = activePbmImageViewer() ) {
+		fileName = childImage->getFullFileName();
+		if(childImage->pm == NULL){
+			childImage->pm = new TCMatriz2D<bool>(fileName.toStdString());
+		}
+		if(childImage->pm) {
+			if(childImage->pm->GetFormato() == P1_X_Y_ASCII){
+				existing = findTextEditor( fileName );
+				goto openTextEditor;
+			} else if(childImage->pm->GetFormato() == P4_X_Y_BINARY){
+				existing = findHexEditor( fileName );
+				goto openHexEditor;
+			}
+		} else {
+			return;
+		}
+	} else if( PgmImageViewer * childImage = activePgmImageViewer() ) {
+		fileName = childImage->getFullFileName();
+		if(childImage->pm == NULL){
+			childImage->pm = new TCMatriz2D<int>(fileName.toStdString());
+		}
+		if(childImage->pm) {
+			if(childImage->pm->GetFormato() == P2_X_Y_GRAY_ASCII){
+				existing = findTextEditor( fileName );
+				goto openTextEditor;
+			} else if(childImage->pm->GetFormato() == P5_X_Y_GRAY_BINARY){
+				existing = findHexEditor( fileName );
+				goto openHexEditor;
+			}
+		} else {
+			return;
+		}
+	} else if( DbmImageViewer * childImage = activeDbmImageViewer() ) {
+		fileName = childImage->getFullFileName();
+		if(childImage->pm3D == NULL){
+			childImage->pm3D = new TCImagem3D<bool>(fileName.toStdString());
+		}
+		if(childImage->pm3D) {
+			if(childImage->pm3D->GetFormato() == D1_X_Y_Z_ASCII){
+				existing = findTextEditor( fileName );
+				goto openTextEditor;
+			} else if(childImage->pm3D->GetFormato() == D4_X_Y_Z_BINARY){
+				existing = findHexEditor( fileName );
+				goto openHexEditor;
+			}
+		} else {
+			return;
+		}
+	} else if( DgmImageViewer * childImage = activeDgmImageViewer() ) {
+		fileName = childImage->getFullFileName();
+		if(childImage->pm3D == NULL){
+			childImage->pm3D = new TCImagem3D<int>(fileName.toStdString());
+		}
+		if(childImage->pm3D) {
+			if(childImage->pm3D->GetFormato() == D2_X_Y_Z_GRAY_ASCII){
+				existing = findTextEditor( fileName );
+				goto openTextEditor;
+			} else if(childImage->pm3D->GetFormato() == D5_X_Y_Z_GRAY_BINARY){
+				existing = findHexEditor( fileName );
+				goto openHexEditor;
+			}
+		} else {
+			return;
+		}
 	} else 	if (Ploter *mdiChild = activePloter()) {
 		fileName = mdiChild->getFullFileName();
 		existing = findTextEditor( fileName );
-		goto openEditor;
+		goto openTextEditor;
 	} else {
 		return;
 	}
 
-openEditor:
-	if (existing) {
-		mdiArea->setActiveSubWindow(existing);
-	} else {
-		if ( TextEditor *child = createTextEditor() ){
-			if ( child->loadFile( fileName ) ){
-				child->show();
-				statusBar()->showMessage(tr("File loaded"), 2000);
+openTextEditor: {
+		if (existing) {
+			mdiArea->setActiveSubWindow(existing);
+		} else {
+			if ( TextEditor *child = createTextEditor() ){
+				if ( child->loadFile( fileName ) ){
+					child->show();
+					statusBar()->showMessage(tr("File loaded"), 2000);
+				}
 			}
 		}
+		updateMenus();
+		return;
 	}
-	updateMenus();
+openHexEditor: {
+		if (existing) {
+			mdiArea->setActiveSubWindow(existing);
+		} else {
+			if ( HexEditor *child = createHexEditor() ){
+				if ( child->loadFile(fileName) ){
+					child->show();
+					statusBar()->showMessage(tr("File loaded"), 2000);
+				}
+			}
+		}
+		updateMenus();
+		return;
+	}
 }
 
 PbmImageViewer *Lvp::createPbmImageViewer() {
@@ -889,9 +968,27 @@ TextEditor * Lvp::createTextEditor() {
 	return NULL;
 }
 
+HexEditor *Lvp::createHexEditor() {
+	HexEditor *childEditor = NULL;
+	childEditor = new HexEditor( this );
+	if ( childEditor ) {
+		mdiArea->addSubWindow( childEditor );
+		setOverwriteMode(childEditor->overwriteMode());
+		connect(childEditor, SIGNAL(overwriteModeChanged(bool)), this, SLOT(setOverwriteMode(bool)));
+		connect(childEditor, SIGNAL(currentAddressChanged(int)), this, SLOT(setAddress(int)));
+		connect(childEditor, SIGNAL(currentSizeChanged(int)), this, SLOT(setSize(int)));
+		connect(childEditor, SIGNAL(dataChanged()), this, SLOT(updateActionSave()));
+		return childEditor;
+	}
+	return NULL;
+}
+
 void Lvp::updateActionSave(){
 	if (activeTextEditor() != 0){
 		actionSave->setEnabled(activeTextEditor()->document()->isModified());
+	}
+	if (activeHexEditor() != 0){
+		actionSave->setEnabled(activeHexEditor()->IsModified());
 	}
 }
 
@@ -3102,6 +3199,14 @@ TextEditor * Lvp::activeTextEditor() {
 	return 0;
 }
 
+HexEditor * Lvp::activeHexEditor() {
+	if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow()) {
+		if ( qobject_cast<HexEditor *>(activeSubWindow->widget()) != 0 )
+			return qobject_cast<HexEditor *>(activeSubWindow->widget());
+	}
+	return 0;
+}
+
 void Lvp::setActiveSubWindow(QWidget *window) {
 	if (!window)
 		return;
@@ -3154,6 +3259,24 @@ void Lvp::setActiveSubWindow(QListWidgetItem *item) {
 			updateDockLista();
 		}
 	}
+}
+
+void Lvp::setAddress(int address)
+{
+	lbAddress->setText(QString("%1").arg(address, 1, 16));
+}
+
+void Lvp::setOverwriteMode(bool mode)
+{
+	if (mode)
+		lbOverwriteMode->setText(tr("Overwrite"));
+	else
+		lbOverwriteMode->setText(tr("Insert"));
+}
+
+void Lvp::setSize(int size)
+{
+	lbSize->setText(QString("%1").arg(size));
 }
 
 QMdiSubWindow *Lvp::findImageViewer(const QString &_fileName) {
@@ -3216,6 +3339,22 @@ QMdiSubWindow *Lvp::findTextEditor(const QString & _fileName) {
 		if (mdiChild)
 			if (mdiChild->getFullFileName() == canonicalFilePath)
 				return window;
+	}
+	return 0;
+}
+
+QMdiSubWindow *Lvp::findHexEditor(const QString & _fileName) {
+	QString canonicalFilePath = QFileInfo(_fileName).canonicalFilePath();
+	HexEditor *mdiChild;
+	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
+		mdiChild = NULL;
+		if (qobject_cast<HexEditor *>(window->widget()) != 0)
+			mdiChild = qobject_cast<HexEditor *>(window->widget());
+		/*
+		if (mdiChild)
+			if (mdiChild->getFullFileName() == canonicalFilePath)
+				return window;
+		*/
 	}
 	return 0;
 }
@@ -3288,6 +3427,40 @@ void Lvp::readSettings() { //Carrega a última posição e tamanho usadas para a
 	} else {
 		mdiArea->setViewMode( QMdiArea::SubWindowView );
 	}
+}
+
+void Lvp::createStatusBar() {
+	// Address Label
+	lbAddressName = new QLabel();
+	lbAddressName->setText(tr("Address:"));
+	statusBar()->addPermanentWidget(lbAddressName);
+	lbAddress = new QLabel();
+	lbAddress->setFrameShape(QFrame::Panel);
+	lbAddress->setFrameShadow(QFrame::Sunken);
+	lbAddress->setMinimumWidth(70);
+	statusBar()->addPermanentWidget(lbAddress);
+
+	// Size Label
+	lbSizeName = new QLabel();
+	lbSizeName->setText(tr("Size:"));
+	statusBar()->addPermanentWidget(lbSizeName);
+	lbSize = new QLabel();
+	lbSize->setFrameShape(QFrame::Panel);
+	lbSize->setFrameShadow(QFrame::Sunken);
+	lbSize->setMinimumWidth(70);
+	statusBar()->addPermanentWidget(lbSize);
+
+	// Overwrite Mode Label
+	lbOverwriteModeName = new QLabel();
+	lbOverwriteModeName->setText(tr("Mode:"));
+	statusBar()->addPermanentWidget(lbOverwriteModeName);
+	lbOverwriteMode = new QLabel();
+	lbOverwriteMode->setFrameShape(QFrame::Panel);
+	lbOverwriteMode->setFrameShadow(QFrame::Sunken);
+	lbOverwriteMode->setMinimumWidth(70);
+	statusBar()->addPermanentWidget(lbOverwriteMode);
+
+	statusBar()->showMessage(tr("Ready"));
 }
 
 void Lvp::about() {

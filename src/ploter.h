@@ -15,65 +15,64 @@
 
 class QMainWindow;
 class QListWidgetItem;
-//class Lvp;
 
 class Ploter : public QwtPlot //public QScrollArea
 {
-	Q_OBJECT
-   // Construtor/Destrutor
-public:
-	Ploter( QMainWindow * _parent );
-	//Ploter( Lvp * _parent );
-	virtual ~Ploter();
+		Q_OBJECT
+		// Construtor/Destrutor
+	public:
+		Ploter( QMainWindow * _parent );
 
-   // Atributos
-public:
-	bool isNew; //true se for um novo gráfico.
-	QStringList patchCurves;
-	QListWidgetItem *item;
+		virtual ~Ploter(){}
 
-private:
-	QMainWindow *parent;
-	//Lvp *parent;
-	QString fullFileName;
-	QString fileName;
-	QString curFileNoExt;
-	QString fileExt;
-   QString filePath;
-	QList<Qt::GlobalColor> colors;
-	QwtPlotPicker * position;
-	QwtLegend *legend;
-	bool isAccumulated;
-	QwtPlotCurve *curveAccumulated;
-	//QwtPicker::DragSelection PointSelection;
-	//QwtPlotZoomer * zoomer;
+		// Atributos
+	public:
+		bool isNew; //true se for um novo gráfico.
+		QStringList patchCurves;
+		QListWidgetItem *item;
 
-   // Métodos
-public:
+	private:
+		QMainWindow *parent;
+		//Lvp *parent;
+		QString fullFileName;
+		QString fileName;
+		QString curFileNoExt;
+		QString fileExt;
+		QString filePath;
+		QList<Qt::GlobalColor> colors;
+		QwtPlotPicker * position;
+		QwtLegend *legend;
+		bool isAccumulated;
+		QwtPlotCurve *curveAccumulated;
+		//QwtPicker::DragSelection PointSelection;
+		//QwtPlotZoomer * zoomer;
 
-	bool addCurves( const QStringList & _filesName );
-	bool loadFile( const QString & _fileName );
-	bool save( QString * lop );
-	bool saveAs( QString * lop );
+		// Métodos
+	public:
 
-	inline QString getFullFileName() { return fullFileName; }
-	inline QString getFileName() { return fileName; }
-	inline QString getFileNameNoExt() { return curFileNoExt;	}
-	inline QString getFileExt() { return fileExt; }
-   inline QString getFilePath() { return filePath; }
-   inline bool IsAccumulated() { return isAccumulated; }
+		bool addCurves( const QStringList & _filesName );
+		bool loadFile( const QString & _fileName );
+		bool save( QString * lop );
+		bool saveAs( QString * lop );
+
+		inline QString getFullFileName() { return fullFileName; }
+		inline QString getFileName() { return fileName; }
+		inline QString getFileNameNoExt() { return curFileNoExt;	}
+		inline QString getFileExt() { return fileExt; }
+		inline QString getFilePath() { return filePath; }
+		inline bool IsAccumulated() { return isAccumulated; }
 
 
-public slots:
-	void labelPos(const QPoint &pos);
-	void accumulated();
+	public slots:
+		void labelPos(const QPoint &pos);
+		void accumulated();
 
-protected:
-	void closeEvent(QCloseEvent *event);
+	protected:
+		void closeEvent(QCloseEvent *event);
 
-private:
-	bool maybeSave();
-	void getFileNames( const QString &fileName );
+	private:
+		bool maybeSave();
+		void getFileNames( const QString &fileName );
 };
 
 #endif

@@ -723,6 +723,9 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionSave">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="application.qrc">
      <normaloff>:/images/save.png</normaloff>:/images/save.png</iconset>
@@ -1271,7 +1274,7 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="icon">
     <iconset resource="application.qrc">
-     <normaloff>:/images/8435_64x64.png</normaloff>:/images/8435_64x64.png</iconset>
+     <normaloff>:/images/7661_64x64.png</normaloff>:/images/7661_64x64.png</iconset>
    </property>
    <property name="text">
     <string>Source</string>

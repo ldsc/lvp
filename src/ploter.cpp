@@ -32,10 +32,6 @@ Ploter::Ploter( QMainWindow * _parent ) {
 	connect( this, SIGNAL( destroyed() ), parent, SLOT( updateDockLista() ) );
 }
 
-Ploter:: ~Ploter() {
-	//	cerr << "destrutor" << endl;
-}
-
 bool Ploter::loadFile(const QString & _fileName) {
 	if ( ! _fileName.isEmpty() ) {
 		getFileNames ( _fileName );

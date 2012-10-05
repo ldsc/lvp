@@ -16,7 +16,14 @@ SOURCES +=  lvp.cpp \
             ploter.cpp \
             reconstructionES.cpp \
             textEditor.cpp \
-            import.cpp
+            import.cpp\
+            hexEditor.cpp \
+            #optionsdialog.cpp \
+            #searchdialog.cpp \
+            qHexEdit/qhexedit.cpp \
+            qHexEdit/qhexedit_p.cpp \
+            qHexEdit/xbytearray.cpp \
+            qHexEdit/commands.cpp
 
 HEADERS +=  lvp.h \
             confEq.h \
@@ -33,13 +40,25 @@ HEADERS +=  lvp.h \
             ploter.h \
             reconstructionES.h \
             textEditor.h \
-            import.h
+            import.h \
+            hexEditor.h \
+            #optionsdialog.h \
+            #searchdialog.h \
+            qHexEdit/qhexedit.h \
+            qHexEdit/qhexedit.h \
+            qHexEdit/qhexedit.h \
+            qHexEdit/qhexedit.h \
+            qHexEdit/qhexedit_p.h \
+            qHexEdit/xbytearray.h \
+            qHexEdit/commands.h
 
 FORMS +=    lvpinterface.ui \
             dialogImport.ui \
             dialogConfEq.ui \
             dialogReconstruction.ui \
             dialogReconstructionES.ui
+            #optionsdialog.ui \
+            #searchdialog.ui
 
 TEMPLATE =  app
 

@@ -12,45 +12,45 @@ class QListWidgetItem;
 
 class TextEditor : public QTextEdit
 {
-	Q_OBJECT
-// Construtor/Destrutor
-public:
-	TextEditor( QMainWindow * _parent );
-	virtual ~TextEditor();
+		Q_OBJECT
+		// Construtor/Destrutor
+	public:
+		TextEditor( QMainWindow * _parent );
+		virtual ~TextEditor();
 
-// Atributos
-public:
-    QListWidgetItem *item;
+		// Atributos
+	public:
+		QListWidgetItem *item;
 
-private:
-	QMainWindow *parent;
-	QString fullFileName;
-	QString fileName;
-	QString curFileNoExt;
-	QString fileExt;
+	private:
+		QMainWindow *parent;
+		QString fullFileName;
+		QString fileName;
+		QString curFileNoExt;
+		QString fileExt;
 
-// Métodos
-public:
-	bool loadFile( const QString & _fileName );
-	bool save();
-	bool saveAs();
+		// Métodos
+	public:
+		bool loadFile( const QString & _fileName );
+		bool save();
+		bool saveAs();
 
-	inline QString getFullFileName() { return fullFileName; }
-	inline QString getFileName() { return fileName; }
-	inline QString getFileNameNoExt() { return curFileNoExt;	}
-	inline QString getFileExt() { return fileExt; }
+		inline QString getFullFileName() { return fullFileName; }
+		inline QString getFileName() { return fileName; }
+		inline QString getFileNameNoExt() { return curFileNoExt;	}
+		inline QString getFileExt() { return fileExt; }
 
-private slots:
-    void documentWasModified();
+	private slots:
+		void documentWasModified();
 
-protected:
-	void closeEvent(QCloseEvent *event);
+	protected:
+		void closeEvent(QCloseEvent *event);
 
-private:
-	bool maybeSave();
-	void getFileNames( const QString & _fileName );
-    bool saveFile(const QString & _fileName);
-    void updateTitle();
+	private:
+		bool maybeSave();
+		void getFileNames( const QString & _fileName );
+		bool saveFile(const QString & _fileName);
+		void updateTitle();
 };
 
 #endif

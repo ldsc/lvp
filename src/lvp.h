@@ -23,14 +23,22 @@
 #include "glwidget.h"
 #include "ploter.h"
 #include "textEditor.h"
+#include "hexEditor.h"
 #include <Correlacao/CCorrelacao3D.h>
 #include <Distribuicao/CBaseDistribuicao.h>
 
+QT_BEGIN_NAMESPACE
 class QMdiSubWindow;
 class QSignalMapper;
 class QMdiArea;
 class QListWidget;
 class QListWidgetItem;
+/*
+class QAction;
+class QMenu;
+class QUndoStack;
+*/
+QT_END_NAMESPACE
 
 class Lvp : public QMainWindow, public Ui::MainWindow
 {
@@ -182,7 +190,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void opening3D();
 		void open3DVisualization();
 		void openMPV( );
-		void openTextEditor();
+		void openEditor();
 		void porosity();
 		void print();
 		void reconstructionES();
@@ -193,6 +201,9 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void saveAs();
 		void setActiveSubWindow(QWidget *window);
 		void setActiveSubWindow(QListWidgetItem *item);
+		void setAddress(int address);
+		void setOverwriteMode(bool mode);
+		void setSize(int size);
 		void skeleton(int type);
 		void skeletonV1();
 		void skeletonV2();
@@ -213,6 +224,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		DgmImageViewer * createDgmImageViewer();
 		Ploter * createPloter();
 		TextEditor * createTextEditor();
+		HexEditor * createHexEditor();
 
 	protected:
 		void closeEvent(QCloseEvent *event);
@@ -225,6 +237,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 	private:
 		void createActions();
 		void readSettings();
+		void createStatusBar();
 		void writeSettings();
 		void createLanguageMenu();
 		BaseImageViewer *activeImageViewer();
@@ -238,6 +251,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		GLWidget *activeGLWidget();
 		Ploter *activePloter();
 		TextEditor *activeTextEditor();
+		HexEditor *activeHexEditor();
 		QList<BasePnmImageViewer *> selected2DImagesList();
 		QList<BaseDnmImageViewer *> selected3DImagesList();
 		QList<PbmImageViewer *> selectedPbmImagesList();
@@ -251,9 +265,16 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		QMdiSubWindow *findGLWidget(const QString &_fileName);
 		QMdiSubWindow *findPloter(const QString &_fileName);
 		QMdiSubWindow *findTextEditor(const QString & _fileName);
+		QMdiSubWindow *findHexEditor(const QString & _fileName);
 		//verifica se existe arquivo com o nome informado. Caso exista retorna o nome de um arquivo inexistente.
 		string validateFileName( const string _strname );
 		QString validateFileName( const QString _name);
+
+		//From HexEditor
+		QLabel *lbAddress, *lbAddressName;
+		QLabel *lbOverwriteMode, *lbOverwriteModeName;
+		QLabel *lbSize, *lbSizeName;
+
 };
 
 #endif
