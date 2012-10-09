@@ -176,7 +176,6 @@ Lvp::Lvp() {
 	createActions();
 	updateMenus();
 	createLanguageMenu();
-	createStatusBar();
 
 	retranslateUi(this);
 	setUnifiedTitleAndToolBarOnMac(true);
@@ -192,6 +191,7 @@ void Lvp::createActions() {
 	connect( listWidgetEditor,							SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
 	connect( mdiArea,												SIGNAL( subWindowActivated(QMdiSubWindow *) ),	this, SLOT( updateMenus()) );
 	connect( mdiArea,												SIGNAL( subWindowActivated(QMdiSubWindow *) ),	this, SLOT( updateDockLista()) );
+	connect( mdiArea,												SIGNAL( subWindowActivated(QMdiSubWindow *) ),	this, SLOT( updateStatusBar()) );
 	connect( spinBox_x,											SIGNAL( valueChanged(int) ),										this, SLOT( exChangePlanX(int)) );
 	connect( spinBox_y,											SIGNAL( valueChanged(int) ),										this, SLOT( exChangePlanY(int)) );
 	connect( spinBox_z,											SIGNAL( valueChanged(int) ),										this, SLOT( exChangePlanZ(int)) );
@@ -307,8 +307,10 @@ void Lvp::updateMenus() {
 		ext = activePloter()->getFileExt();
 	} else if ( activeTextEditor() != 0 ) {
 		hasTextEditor = true;
+		actionSave->setEnabled( hasTextEditor && activeTextEditor()->document()->isModified() );
 	} else if ( activeHexEditor() != 0 ) {
 		hasHexEditor = true;
+		actionSave->setEnabled( hasTextEditor && activeHexEditor()->IsModified() );
 	}
 	actionDTSspatial->setVisible(hasImageViewer);
 	actionDTSspatial3D->setVisible(hasImageViewer3D);
@@ -395,11 +397,7 @@ void Lvp::updateMenus() {
 	spinBoxPlano3D->setEnabled(hasImageViewer3D);
 	horizontalSliderPlano3D->setEnabled(hasImageViewer3D);
 	actionSave->setEnabled(false);
-	if (hasTextEditor) {
-		actionSave->setEnabled( hasTextEditor && activeTextEditor()->document()->isModified() );
-	} else if(hasHexEditor) {
-		actionSave->setEnabled( hasTextEditor && activeHexEditor()->IsModified() );
-	} else if ( hasGLWidget ) {
+	if ( hasGLWidget ) {
 		GLWidget * childImage = activeGLWidget();
 		if(childImage->getViewType()==GLWidget::MPV){ //se o tipo de visualização for multiplanar
 			spinBox_x->setEnabled(true);
@@ -957,10 +955,6 @@ HexEditor *Lvp::createHexEditor() {
 	childEditor = new HexEditor( this );
 	if ( childEditor ) {
 		mdiArea->addSubWindow( childEditor );
-		setOverwriteMode(childEditor->overwriteMode());
-		connect(childEditor, SIGNAL(overwriteModeChanged(bool)), this, SLOT(setOverwriteMode(bool)));
-		connect(childEditor, SIGNAL(currentAddressChanged(int)), this, SLOT(setAddress(int)));
-		connect(childEditor, SIGNAL(currentSizeChanged(int)), this, SLOT(setSize(int)));
 		connect(childEditor, SIGNAL(dataChanged()), this, SLOT(updateActionSave()));
 		return childEditor;
 	}
@@ -3192,24 +3186,6 @@ void Lvp::setActiveSubWindow(QListWidgetItem *item) {
 	}
 }
 
-void Lvp::setAddress(int address)
-{
-	lbAddress->setText(QString("%1").arg(address, 1, 16));
-}
-
-void Lvp::setOverwriteMode(bool mode)
-{
-	if (mode)
-		lbOverwriteMode->setText(tr("Overwrite"));
-	else
-		lbOverwriteMode->setText(tr("Insert"));
-}
-
-void Lvp::setSize(int size)
-{
-	lbSize->setText(QString("%1").arg(size));
-}
-
 QMdiSubWindow *Lvp::findImageViewer(const QString &_fileName) {
 	QString canonicalFilePath = QFileInfo(_fileName).canonicalFilePath();
 	BaseImageViewer *mdiChild;
@@ -3279,11 +3255,9 @@ QMdiSubWindow *Lvp::findHexEditor(const QString & _fileName) {
 		mdiChild = NULL;
 		if (qobject_cast<HexEditor *>(window->widget()) != 0)
 			mdiChild = qobject_cast<HexEditor *>(window->widget());
-		/*
 		if (mdiChild)
-			if (mdiChild->getFullFileName() == canonicalFilePath)
+			if (mdiChild->CurFile() == canonicalFilePath)
 				return window;
-		*/
 	}
 	return 0;
 }
@@ -3358,41 +3332,26 @@ void Lvp::readSettings() { //Carrega a última posição e tamanho usadas para a
 	}
 }
 
-void Lvp::createStatusBar() {
-	// Address Label
-	lbAddressName = new QLabel();
-	lbAddressName->setText(tr("Address:"));
-	statusBar()->addPermanentWidget(lbAddressName);
-	lbAddress = new QLabel();
-	lbAddress->setFrameShape(QFrame::Panel);
-	lbAddress->setFrameShadow(QFrame::Sunken);
-	lbAddress->setMinimumWidth(70);
-	statusBar()->addPermanentWidget(lbAddress);
-
-	// Size Label
-	lbSizeName = new QLabel();
-	lbSizeName->setText(tr("Size:"));
-	statusBar()->addPermanentWidget(lbSizeName);
-	lbSize = new QLabel();
-	lbSize->setFrameShape(QFrame::Panel);
-	lbSize->setFrameShadow(QFrame::Sunken);
-	lbSize->setMinimumWidth(70);
-	statusBar()->addPermanentWidget(lbSize);
-
-	// Overwrite Mode Label
-	lbOverwriteModeName = new QLabel();
-	lbOverwriteModeName->setText(tr("Mode:"));
-	statusBar()->addPermanentWidget(lbOverwriteModeName);
-	lbOverwriteMode = new QLabel();
-	lbOverwriteMode->setFrameShape(QFrame::Panel);
-	lbOverwriteMode->setFrameShadow(QFrame::Sunken);
-	lbOverwriteMode->setMinimumWidth(70);
-	statusBar()->addPermanentWidget(lbOverwriteMode);
-
-	statusBar()->showMessage(tr("Ready"));
-}
-
 void Lvp::about() {
 	QMessageBox::about(this, tr("About LVP"), tr("The <b>LVP</b> is a Petrophysical Virtual Laboratory."));
 }
 
+void Lvp::updateStatusBar() {
+	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
+		if (qobject_cast<HexEditor *>(window->widget()) != 0) {
+			HexEditor *mdiChild = qobject_cast<HexEditor *>(window->widget());
+			mdiChild->destroyStatusBar();
+		} else if (qobject_cast<BasePnmImageViewer *>(window->widget()) != 0) {
+			BasePnmImageViewer *mdiChild = qobject_cast<BasePnmImageViewer *>(window->widget());
+			mdiChild->destroyStatusBar();
+		} else if (qobject_cast<BaseDnmImageViewer *>(window->widget()) != 0) {
+			BaseDnmImageViewer *mdiChild = qobject_cast<BaseDnmImageViewer *>(window->widget());
+			mdiChild->destroyStatusBar();
+		}
+	}
+	if ( activeHexEditor() != 0 ) {
+		activeHexEditor()->createStatusBar();
+	} else if ( activeImageViewer() != 0 ) {
+		activeImageViewer()->createStatusBar();
+	}
+}

@@ -24,7 +24,13 @@ class BaseImageViewer : public QScrollArea
 			//std::cerr << "virtual ~ BaseImageViewer( ) "<< std::endl;
 			//if (pm) delete pm;
 			//if (pm3D) delete pm3D;
+			if (lbX) delete lbX;
+			if (lbY) delete lbY;
 			if (image) delete image;
+			if (lbRGB) delete lbRGB;
+			if (lbXName) delete lbXName;
+			if (lbYName) delete lbYName;
+			if (lbRGBName) delete lbRGBName;
 			if (imageLabel) delete imageLabel;
 		}
 
@@ -53,6 +59,11 @@ class BaseImageViewer : public QScrollArea
 		QPrinter printer;
 #endif
 
+	private:
+		QLabel *lbX, *lbXName;
+		QLabel *lbY, *lbYName;
+		QLabel *lbRGB, *lbRGBName;
+
 		// Métodos
 	public:
 		virtual bool loadFile(const QString &fileName) = 0;
@@ -68,6 +79,8 @@ class BaseImageViewer : public QScrollArea
 		void zoomIn();
 		void zoomOut();
 		void normalSize();
+		void createStatusBar();
+		void destroyStatusBar();
 
 	protected:
 		void adjustScrollBar(QScrollBar *scrollBar, double factor);

@@ -45,9 +45,6 @@ HEADERS +=  lvp.h \
             #optionsdialog.h \
             #searchdialog.h \
             qHexEdit/qhexedit.h \
-            qHexEdit/qhexedit.h \
-            qHexEdit/qhexedit.h \
-            qHexEdit/qhexedit.h \
             qHexEdit/qhexedit_p.h \
             qHexEdit/xbytearray.h \
             qHexEdit/commands.h

@@ -200,9 +200,6 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void saveAs();
 		void setActiveSubWindow(QWidget *window);
 		void setActiveSubWindow(QListWidgetItem *item);
-		void setAddress(int address);
-		void setOverwriteMode(bool mode);
-		void setSize(int size);
 		void skeleton(int type);
 		void skeletonV1();
 		void skeletonV2();
@@ -213,6 +210,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void updateDockLista();
 		void updateMenus();
 		void updateWindowMenu();
+		void updateStatusBar();
 		void zoomIn();
 		void zoomOut();
 		GLWidget * createGLWidget(DbmImageViewer *_mdiChild);
@@ -236,7 +234,6 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 	private:
 		void createActions();
 		void readSettings();
-		void createStatusBar();
 		void writeSettings();
 		void createLanguageMenu();
 		BaseImageViewer *activeImageViewer();
@@ -268,9 +265,9 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		QString validateFileName( const QString _name);
 
 		//From HexEditor
-		QLabel *lbAddress, *lbAddressName;
-		QLabel *lbOverwriteMode, *lbOverwriteModeName;
-		QLabel *lbSize, *lbSizeName;
+//		QLabel *lbAddress, *lbAddressName;
+//		QLabel *lbOverwriteMode, *lbOverwriteModeName;
+//		QLabel *lbSize, *lbSizeName;
 };
 
 #endif

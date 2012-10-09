@@ -9,10 +9,12 @@ HexEditor::HexEditor(QMainWindow *_parent) : QHexEdit(_parent) {
 	//init();
 	setAttribute(Qt::WA_DeleteOnClose);
 	parent = _parent;
+
 	setCurrentFile("");
 	isUntitled = true;
 	isModified = false;
 	connect(this, SIGNAL(dataChanged()), this, SLOT(documentWasModified()));
+	connect(this, SIGNAL(overwriteModeChanged(bool)), this, SLOT(setOverwriteMode(bool)));
 }
 
 /*****************************************************************************/
@@ -129,6 +131,69 @@ void HexEditor::setCurrentFile(const QString &fileName) {
 
 QString HexEditor::strippedName(const QString &fullFileName) {
 	return QFileInfo(fullFileName).fileName();
+}
+
+void HexEditor::createStatusBar() {
+	lbAddressName = new QLabel();
+	lbAddressName->setText(tr("Address:"));
+
+	lbAddress = new QLabel();
+	lbAddress->setFrameShape(QFrame::Panel);
+	lbAddress->setFrameShadow(QFrame::Sunken);
+	lbAddress->setMinimumWidth(70);
+
+	lbSizeName = new QLabel();
+	lbSizeName->setText(tr("Size:"));
+
+	lbSize = new QLabel();
+	lbSize->setFrameShape(QFrame::Panel);
+	lbSize->setFrameShadow(QFrame::Sunken);
+	lbSize->setMinimumWidth(70);
+
+	lbOverwriteModeName = new QLabel();
+	lbOverwriteModeName->setText(tr("Mode:"));
+
+	lbOverwriteMode = new QLabel();
+	lbOverwriteMode->setFrameShape(QFrame::Panel);
+	lbOverwriteMode->setFrameShadow(QFrame::Sunken);
+	lbOverwriteMode->setMinimumWidth(70);
+
+	parent->statusBar()->addPermanentWidget(lbAddressName);
+	parent->statusBar()->addPermanentWidget(lbAddress);
+	parent->statusBar()->addPermanentWidget(lbSizeName);
+	parent->statusBar()->addPermanentWidget(lbSize);
+	parent->statusBar()->addPermanentWidget(lbOverwriteModeName);
+	parent->statusBar()->addPermanentWidget(lbOverwriteMode);
+
+	connect(this, SIGNAL(currentAddressChanged(int)), this, SLOT(setAddress(int)));
+	connect(this, SIGNAL(currentSizeChanged(int)), this, SLOT(setSize(int)));
+	setOverwriteMode(overwriteMode());
+}
+
+void HexEditor::destroyStatusBar() {
+	parent->statusBar()->removeWidget(lbAddressName);
+	parent->statusBar()->removeWidget(lbAddress);
+	parent->statusBar()->removeWidget(lbSizeName);
+	parent->statusBar()->removeWidget(lbSize);
+	parent->statusBar()->removeWidget(lbOverwriteModeName);
+	parent->statusBar()->removeWidget(lbOverwriteMode);
+	disconnect(this, SIGNAL(currentAddressChanged(int)), this, SLOT(setAddress(int)));
+	disconnect(this, SIGNAL(currentSizeChanged(int)), this, SLOT(setSize(int)));
+}
+
+void HexEditor::setAddress(int address) {
+	lbAddress->setText(QString("%1").arg(address, 1, 16));
+}
+
+void HexEditor::setOverwriteMode(bool mode) {
+	if (mode)
+		lbOverwriteMode->setText(tr("Overwrite"));
+	else
+		lbOverwriteMode->setText(tr("Insert"));
+}
+
+void HexEditor::setSize(int size) {
+	lbSize->setText(QString("%1").arg(size));
 }
 
 /*
@@ -256,44 +321,6 @@ void HexEditor::createMenus()
 	helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addAction(aboutAct);
 	helpMenu->addAction(aboutQtAct);
-}
-
-void HexEditor::createStatusBar()
-{
-	// Address Label
-	lbAddressName = new QLabel();
-	lbAddressName->setText(tr("Address:"));
-	statusBar()->addPermanentWidget(lbAddressName);
-	lbAddress = new QLabel();
-	lbAddress->setFrameShape(QFrame::Panel);
-	lbAddress->setFrameShadow(QFrame::Sunken);
-	lbAddress->setMinimumWidth(70);
-	statusBar()->addPermanentWidget(lbAddress);
-	connect(hexEdit, SIGNAL(currentAddressChanged(int)), this, SLOT(setAddress(int)));
-
-	// Size Label
-	lbSizeName = new QLabel();
-	lbSizeName->setText(tr("Size:"));
-	statusBar()->addPermanentWidget(lbSizeName);
-	lbSize = new QLabel();
-	lbSize->setFrameShape(QFrame::Panel);
-	lbSize->setFrameShadow(QFrame::Sunken);
-	lbSize->setMinimumWidth(70);
-	statusBar()->addPermanentWidget(lbSize);
-	connect(hexEdit, SIGNAL(currentSizeChanged(int)), this, SLOT(setSize(int)));
-
-	// Overwrite Mode Label
-	lbOverwriteModeName = new QLabel();
-	lbOverwriteModeName->setText(tr("Mode:"));
-	statusBar()->addPermanentWidget(lbOverwriteModeName);
-	lbOverwriteMode = new QLabel();
-	lbOverwriteMode->setFrameShape(QFrame::Panel);
-	lbOverwriteMode->setFrameShadow(QFrame::Sunken);
-	lbOverwriteMode->setMinimumWidth(70);
-	statusBar()->addPermanentWidget(lbOverwriteMode);
-	setOverwriteMode(hexEdit->overwriteMode());
-
-	statusBar()->showMessage(tr("Ready"));
 }
 
 void HexEditor::createToolBars()
