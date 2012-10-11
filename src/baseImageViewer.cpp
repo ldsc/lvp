@@ -16,6 +16,68 @@ BaseImageViewer::BaseImageViewer( QMainWindow * _parent ): /*pm(NULL), pm3D(NULL
 	createStatusBar();
 }
 
+bool BaseImageViewer::loadImage(TCMatriz2D<bool> *&_pm) {
+	if ( _pm ) {
+		int nx = _pm->NX();
+		int ny = _pm->NY();
+		image = new QImage(nx, ny, QImage::Format_Mono); //QImage::Format_MonoLSB
+		if (image->isNull()) {
+			QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot create image"));
+			return false;
+		}
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		for (int i=0; i<nx; i++){
+			for (int j=0; j<ny; j++){
+				image->setPixel(i, j, _pm->data2D[i][j]);
+			}
+		}
+		image->invertPixels();
+		imageLabel->setPixmap(QPixmap::fromImage(*image));
+		QApplication::restoreOverrideCursor();
+		static int seqNumberLoadImage = 1;
+		QString fname = getFileName();
+		if (fname.isEmpty()){
+			fname = tr("untitled-%1.pbm").arg(QString::number(seqNumberLoadImage++));
+			getFileNames(fname);
+		}
+		setWindowTitle(fname);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool BaseImageViewer::loadImage(TCMatriz2D<int> *&_pm) {
+	if ( _pm ) {
+		int nx = _pm->NX();
+		int ny = _pm->NY();
+		image = new QImage(nx, ny, QImage::Format_Indexed8); //QImage::Format_MonoLSB
+		if (image->isNull()) {
+			QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot create image"));
+			return false;
+		}
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		for (int i=0; i<nx; i++){
+			for (int j=0; j<ny; j++){
+				image->setPixel(i, j, _pm->data2D[i][j]);
+			}
+		}
+		image->invertPixels();
+		imageLabel->setPixmap(QPixmap::fromImage(*image));
+		QApplication::restoreOverrideCursor();
+		static int seqNumberLoadImage = 1;
+		QString fname = getFileName();
+		if (fname.isEmpty()){
+			fname = tr("untitled-%1.pbm").arg(QString::number(seqNumberLoadImage++));
+			getFileNames(fname);
+		}
+		setWindowTitle(fname);
+		return true;
+	} else {
+		return false;
+	}
+}
+
 void BaseImageViewer::zoomIn()
 {
 	scaleImage(1.25);

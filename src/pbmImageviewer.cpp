@@ -5,6 +5,20 @@ PbmImageViewer::PbmImageViewer(QMainWindow * _parent) : BasePnmImageViewer( _par
 	//setBackgroundRole(QPalette::Shadow);
 }
 
+bool PbmImageViewer::loadFile(const QString &fileName) {
+	if (!fileName.isEmpty()) {
+		pm = new TCMatriz2D<bool>(fileName.toStdString());
+		if( pm ){
+			getFileNames(fileName);
+			if ( loadImage(pm)){
+				return true;
+			}
+		}
+	}
+	QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot load %1.").arg(fileName));
+	return false;
+}
+
 bool PbmImageViewer::save() {
 	if (isNew) {
 		return saveAs();

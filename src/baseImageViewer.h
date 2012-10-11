@@ -67,6 +67,8 @@ class BaseImageViewer : public QScrollArea
 		// Métodos
 	public:
 		virtual bool loadFile(const QString &fileName) = 0;
+		bool loadImage(TCMatriz2D<bool> *&_pm);
+		bool loadImage(TCMatriz2D<int>* &_pm);
 		virtual bool save() = 0;
 		virtual bool saveAs() = 0;
 		inline QString getFullFileName() { return fullFileName; }

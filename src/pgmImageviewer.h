@@ -20,6 +20,7 @@ public:
 
 	//Métodos
 public:
+	virtual bool loadFile(const QString &fileName);
 	virtual bool save();
 	virtual bool saveAs();
 
