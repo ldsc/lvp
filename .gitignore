@@ -35,7 +35,7 @@ libldsc
 lvp
 Makefile
 cmake_install.cmake
-docs
+doc
 autom4te.cache
 qtc-gdbmacros
 pullToGithub
