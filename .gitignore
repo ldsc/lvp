@@ -28,6 +28,7 @@ cvs/
 *.rpc
 *.tif
 *.TIF
+*.tag
 bin/*.txt
 bin/*.TXT
 CMakeFiles

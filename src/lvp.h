@@ -39,6 +39,39 @@ class QUndoStack;
 */
 QT_END_NAMESPACE
 
+/**
+\mainpage
+O software LVP possibilita, através da análise de imagens de rochas
+reservatório de petróleo, a caracterização e determinação de propriedades
+petrofísicas.
+
+As funcionalidades disponibilizadas no LVP estão implementadas na
+biblioteca computacional para análise de imagens de meios porosos
+lib_ldsc, desenvolvida com base em trabalhos científcos de diversos
+autores.
+
+Escrito em C++, utiliza a framework Qt (Qt4) para facilitar sua usabilidade
+através de uma interface gráfica avançada, moderna e amigável.
+
+O software LVP é distribuído sob a licença GPL
+(General Public License - http://www.gnu.org/licenses/gpl.html).
+É software livre, podendo ser copiado, modificado e distribuído por
+toda a comunidade profissional e acadêmica.
+
+Está disponível nos idiomas Inglês e Português do Brasil, podendo ser
+facilmente traduzido para outros idiomas.
+
+---
+
+The LVP software enables, through image analysis of petroleum reservoir
+rocks, the characterization and determination of petrophysical properties.
+
+---
+
+\version 2.0.0
+\image html splashScream.png
+*/
+/*! Lvp é a classe principal do software LVP. */
 class Lvp : public QMainWindow, public Ui::MainWindow
 {
 		Q_OBJECT

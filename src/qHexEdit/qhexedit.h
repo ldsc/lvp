@@ -4,7 +4,7 @@
 #include <QtGui>
 #include "qhexedit_p.h"
 
-/** \mainpage
+/* \mainpage
 QHexEdit is a binary editor widget for Qt.
 
 \version Version 0.6.3
