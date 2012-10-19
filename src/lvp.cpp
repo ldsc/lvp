@@ -1942,6 +1942,8 @@ void Lvp::exReconstructionES() {
 
 void Lvp::intrinsicPermeability() {
 	QMessageBox::information(this, tr("LVP"), tr("Funcionalidade não implementada!"));
+	//Antes de mudar a classe CPermeabilidadeIntrinseca para template precisa
+	//implmentar template em Grafo...
 	/*
 	DbmImageViewer * child3D = NULL;
 	if ( (child3D = activeDbmImageViewer()) ) {
@@ -2062,7 +2064,28 @@ void Lvp::rotate() {
 		return;
 	}
 	if ( ! filepath.isNull() ) {
-		if ( active2DImageViewer() != 0 ){
+		if ( activePbmImageViewer() != 0 ){
+			TCMatriz2D<bool> * pm = NULL;
+			pm = new TCMatriz2D<bool>(filepath.toStdString());
+			if ( pm ) {
+				QApplication::setOverrideCursor(Qt::WaitCursor);
+				if ( pm->Rotacionar90 ( ) ) {
+					static int seqNumberRotate = 1;
+					filepath = tr(".rotated%1.%2").arg(QString::number(seqNumberRotate++)).arg(child->getFileExt());
+					pm->Write(filepath.toStdString());
+					filepath = child->getFilePath() + filepath;
+					open( filepath.toStdString() );
+					QApplication::restoreOverrideCursor();
+				} else {
+					QApplication::restoreOverrideCursor();
+					QMessageBox::information(this, tr("LVP"), tr("Error trying to rotate the 2D image!"));
+				}
+				delete pm;
+			} else {
+				QMessageBox::information(this, tr("LVP"), tr("Error trying to create 2D image!"));
+				return;
+			}
+		} else if ( activePgmImageViewer() != 0 ){
 			TCMatriz2D<int> * pm = NULL;
 			pm = new TCMatriz2D<int>(filepath.toStdString());
 			if ( pm ) {
@@ -2083,9 +2106,9 @@ void Lvp::rotate() {
 				QMessageBox::information(this, tr("LVP"), tr("Error trying to create 2D image!"));
 				return;
 			}
-		} else if ( active3DImageViewer() != 0 ){
-			TCMatriz3D<int> * pm = NULL;
-			pm = new TCMatriz3D<int>(filepath.toStdString());
+		} else if ( activeDbmImageViewer() != 0 ){
+			TCMatriz3D<bool> * pm = NULL;
+			pm = new TCMatriz3D<bool>(filepath.toStdString());
 			if ( pm ) {
 				QMessageBox msgBox(this);
 				msgBox.setWindowTitle(tr("LVP - Rotate"));
@@ -2128,6 +2151,49 @@ void Lvp::rotate() {
 			}
 		} else {
 			QMessageBox::information(this, tr("LVP"), tr("Error: Image viewer not active!"));
+			return;
+		}
+	} else if ( activeDgmImageViewer() != 0 ){
+		TCMatriz3D<int> * pm = NULL;
+		pm = new TCMatriz3D<int>(filepath.toStdString());
+		if ( pm ) {
+			QMessageBox msgBox(this);
+			msgBox.setWindowTitle(tr("LVP - Rotate"));
+			msgBox.setText(tr("Rotate on:"));
+			msgBox.addButton(QMessageBox::Cancel);
+			QPushButton *xButton = msgBox.addButton(tr("&X axis"), QMessageBox::ActionRole);
+			QPushButton *yButton = msgBox.addButton(tr("&Y axis"), QMessageBox::ActionRole);
+			QPushButton *zButton = msgBox.addButton(tr("&Z axis"), QMessageBox::ActionRole);
+			msgBox.setDefaultButton(xButton);
+			msgBox.exec();
+
+			E_eixo axis;
+			if (msgBox.clickedButton() == xButton) {
+				axis = EIXO_X;
+			} else if (msgBox.clickedButton() == yButton) {
+				axis = EIXO_Y;
+			} else if (msgBox.clickedButton() == zButton) {
+				axis = EIXO_Z;
+			} else {
+				delete pm;
+				return;
+			}
+
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+			if ( pm->Rotacionar90 ( axis ) ) {
+				static int seqNumberRotate = 1;
+				filepath = tr(".rotated%1.%2").arg(QString::number(seqNumberRotate++)).arg(child->getFileExt());
+				pm->Write(filepath.toStdString());
+				filepath = child->getFilePath() + filepath;
+				open( filepath.toStdString() );
+				QApplication::restoreOverrideCursor();
+			} else {
+				QApplication::restoreOverrideCursor();
+				QMessageBox::information(this, tr("LVP"), tr("Error trying to rotate the 3D image!"));
+			}
+			delete pm;
+		} else {
+			QMessageBox::information(this, tr("LVP"), tr("Error trying to create 3D image!"));
 			return;
 		}
 	} else {
@@ -2559,9 +2625,7 @@ void Lvp::dtsEuclidian () {
 }
 
 void Lvp::distribution (CBaseDistribuicao::Tipos tipo, Metrics2D m2d) {
-	tipo=CBaseDistribuicao::dts; m2d=m2DSpatial; //evitar warming. apagar depois...
-	QMessageBox::information(this, tr("LVP"), tr("Funcionalidade não implementada!"));
-	/*QList<PbmImageViewer *> imagesList = selectedPbmImagesList(); //lista de ponteiros para imagens selecionadas.
+	QList<PbmImageViewer *> imagesList = selectedPbmImagesList(); //lista de ponteiros para imagens selecionadas.
 	if ( imagesList.isEmpty() )
 		return;
 	string stdstr;
@@ -2657,7 +2721,6 @@ void Lvp::distribution (CBaseDistribuicao::Tipos tipo, Metrics2D m2d) {
 	}
 	progress.setValue(numFiles);
 	QApplication::restoreOverrideCursor();
-	*/
 }
 
 void Lvp::dtpSpatial3D () {
@@ -2701,9 +2764,8 @@ void Lvp::dtsEuclidian3D () {
 }
 
 void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
-	tipo=CBaseDistribuicao::dts; m3d=m3DSpatial; //evitar warming. apagar depois...
-	QMessageBox::information(this, tr("LVP"), tr("Funcionalidade não implementada!"));
-	/*
+	//tipo=CBaseDistribuicao::dts; m3d=m3DSpatial; //evitar warming. apagar depois...
+	//QMessageBox::information(this, tr("LVP"), tr("Funcionalidade não implementada!"));
 	QList<DbmImageViewer *> imagesList = selectedDbmImagesList (); //lista de ponteiros para imagens selecionadas.
 	if ( imagesList.isEmpty() )
 		return;
@@ -2782,7 +2844,7 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 		if (progress.wasCanceled())
 			break;
 		if ( ! mdiChild->pm3D ) {
-			mdiChild->pm3D = new TCImagem3D<int>( mdiChild->getFullFileName().toStdString() );
+			mdiChild->pm3D = new TCImagem3D<bool>( mdiChild->getFullFileName().toStdString() );
 		}
 		if ( ! mdiChild->pm3D ) {
 			cerr << "Não foi possível alocar TCMatriz3D em Lvp::distribution3D()" << endl;
@@ -2821,7 +2883,6 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 	}
 	progress.setValue(numFiles);
 	QApplication::restoreOverrideCursor();
-	*/
 }
 
 void Lvp::porosity() {
