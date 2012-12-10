@@ -167,6 +167,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void changeViewMode();
 		void closing();
 		void closing3D();
+		void connectedObjects();
 		void confEq();
 		void connectivity3D();
 		void copy();

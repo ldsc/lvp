@@ -36,6 +36,7 @@
 #include <Permeabilidade/CPermeabilidadeIntrinseca.h>
 #include <Reconstrucao/CReconstrucaoBueno.h>
 #include <Reconstrucao/CReconstrucaoEsferas.h>
+#include <Rotulador/TCRotulador2D.h>
 
 
 using namespace std;
@@ -279,6 +280,7 @@ void Lvp::createActions() {
 	connect( actionIDF,                     SIGNAL( triggered() ),  this,			SLOT( idf()												) );
 	connect( actionIDF3D,                   SIGNAL( triggered() ),  this,			SLOT( idf()												) );
 	connect( actionImport,                  SIGNAL( triggered() ),  this,			SLOT( import()										) );
+	connect( actionConnectedObjects,        SIGNAL( triggered() ),  this,			SLOT( connectedObjects() 					) );
 }
 
 void Lvp::updateMenus() {
@@ -336,6 +338,7 @@ void Lvp::updateMenus() {
 	actionClosing->setVisible(hasPbmImageViewer);
 	actionClosing3D->setVisible(hasDbmImageViewer);
 	actionConnectivity->setEnabled(hasDbmImageViewer);
+	actionConnectedObjects->setEnabled(hasPbmImageViewer);
 	actionConfEq->setEnabled(hasImageViewer || hasImageViewer3D);
 	actionCopy->setEnabled(false);
 	actionCorFrequency->setVisible(hasImageViewer);
@@ -1684,6 +1687,64 @@ void Lvp::connectivity3D() {
 	}
 }
 
+void Lvp::connectedObjects(){
+	static int seqNumberConObj = 1;
+	if ( PbmImageViewer *mdiChild = activePbmImageViewer() ) {
+		QString qstr = mdiChild->getFullFileName();
+		string stdstr = qstr.toStdString();
+		QMessageBox msgBox(this);
+		msgBox.setWindowTitle(tr("LVP - Segmentation"));
+		msgBox.setText(tr("Pore is:"));
+		msgBox.addButton(QMessageBox::Cancel);
+		QPushButton *writeButton = msgBox.addButton(tr("&Write (0)"), QMessageBox::ActionRole);
+		QPushButton *blackButton = msgBox.addButton(tr("&Black (1)"), QMessageBox::ActionRole);
+		msgBox.setDefaultButton(blackButton);
+		msgBox.exec();
+		int indice, fundo;
+		if (msgBox.clickedButton() == blackButton) {
+			indice = 1; fundo = 0;
+		} else if (msgBox.clickedButton() == writeButton) {
+			indice = 0; fundo = 1;
+		} else {
+			QApplication::restoreOverrideCursor();
+			return;
+		}
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		if ( mdiChild->pm == NULL )
+			mdiChild->pm = new TCMatriz2D<bool>(stdstr);
+		TCRotulador2D<bool> *obj = new TCRotulador2D<bool>(mdiChild->pm, indice, fundo);
+		obj->Go(mdiChild->pm);
+		qstr = tr(".objCon%1.pgm").arg(QString::number(seqNumberConObj++));
+		stdstr = qstr.toStdString();
+		obj->SetFormato(P5_X_Y_GRAY_BINARY);
+		obj->NumCores(obj->NumeroObjetos());
+		obj->Path(mdiChild->getFilePath().toStdString());
+		obj->Write(stdstr);
+		open( (mdiChild->getFilePath() + qstr).toStdString() );
+		delete obj;
+	}/* else if ( DbmImageViewer *mdiChild = activeDbmImageViewer() ) {
+		QString qstr = mdiChild->getFullFileName();
+		string stdstr = qstr.toStdString();
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		if ( mdiChild->pm3D == NULL )
+			mdiChild->pm3D = new TCImagem3D<bool>(stdstr);
+		TCFEMMIDFd3453D<bool> *idf3D = NULL;
+		TCMatriz3D<bool> * obj3D = dynamic_cast<TCMatriz3D<bool> *>(mdiChild->pm3D);
+		idf3D = new TCFEMMIDFd3453D<bool>(obj3D);
+		idf3D->Go(obj3D);
+		qstr = tr(".idf%1.dgm").arg(QString::number(seqNumberIDF++));
+		stdstr = qstr.toStdString();
+		idf3D->SetFormato(D5_X_Y_Z_GRAY_BINARY);
+		idf3D->NumCores(idf3D->MaiorValor());
+		idf3D->Path(mdiChild->getFilePath().toStdString());
+		idf3D->Write(stdstr);
+		qstr = mdiChild->getFilePath() + qstr;
+		open(qstr.toStdString());
+		delete idf3D;
+	}*/
+	QApplication::restoreOverrideCursor();
+}
+
 void Lvp::addCurve() {
 	QStringList filespath;
 	Ploter * plot = NULL;
@@ -2967,7 +3028,6 @@ void Lvp::porosity() {
 		msgPorosity.exec();
 	}
 }
-
 
 // Retorna a lista de imagens selecionadas em Images List
 QList<BasePnmImageViewer *> Lvp::selected2DImagesList() {

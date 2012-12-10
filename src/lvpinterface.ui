@@ -240,10 +240,18 @@
     <addaction name="actionTruncadeGaussiana"/>
     <addaction name="actionSuperposedSpheres"/>
    </widget>
+   <widget class="QMenu" name="menuSegmentation">
+    <property name="title">
+     <string>&amp;Segmentation</string>
+    </property>
+    <addaction name="actionConnectedObjects"/>
+    <addaction name="actionPoresTroats"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menu_View"/>
    <addaction name="menuFilters"/>
+   <addaction name="menuSegmentation"/>
    <addaction name="menuCharacterization"/>
    <addaction name="menuReconstruction"/>
    <addaction name="menuWindow"/>
@@ -1499,6 +1507,22 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionConnectedObjects">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Connected Objects</string>
+   </property>
+  </action>
+  <action name="actionPoresTroats">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Pores and Troats</string>
    </property>
   </action>
   <zorder>dockWidgetVisualisation3D</zorder>
