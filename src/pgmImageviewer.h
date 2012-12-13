@@ -5,6 +5,7 @@
 #include "basePnmImageviewer.h"
 #endif
 
+/*! PgmImageViewer é a classe que representa imagens bidimensionais em tons de cinza.*/
 class PgmImageViewer : public BasePnmImageViewer
 {
 	Q_OBJECT

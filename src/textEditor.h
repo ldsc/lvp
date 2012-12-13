@@ -10,6 +10,7 @@
 class QMainWindow;
 class QListWidgetItem;
 
+/*! TextEditor é a classe que implementa o editor de arquivos texto. */
 class TextEditor : public QTextEdit
 {
 		Q_OBJECT

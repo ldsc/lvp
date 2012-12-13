@@ -5,6 +5,7 @@
 #include "basePnmImageviewer.h"
 #endif
 
+/*! PbmImageViewer é a classe que representa imagens bidimensionais binárias (preto e branco).*/
 class PbmImageViewer : public BasePnmImageViewer
 {
 	Q_OBJECT

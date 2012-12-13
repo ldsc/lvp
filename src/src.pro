@@ -18,7 +18,7 @@ SOURCES +=  lvp.cpp \
             textEditor.cpp \
             import.cpp\
             hexEditor.cpp \
-            #optionsdialog.cpp \
+            optionsdialog.cpp \
             #searchdialog.cpp \
             qHexEdit/qhexedit.cpp \
             qHexEdit/qhexedit_p.cpp \
@@ -42,7 +42,7 @@ HEADERS +=  lvp.h \
             textEditor.h \
             import.h \
             hexEditor.h \
-            #optionsdialog.h \
+            optionsdialog.h \
             #searchdialog.h \
             qHexEdit/qhexedit.h \
             qHexEdit/qhexedit_p.h \
@@ -53,8 +53,8 @@ FORMS +=    lvpinterface.ui \
             dialogImport.ui \
             dialogConfEq.ui \
             dialogReconstruction.ui \
-            dialogReconstructionES.ui
-            #optionsdialog.ui \
+            dialogReconstructionES.ui \
+            optionsdialog.ui
             #searchdialog.ui
 
 TEMPLATE =  app
@@ -85,3 +85,6 @@ LIBS +=  -L../../qwt/lib \
          -lldsc
 
 TARGET = lvp
+
+OTHER_FILES += \
+    ../Doxyfile

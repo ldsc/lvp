@@ -14,13 +14,13 @@ class QImage;
 class QSignalMapper;
 class QMainWindow;
 
+/*! BaseImageViewer é a classe base para representar imagens.*/
 class BaseImageViewer : public QScrollArea
 {
 		// Construtor / Destrutor
 	public:
 		BaseImageViewer( QMainWindow * _parent );
-		virtual ~ BaseImageViewer( )
-		{
+		virtual ~ BaseImageViewer( ) {
 			//std::cerr << "virtual ~ BaseImageViewer( ) "<< std::endl;
 			//if (pm) delete pm;
 			//if (pm3D) delete pm3D;

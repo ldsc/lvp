@@ -23,6 +23,7 @@
 #include "ploter.h"
 #include "textEditor.h"
 #include "hexEditor.h"
+#include "optionsdialog.h"
 #include <Correlacao/CCorrelacao3D.h>
 #include <Distribuicao/CBaseDistribuicao.h>
 
@@ -32,53 +33,47 @@ class QSignalMapper;
 class QMdiArea;
 class QListWidget;
 class QListWidgetItem;
-/*
-class QAction;
-class QMenu;
-class QUndoStack;
-*/
+class QMimeData;
+//class QAction;
+//class QMenu;
+//class QUndoStack;
 QT_END_NAMESPACE
 
 /**
 \mainpage
-O software LVP possibilita, através da análise de imagens de rochas
-reservatório de petróleo, a caracterização e determinação de propriedades
-petrofísicas.
+---
 
-As funcionalidades disponibilizadas no LVP estão implementadas na
-biblioteca computacional para análise de imagens de meios porosos
-lib_ldsc, desenvolvida com base em trabalhos científcos de diversos
-autores.
-
-Escrito em C++, utiliza a framework Qt (Qt4) para facilitar sua usabilidade
-através de uma interface gráfica avançada, moderna e amigável.
-
-O software LVP é distribuído sob a licença GPL
-(General Public License - http://www.gnu.org/licenses/gpl.html).
-É software livre, podendo ser copiado, modificado e distribuído por
-toda a comunidade profissional e acadêmica.
-
-Está disponível nos idiomas Inglês e Português do Brasil, podendo ser
-facilmente traduzido para outros idiomas.
+O software LVP possibilita, através da análise de imagens de rochas reservatório de petróleo, a caracterização e determinação de propriedades petrofísicas.
+As funcionalidades disponibilizadas no LVP estão implementadas na biblioteca computacional para análise de imagens de meios porosos lib_ldsc, desenvolvida com base em trabalhos científicos de diversos autores.
+Escrito em C++, utiliza a framework Qt (Qt4) para facilitar sua usabilidade através de uma interface gráfica avançada, moderna e amigável.
+O software LVP é distribuído sob a licença GPL (General Public License - http://www.gnu.org/licenses/gpl.html).
+É software livre, podendo ser copiado, modificado e distribuído por toda a comunidade profissional e acadêmica.
+Está disponível nos idiomas Inglês e Português do Brasil, podendo ser facilmente traduzido para outros idiomas.
 
 ---
 
-The LVP software enables, through image analysis of petroleum reservoir
-rocks, the characterization and determination of petrophysical properties.
+The LVP software enables, through image analysis of petroleum reservoir rocks, the characterization and determination of petrophysical properties.
+The features available on the LVP software are implemented on lib_ldsc, a computational library for image analysis of porous media, developed based on scientific works of several authors.
+Written in C++, using the Qt framework (Qt4) to facilitate its usability through a graphical, modern and friendly user interface.
+The LVP software is distributed under the GPL license (General Public License - http://www.gnu.org/licenses/gpl.html).
+It is free software and can be copied, modified and distributed by all professional and academic community.
+It is available in English and Portuguese and can be easily translated into other languages​​.
 
 ---
 
 \version 2.0.0
 \image html splashScream.png
 */
-/*! Lvp é a classe principal do software LVP. */
+
+/*! Lvp é a classe principal do Software LVP. */
 class Lvp : public QMainWindow, public Ui::MainWindow
 {
 		Q_OBJECT
 	public:
-		//Construtor
+		/// Construtor
 		Lvp();
-		//Destrutor
+
+		/// Destrutor
 		virtual ~Lvp() {
 			delete settings;
 			if (dialog)				delete dialog;
@@ -86,10 +81,9 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 			if (dialogES)			delete dialogES;
 			if (dialogImport)	delete dialogImport;
 		}
-
-		// Atributos
-	public:
-		// Tipos de operações da Morfologia Matemática
+	// Enums
+	private:
+		/// Tipos de operações da Morfologia Matemática
 		enum MorphType {
 			mtErosion,
 			mtDilation,
@@ -97,7 +91,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 			mtClosing
 		};
 
-		//Tipos de Metricas para imagens 2D
+		/// Tipos de Metricas para  imagens 2D
 		enum Metrics2D {
 			m2DSpatial,
 			m2Dd34,
@@ -105,7 +99,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 			m2DEuclidian
 		};
 
-		//Tipos de Metricas para imagens 3D
+		/// Tipos de Metricas para imagens 3D
 		enum Metrics3D {
 			m3DSpatial,
 			m3Dd34,
@@ -114,9 +108,10 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 			m3DEuclidian
 		};
 
-		// Último diretório acessado
+	// Atributos
+	public:
+		/// Último diretório acessado
 		QString lastOpenPath;
-		QPushButton *pushButtonAccumulated;
 
 	private:
 		QMdiArea *mdiArea;
@@ -127,6 +122,8 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		QPushButton *pushButtonAddCurve;
 		QPushButton *pushButtonAverage;
 		QPushButton *pushButtonSource;
+		QPushButton *pushButtonAccumulated;
+
 		//QVBoxLayout *verticalLayout;
 		QGridLayout *gridLayout;
 		QGridLayout *gridLayoutChart;
@@ -146,6 +143,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		Reconstruction   * dialogGT;
 		ReconstructionES * dialogES;
 		Import * dialogImport;
+		OptionsDialog * dialogHexEditor;
 
 		QTranslator appTranslator;
 		QString qmPath;
@@ -157,6 +155,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 
 		//Métodos
 	public slots:
+		/// Método para abertura de arquivos suportados pelo LVP
 		void open(std::string _file, bool novo = true);
 
 	private slots:
@@ -224,6 +223,8 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void open3DVisualization();
 		void openMPV( );
 		void openEditor();
+		void options(); // abre diálogo de opções para o editor hexadecimal
+		void optionsAccepted(); // grava e lê as opções do editor hexadecimal
 		void porosity();
 		void print();
 		void reconstructionES();
@@ -258,14 +259,24 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		HexEditor * createHexEditor();
 
 	protected:
+		/// Sobrecarrega método chamado quando o usuário fecha o software.
 		void closeEvent(QCloseEvent *event);
+
+		/// Sobrecarrega método que possibilita arrastar imagens para serem abertas no LVP.
+		void dragEnterEvent(QDragEnterEvent *event);
+
+		/// Sobrecarrega método que possibilita soltar imagens para serem abertas no LVP.
+		void dropEvent(QDropEvent *event);
+
+		//void dragMoveEvent(QDragMoveEvent *event);
+		//void dragLeaveEvent(QDragLeaveEvent *event);
+
+	private:
 		void correlation3D( CCorrelacao3D::Tipos tipo );
 		void mathematicalMorphology( MorphType mtype );
 		void mathematicalMorphology3D( MorphType mtype );
 		void distribution( CBaseDistribuicao::Tipos tipo, Metrics2D m2d );
 		void distribution3D( CBaseDistribuicao::Tipos tipo, Metrics3D m3d );
-
-	private:
 		void createActions();
 		void readSettings();
 		void writeSettings();

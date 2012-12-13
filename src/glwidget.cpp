@@ -38,7 +38,7 @@ GLWidget::GLWidget(TCMatriz3D<bool> * _pm3D, QString _fileName, int _viewtype, Q
 
 GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QWidget *parent)
 	: QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer), parent) { //QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
-	viewtype=_viewtype;
+	viewtype = _viewtype;
 	distpoints = 0.001;
 	pointsize = 1.0;
 	object = 0;
@@ -188,10 +188,10 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void GLWidget::wheelEvent(QWheelEvent *event) {
-	if (event->delta() > 0 && pm3D->NX()*pointsize*2 < 1400) {
+	if (event->delta() > 0 && nx*pointsize*2 < 1400) {
 		pointsize  *= 1.1f;
 		distpoints *= 1.1f;
-	} else if ( pm3D->NX()*pointsize > 50) {
+	} else if ( nx*pointsize > 50) {
 		pointsize  /= 1.1f;
 		distpoints /= 1.1f;
 	}

@@ -5,6 +5,7 @@
 #include "baseDnmImageviewer.h"
 #endif
 
+/*! DbmImageViewer é a classe que representa imagens tridimensionais binárias (preto e branco).*/
 class DbmImageViewer : public BaseDnmImageViewer
 {
 		Q_OBJECT

@@ -59,6 +59,8 @@
     </property>
     <addaction name="actionCopy"/>
     <addaction name="actionRotate"/>
+    <addaction name="separator"/>
+    <addaction name="actionOptions"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
@@ -1523,6 +1525,14 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>&amp;Pores and Troats</string>
+   </property>
+  </action>
+  <action name="actionOptions">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Options</string>
    </property>
   </action>
   <zorder>dockWidgetVisualisation3D</zorder>

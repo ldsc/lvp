@@ -7,6 +7,7 @@
 
 template <typename T> class TCMatriz3D;
 
+/*! DgmImageViewer é a classe que representa imagens tridimensionais em tons de cinza.*/
 class DgmImageViewer : public BaseDnmImageViewer
 {
 		Q_OBJECT

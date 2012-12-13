@@ -18,6 +18,7 @@ QT_END_NAMESPACE
 
 template <typename T> class TCMatriz3D;
 
+/*! GLWidget é a classe que representa a visualização de imagens tridimensionais em OpenGL.*/
 class GLWidget : public QGLWidget
 {
     Q_OBJECT

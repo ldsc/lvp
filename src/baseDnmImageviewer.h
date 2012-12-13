@@ -5,6 +5,7 @@
 #include "baseImageViewer.h"
 #endif
 
+/*! BaseDnmImageViewer é a classe base para representar imagens tridimensionais.*/
 class BaseDnmImageViewer : public BaseImageViewer
 {
 	Q_OBJECT

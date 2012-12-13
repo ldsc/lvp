@@ -16,6 +16,7 @@
 class QMainWindow;
 class QListWidgetItem;
 
+/*! Ploter é a classe que representa a visualização de gráficos através do QwtPlot.*/
 class Ploter : public QwtPlot //public QScrollArea
 {
 		Q_OBJECT

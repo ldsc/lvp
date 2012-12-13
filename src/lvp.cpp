@@ -171,6 +171,7 @@ Lvp::Lvp() {
 	dialogGT = NULL;
 	dialogES = NULL;
 	dialogImport = NULL;
+	dialogHexEditor = NULL;
 	lastOpenPath = "";
 
 	readSettings();
@@ -180,6 +181,30 @@ Lvp::Lvp() {
 
 	retranslateUi(this);
 	setUnifiedTitleAndToolBarOnMac(true);
+	setAcceptDrops(true);
+}
+
+void Lvp::dragEnterEvent(QDragEnterEvent *event) {
+	event->acceptProposedAction();
+}
+/*
+void Lvp::dragMoveEvent(QDragMoveEvent *event) {
+	event->acceptProposedAction();
+}
+*/
+void Lvp::dropEvent(QDropEvent *event) {
+	const QMimeData *mimeData = event->mimeData();
+	if (mimeData->hasUrls()) {
+		QList<QUrl> urlList = mimeData->urls();
+		QString text;
+		//for (int i = 0; i < urlList.size() && i < 10; ++i) {
+		text = urlList.at(0).path();
+		open(text.toStdString(), false);
+		//}
+	} else {
+		QMessageBox::information(this, tr("LVP"), tr("Invalid file type!"));
+	}
+	event->acceptProposedAction();
 }
 
 //Conexões de sinais com slots
@@ -281,12 +306,14 @@ void Lvp::createActions() {
 	connect( actionIDF3D,                   SIGNAL( triggered() ),  this,			SLOT( idf()												) );
 	connect( actionImport,                  SIGNAL( triggered() ),  this,			SLOT( import()										) );
 	connect( actionConnectedObjects,        SIGNAL( triggered() ),  this,			SLOT( connectedObjects() 					) );
+	connect( actionOptions,									SIGNAL( triggered() ),  this,			SLOT( options()										) );
 }
 
 void Lvp::updateMenus() {
 	//cerr << "teste" << endl;
 	bool hasImageViewer			= false;
 	bool hasDbmImageViewer	= false;
+	bool hasDgmImageViewer	= false;
 	bool hasPbmImageViewer	= false;
 	bool hasImageViewer3D		= false;
 	bool hasGLWidget				= false;
@@ -302,6 +329,8 @@ void Lvp::updateMenus() {
 		hasImageViewer3D = true;
 		if ( activeDbmImageViewer() != 0 )
 			hasDbmImageViewer = true;
+		else if ( activeDgmImageViewer() != 0 )
+			hasDgmImageViewer = true;
 	} else if ( activeGLWidget() != 0 ) {
 		hasGLWidget = true;
 	} else if ( activePloter() != 0 ) {
@@ -400,6 +429,7 @@ void Lvp::updateMenus() {
 	spinBoxPlano3D->setEnabled(hasImageViewer3D);
 	horizontalSliderPlano3D->setEnabled(hasImageViewer3D);
 	actionSave->setEnabled(false);
+	actionOptions->setEnabled(hasHexEditor);
 	if ( hasGLWidget ) {
 		GLWidget * childImage = activeGLWidget();
 		if(childImage->getViewType()==GLWidget::MPV){ //se o tipo de visualização for multiplanar
@@ -415,12 +445,21 @@ void Lvp::updateMenus() {
 			action3DVisualization->setEnabled(false);
 			actionMPV->setEnabled(true);
 		}
-		horizontalSlider_x->setMaximum( childImage->getPM3D()->NX() - 1 );
-		horizontalSlider_y->setMaximum( childImage->getPM3D()->NY() - 1 );
-		horizontalSlider_z->setMaximum( childImage->getPM3D()->NZ() - 1 );
-		spinBox_x->setMaximum( childImage->getPM3D()->NX() - 1 );
-		spinBox_y->setMaximum( childImage->getPM3D()->NY() - 1 );
-		spinBox_z->setMaximum( childImage->getPM3D()->NZ() - 1 );
+		if (hasDbmImageViewer) {
+			horizontalSlider_x->setMaximum( childImage->getPM3D()->NX() - 1 );
+			horizontalSlider_y->setMaximum( childImage->getPM3D()->NY() - 1 );
+			horizontalSlider_z->setMaximum( childImage->getPM3D()->NZ() - 1 );
+			spinBox_x->setMaximum( childImage->getPM3D()->NX() - 1 );
+			spinBox_y->setMaximum( childImage->getPM3D()->NY() - 1 );
+			spinBox_z->setMaximum( childImage->getPM3D()->NZ() - 1 );
+		} else if (hasDgmImageViewer) {
+			horizontalSlider_x->setMaximum( childImage->getPM3Di()->NX() - 1 );
+			horizontalSlider_y->setMaximum( childImage->getPM3Di()->NY() - 1 );
+			horizontalSlider_z->setMaximum( childImage->getPM3Di()->NZ() - 1 );
+			spinBox_x->setMaximum( childImage->getPM3Di()->NX() - 1 );
+			spinBox_y->setMaximum( childImage->getPM3Di()->NY() - 1 );
+			spinBox_z->setMaximum( childImage->getPM3Di()->NZ() - 1 );
+		}
 		spinBox_x->setValue( childImage->getPlanX() );
 		spinBox_y->setValue( childImage->getPlanY() );
 		spinBox_z->setValue( childImage->getPlanZ() );
@@ -959,6 +998,8 @@ HexEditor *Lvp::createHexEditor() {
 	if ( childEditor ) {
 		mdiArea->addSubWindow( childEditor );
 		connect(childEditor, SIGNAL(dataChanged()), this, SLOT(updateActionSave()));
+		childEditor->createStatusBar();
+		readSettings();
 		return childEditor;
 	}
 	return NULL;
@@ -975,7 +1016,7 @@ void Lvp::updateActionSave(){
 
 void Lvp::closeEvent(QCloseEvent *event) {
 	mdiArea->closeAllSubWindows();
-	if (activeImageViewer() or activeGLWidget() or activePloter()) {
+	if (activeImageViewer() or activeGLWidget() or activePloter() or activeTextEditor()) {
 		event->ignore();
 	} else {
 		writeSettings();
@@ -3437,9 +3478,10 @@ void Lvp::writeSettings() { //Grava a posição e tamanho atuais da aplicação
 
 void Lvp::readSettings() { //Carrega a última posição e tamanho usadas para a aplicação.
 	QPoint pos = settings->value("pos", QPoint(200, 200)).toPoint();
-	move(pos);
 	QSize size = settings->value("size", QSize(400, 400)).toSize();
+	move(pos);
 	resize(size);
+
 	bool maximized = settings->value("maximized", bool(false)).toBool();
 	if ( maximized ) showMaximized ();
 
@@ -3450,6 +3492,22 @@ void Lvp::readSettings() { //Carrega a última posição e tamanho usadas para a
 		mdiArea->setViewMode( QMdiArea::TabbedView );
 	} else {
 		mdiArea->setViewMode( QMdiArea::SubWindowView );
+	}
+
+	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
+		if (qobject_cast<HexEditor *>(window->widget()) != 0) {
+			HexEditor *hexEdit = qobject_cast<HexEditor *>(window->widget());
+			hexEdit->setAddressArea(settings->value("AddressArea").toBool());
+			hexEdit->setAsciiArea(settings->value("AsciiArea").toBool());
+			hexEdit->setHighlighting(settings->value("Highlighting").toBool());
+			hexEdit->setOverwriteMode(settings->value("OverwriteMode").toBool());
+			hexEdit->setReadOnly(settings->value("ReadOnly").toBool());
+			hexEdit->setHighlightingColor(settings->value("HighlightingColor").value<QColor>());
+			hexEdit->setAddressAreaColor(settings->value("AddressAreaColor").value<QColor>());
+			hexEdit->setSelectionColor(settings->value("SelectionColor").value<QColor>());
+			hexEdit->setFont(settings->value("WidgetFont").value<QFont>());
+			hexEdit->setAddressWidth(settings->value("AddressAreaWidth").toInt());
+		}
 	}
 }
 
@@ -3475,4 +3533,17 @@ void Lvp::updateStatusBar() {
 	} else if ( activeImageViewer() != 0 ) {
 		activeImageViewer()->createStatusBar();
 	}
+}
+
+void Lvp::options(){
+	if ( ! dialogHexEditor ) {
+		dialogHexEditor = new OptionsDialog( this );
+		connect(dialogHexEditor, SIGNAL(accepted()), this, SLOT(optionsAccepted()));
+	}
+	dialogHexEditor->show();
+}
+
+void Lvp::optionsAccepted() {
+		writeSettings();
+		readSettings();
 }

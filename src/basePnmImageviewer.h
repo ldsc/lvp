@@ -5,6 +5,7 @@
 #include "baseImageViewer.h"
 #endif
 
+/*! BasePnmImageViewer é a classe base para representar imagens bidimensionais.*/
 class BasePnmImageViewer : public BaseImageViewer
 {
 	Q_OBJECT

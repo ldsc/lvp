@@ -5,6 +5,8 @@
 #include "baseDnmImageviewer.h"
 #endif
 
+/** \cond docNever */
+
 class DbmImageViewerInt : public BaseDnmImageViewer
 {
 		Q_OBJECT
@@ -29,5 +31,7 @@ class DbmImageViewerInt : public BaseDnmImageViewer
 		bool ChangePlan( unsigned int plano, E_eixo axis );
 
 };
+
+/** \endcond docNever */
 
 #endif

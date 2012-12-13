@@ -13,6 +13,7 @@ BaseImageViewer::BaseImageViewer( QMainWindow * _parent ): /*pm(NULL), pm3D(NULL
 	isFitedToWindow = false;
 	isNew = false;
 	connect(this, SIGNAL(destroyed()), parent, SLOT(updateDockLista()));
+
 	createStatusBar();
 }
 
@@ -140,7 +141,7 @@ void BaseImageViewer::getFileNames(const QString & _fileName) {
 void BaseImageViewer::mouseMoveEvent(QMouseEvent *event) {
 	if (event->x() >= 0 && event->y() >= 0 && event->x() < image->width() && event->y() < image->height() && scaleFactor == 1.0 && !isFitedToWindow) {
 		int gray = qGray(image->pixel( event->pos() ));
-		parent->statusBar()->showMessage(tr("Coordinates (x = %1, y = %2) - RGB (%3,%4,%5)").arg(event->x()).arg(event->y()).arg(gray).arg(gray).arg(gray), 2000);
+		//parent->statusBar()->showMessage(tr("Coordinates (x = %1, y = %2) - RGB (%3,%4,%5)").arg(event->x()).arg(event->y()).arg(gray).arg(gray).arg(gray), 2000);
 		//QToolTip::showText(event->pos(), tr("Coordinates"));
 		lbX->setText(QString("%1").arg(event->x()));
 		lbY->setText(QString("%1").arg(event->y()));
@@ -172,7 +173,7 @@ void BaseImageViewer::createStatusBar() {
 	lbX = new QLabel();
 	lbX->setFrameShape(QFrame::Panel);
 	lbX->setFrameShadow(QFrame::Sunken);
-	lbX->setMinimumWidth(30);
+	lbX->setMinimumWidth(35);
 
 	lbYName = new QLabel();
 	lbYName->setText(tr("Y ="));
@@ -180,7 +181,7 @@ void BaseImageViewer::createStatusBar() {
 	lbY = new QLabel();
 	lbY->setFrameShape(QFrame::Panel);
 	lbY->setFrameShadow(QFrame::Sunken);
-	lbY->setMinimumWidth(30);
+	lbY->setMinimumWidth(35);
 
 	lbRGBName = new QLabel();
 	lbRGBName->setText(tr("RGB:"));
@@ -188,7 +189,7 @@ void BaseImageViewer::createStatusBar() {
 	lbRGB = new QLabel();
 	lbRGB->setFrameShape(QFrame::Panel);
 	lbRGB->setFrameShadow(QFrame::Sunken);
-	lbRGB->setMinimumWidth(70);
+	lbRGB->setMinimumWidth(85);
 
 	parent->statusBar()->addPermanentWidget(lbXName);
 	parent->statusBar()->addPermanentWidget(lbX);

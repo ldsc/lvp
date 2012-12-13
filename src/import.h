@@ -6,6 +6,7 @@
 
 class QMainWindow;
 
+/*! Import é a classe que implementa a janela de diálogo para importar imagens RAW. */
 class Import : public QDialog, public Ui::DialogImport
 {
 		Q_OBJECT

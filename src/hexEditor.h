@@ -12,6 +12,7 @@ class QUndoStack;
 QT_END_NAMESPACE
 */
 
+/*! HexEditor é a classe que disponibiliza o editor exadecimal QHexEdit. */
 class HexEditor : public QHexEdit //: public QMainWindow
 {
 		Q_OBJECT
