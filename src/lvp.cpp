@@ -37,19 +37,20 @@
 #include <Reconstrucao/CReconstrucaoBueno.h>
 #include <Reconstrucao/CReconstrucaoEsferas.h>
 #include <Rotulador/TCRotulador2D.h>
-
+#include <Segmentacao/2D/PorosGargantas/CAberturaDilatacao.h>
+#include <Segmentacao/3D/PorosGargantas/CAberturaDilatacao3D.h>
 
 using namespace std;
 
 Lvp::Lvp() {
 	setupUi(this); // this sets up GUI
-
+	
 	mdiArea = new QMdiArea;
 	mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	mdiArea->setViewMode( QMdiArea::TabbedView );
 	setCentralWidget(mdiArea);
-
+	
 	//Lista de imagens 2D
 	listWidget = new QListWidget(dockWidgetLista);
 	listWidget->setFocusPolicy( Qt::NoFocus );
@@ -58,7 +59,7 @@ Lvp::Lvp() {
 	listWidget->setSelectionMode( QAbstractItemView::ExtendedSelection );
 	dockWidgetLista->setWidget(listWidget);
 	dockWidgetLista->setVisible( false );
-
+	
 	//Lista de imagens 3D
 	gridLayout = new QGridLayout(dockWidgetContents3D);
 	gridLayout->setSizeConstraint(QLayout::SetMinimumSize);
@@ -67,53 +68,53 @@ Lvp::Lvp() {
 	gridLayout->setRowMinimumHeight(0, 20);
 	gridLayout->setRowMinimumHeight(1, 25);
 	gridLayout->setRowMinimumHeight(2, 25);
-
+	
 	labelPlano3D = new QLabel(dockWidgetContents3D);
 	labelPlano3D->setAlignment(Qt::AlignCenter);
 	labelPlano3D->setWordWrap(true);
 	labelPlano3D->setText(QString::fromUtf8("Plan of the 3D Image"));
 	gridLayout->addWidget(labelPlano3D, 0, 0, 1, 1);
-
+	
 	groupBox = new QGroupBox(dockWidgetContents3D);
 	groupBox->setObjectName(QString::fromUtf8("groupBox"));
 	groupBox->setTitle(QApplication::translate("Form", "axis", 0, QApplication::UnicodeUTF8));
-
+	
 	radioButtonX = new QRadioButton(groupBox);
 	radioButtonX->setGeometry(QRect(0, 55, 41, 25));
 	radioButtonX->setText(QApplication::translate("Form", "X", 0, QApplication::UnicodeUTF8));
-
+	
 	radioButtonY = new QRadioButton(groupBox);
 	radioButtonY->setGeometry(QRect(20, 18, 41, 25));
 	radioButtonY->setText(QApplication::translate("Form", "Y", 0, QApplication::UnicodeUTF8));
-
+	
 	radioButtonZ = new QRadioButton(groupBox);
 	radioButtonZ->setGeometry(QRect(45, 45, 41, 25));
 	radioButtonZ->setText(QApplication::translate("Form", "Z", 0, QApplication::UnicodeUTF8));
 	radioButtonZ->setChecked(true);
-
+	
 	labelAxis = new QLabel(groupBox);
 	labelAxis->setGeometry(QRect(19, 37, 30, 30));
 	labelAxis->setPixmap(QPixmap(QString::fromUtf8(":/images/3d.png")));
 	labelAxis->setScaledContents(true);
 	gridLayout->addWidget(groupBox, 0, 1, 3, 1);
-
+	
 	spinBoxPlano3D = new QSpinBox(dockWidgetContents3D);
 	gridLayout->addWidget(spinBoxPlano3D, 1, 0, 1, 1);
-
+	
 	horizontalSliderPlano3D = new QSlider(dockWidgetContents3D);
 	horizontalSliderPlano3D->setOrientation(Qt::Horizontal);
 	gridLayout->addWidget(horizontalSliderPlano3D, 2, 0, 1, 1);
-
+	
 	listWidget3D = new QListWidget(dockWidgetContents3D);
 	listWidget3D->setFocusPolicy( Qt::NoFocus );
 	listWidget3D->setSortingEnabled ( true );
 	listWidget3D->setAlternatingRowColors ( true );
 	gridLayout->addWidget(listWidget3D, 3, 0, 1, 2);
 	dockWidgetLista3D->setVisible( false );
-
+	
 	//Controles da visualização 3D
 	dockWidgetVisualisation3D->setVisible( false );
-
+	
 	//Lista de gráficos
 	gridLayoutChart = new QGridLayout(dockWidgetContentsListaChart);
 	gridLayoutChart->setSizeConstraint(QLayout::SetMinimumSize);
@@ -122,34 +123,34 @@ Lvp::Lvp() {
 	gridLayoutChart->setRowMinimumHeight(0, 20);
 	gridLayoutChart->setRowMinimumHeight(1, 25);
 	gridLayoutChart->setRowMinimumHeight(2, 25);
-
+	
 	pushButtonAddCurve = new QPushButton(dockWidgetContentsListaChart);
 	pushButtonAddCurve->setText(QString::fromUtf8("Add Curve"));
 	pushButtonAddCurve->setEnabled( false );
 	gridLayoutChart->addWidget(pushButtonAddCurve, 0, 0, 1, 1);
-
+	
 	pushButtonAverage = new QPushButton(dockWidgetContentsListaChart);
 	pushButtonAverage->setText(QString::fromUtf8("Average"));
 	pushButtonAverage->setEnabled( false );
 	gridLayoutChart->addWidget(pushButtonAverage, 1, 1, 1, 1);
-
+	
 	pushButtonAccumulated = new QPushButton(dockWidgetContentsListaChart);
 	pushButtonAccumulated->setText(QString::fromUtf8("Show Accumulated"));
 	pushButtonAccumulated->setEnabled( false );
 	gridLayoutChart->addWidget(pushButtonAccumulated, 1, 0, 1, 1);
-
+	
 	pushButtonSource = new QPushButton(dockWidgetContentsListaChart);
 	pushButtonSource->setText(QString::fromUtf8("Source"));
 	pushButtonSource->setEnabled( false );
 	gridLayoutChart->addWidget(pushButtonSource, 0, 1, 1, 1);
-
+	
 	listWidgetChart = new QListWidget(dockWidgetContentsListaChart);
 	listWidgetChart->setSortingEnabled ( true );
 	listWidgetChart->setAlternatingRowColors ( true );
 	listWidgetChart->setSelectionMode( QAbstractItemView::ExtendedSelection );
 	gridLayoutChart->addWidget(listWidgetChart, 2, 0, 1, 2);
 	dockWidgetListaChart->setVisible( false );
-
+	
 	//Lista de editores
 	listWidgetEditor = new QListWidget(dockWidgetListaTextEditor);
 	listWidgetEditor->setFocusPolicy( Qt::NoFocus );
@@ -158,14 +159,14 @@ Lvp::Lvp() {
 	listWidgetEditor->setSelectionMode( QAbstractItemView::ExtendedSelection );
 	dockWidgetListaTextEditor->setWidget(listWidgetEditor);
 	dockWidgetListaTextEditor->setVisible( false );
-
+	
 	//Objeto para salvar as preferências do usuário
 	settings = new QSettings("LENEP", "LVP");
-
+	
 	//Traduções do software
 	qApp->installTranslator(&appTranslator);
 	qmPath = qApp->applicationDirPath() + "/translations";
-
+	
 	//Inicializando demais atributos
 	dialog = NULL;
 	dialogGT = NULL;
@@ -173,12 +174,12 @@ Lvp::Lvp() {
 	dialogImport = NULL;
 	dialogHexEditor = NULL;
 	lastOpenPath = "";
-
+	
 	readSettings();
 	createActions();
 	updateMenus();
 	createLanguageMenu();
-
+	
 	retranslateUi(this);
 	setUnifiedTitleAndToolBarOnMac(true);
 	setAcceptDrops(true);
@@ -307,6 +308,7 @@ void Lvp::createActions() {
 	connect( actionImport,                  SIGNAL( triggered() ),  this,			SLOT( import()										) );
 	connect( actionConnectedObjects,        SIGNAL( triggered() ),  this,			SLOT( connectedObjects() 					) );
 	connect( actionOptions,									SIGNAL( triggered() ),  this,			SLOT( options()										) );
+	connect( actionPoresThroats,						SIGNAL( triggered() ),  this,			SLOT( segmentationPoresThroats()	) );
 }
 
 void Lvp::updateMenus() {
@@ -430,6 +432,7 @@ void Lvp::updateMenus() {
 	horizontalSliderPlano3D->setEnabled(hasImageViewer3D);
 	actionSave->setEnabled(false);
 	actionOptions->setEnabled(hasHexEditor);
+	actionPoresThroats->setEnabled(hasDbmImageViewer);
 	if ( hasGLWidget ) {
 		GLWidget * childImage = activeGLWidget();
 		if(childImage->getViewType()==GLWidget::MPV){ //se o tipo de visualização for multiplanar
@@ -531,11 +534,11 @@ void Lvp::updateWindowMenu() {
 	menuWindow->addAction(actionNext);
 	menuWindow->addAction(actionPrevious);
 	menuWindow->addAction(actionSeparator);
-
+	
 	QList<QMdiSubWindow *> windows = mdiArea->subWindowList();
 	actionSeparator->setSeparator(!windows.isEmpty());
 	actionSeparator->setVisible(!windows.isEmpty());
-
+	
 	BaseImageViewer *childImage;
 	GLWidget * childGL;
 	QString text;
@@ -663,17 +666,17 @@ void Lvp::open( ) {
 	// lista com o nome dos arquivos que serão abertos
 	QStringList files = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Accepted Files (*.pgm *.pbm *.dbm *.dgm *.cor *.dtp *.dts *.rpc);;Image Files (*.pgm *.pbm *.dbm);;Binary Images (*.pbm);;3D Binary Images (*.dbm);;Grey Scale Images (*.pgm);;3DGrey Scale Images (*.dgm);;Relative Permeability Curves (*.rpc);;Correlation Files (*.cor);;Distribution Files (*.dtp *.dts)"));
 	int numFiles = files.size(); //número de arquivos que serão abertos
-
+	
 	QProgressDialog progress("Opening files...", "&Cancel", 0, numFiles, this);
 	progress.setWindowModality(Qt::WindowModal);
-
+	
 	for (int i = 0; i < numFiles; ++i) {
 		progress.setValue(i);
 		if (progress.wasCanceled())
 			break;
 		open( files.at(i).toStdString(), false);
 	}
-
+	
 	progress.setValue(numFiles);
 }
 void Lvp::open(string _file, bool novo) {
@@ -880,7 +883,7 @@ void Lvp::openEditor(){
 	} else {
 		return;
 	}
-
+	
 openTextEditor: {
 		if (existing) {
 			mdiArea->setActiveSubWindow(existing);
@@ -1374,7 +1377,7 @@ void Lvp::mathematicalMorphology( MorphType mtype ) {
 				int cont = 0;
 				QProgressDialog progress("Applying filter...", "&Cancel", 0, numFiles, this);
 				progress.setWindowModality(Qt::WindowModal);
-
+				
 				foreach (PbmImageViewer *mdiChild, imagesList) {
 					progress.setValue(cont++);
 					if (progress.wasCanceled())
@@ -1473,12 +1476,12 @@ void Lvp::mathematicalMorphology3D( MorphType mtype ){
 				} else {
 					indice = 0; fundo = 1;
 				}
-
+				
 				int numFiles = imagesList.size(); //número de arquivos que serão abertos
 				int cont = 0;
 				QProgressDialog progress("Applying 3D filter...", "&Cancel", 0, numFiles, this);
 				progress.setWindowModality(Qt::WindowModal);
-
+				
 				foreach (DbmImageViewer *mdiChild, imagesList) {
 					progress.setValue(cont++);
 					if (progress.wasCanceled())
@@ -1696,7 +1699,7 @@ void Lvp::connectivity3D() {
 		QPushButton *blackButton = msgBox.addButton(tr("&Black (1)"), QMessageBox::ActionRole);
 		msgBox.setDefaultButton(blackButton);
 		msgBox.exec();
-
+		
 		int indice, fundo;
 		if (msgBox.clickedButton() == blackButton) {
 			indice = 1; fundo = 0;
@@ -1827,7 +1830,7 @@ void Lvp::average() {
 	if ( plot ) {
 		QString qstr;
 		QString ext = plot->getFileExt();
-
+		
 		set<string> fnames;
 		for (int it = 0; it < plot->patchCurves.size(); ++it){
 			fnames.insert((plot->patchCurves[it]).toStdString());
@@ -2088,7 +2091,7 @@ void Lvp::relativePermeability() {
 	if ( (child3D = activePbmImageViewer()) ) {
 		QString qstr = tr("%1%2.rpc").arg( child3D->getFilePath( ), child3D->getFileNameNoExt() );
 		ofstream fout( qstr.toStdString().c_str() );
-
+		
 		CPermeabilidadeRelativa * objPerRel = NULL;
 		objPerRel = new CPermeabilidadeRelativa( fout );
 		if ( objPerRel ) {
@@ -2155,6 +2158,89 @@ void Lvp::relativePermeability() {
 	}
 }
 
+void Lvp::segmentationPoresThroats(){
+	int indice, fundo;
+	bool ok1, ok2, ok3;
+	if ( activeDbmImageViewer() != 0 ){
+		DbmImageViewer* child = activeDbmImageViewer();
+		TCMatriz3D<bool> * pm = NULL;
+		pm = new TCMatriz3D<bool>( *child->pm3D );
+		if ( pm ) {
+			QMessageBox msgBox(this);
+			msgBox.setWindowTitle(tr("LVP - 3D pores and throats segmentation"));
+			msgBox.setText(tr("Pore is:"));
+			msgBox.addButton(QMessageBox::Cancel);
+			QPushButton *writeButton = msgBox.addButton(tr("&Write (0)"), QMessageBox::ActionRole);
+			QPushButton *blackButton = msgBox.addButton(tr("&Black (1)"), QMessageBox::ActionRole);
+			msgBox.setDefaultButton(blackButton);
+			msgBox.exec();
+			if (msgBox.clickedButton() == blackButton) {
+				indice = 1;
+				fundo = 0;
+			} else if (msgBox.clickedButton() == writeButton) {
+				indice = 0;
+				fundo = 1;
+			} else {
+				return;
+			}
+			CAberturaDilatacao3D filtro = CAberturaDilatacao3D(pm, child->getFileNameNoExt().toStdString(), indice, fundo );
+			QMessageBox msgBox2(this);
+			msgBox2.setText(tr("Select a model:"));
+			QPushButton *cancel = msgBox2.addButton(QMessageBox::Cancel);
+			QPushButton *model0 = msgBox2.addButton(tr("Model &0"), QMessageBox::ActionRole);
+			QPushButton *model1 = msgBox2.addButton(tr("Model &1"), QMessageBox::ActionRole);
+			QPushButton *model2 = msgBox2.addButton(tr("Model &2"), QMessageBox::ActionRole);
+			QPushButton *model3 = msgBox2.addButton(tr("Model &3"), QMessageBox::ActionRole);
+			QPushButton *model4 = msgBox2.addButton(tr("Model &4"), QMessageBox::ActionRole);
+			msgBox2.setDefaultButton(model3);
+			msgBox2.exec();
+			if (msgBox2.clickedButton() == cancel) {
+				delete pm;
+				return;
+			}
+			int raioMaximo = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the maximum radius of the structuring element:"), 50, 1, 99, 1, &ok1);
+			int fatorReducao = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the reduction factor of the structuring element radius:"), 1, 1, raioMaximo, 1, &ok2);
+			int incrementoRaio = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the increment value for the structuring element radius:"), 1, 1, raioMaximo, 1, &ok3);
+			if (ok1 and ok2 and ok3) {
+				QApplication::setOverrideCursor(Qt::WaitCursor);
+
+				filtro.RaioMaximoElementoEstruturante(raioMaximo);
+				filtro.FatorReducaoRaioElemEst(fatorReducao);
+				filtro.IncrementoRaioElementoEstruturante(incrementoRaio);
+
+				if (msgBox2.clickedButton() == model0) {
+					filtro.DistSitiosLigacoes_Modelo_0();
+				} else if (msgBox2.clickedButton() == model1) {
+					filtro.DistSitiosLigacoes_Modelo_1();
+				} else if (msgBox2.clickedButton() == model2) {
+					filtro.DistSitiosLigacoes_Modelo_2();
+				} else if (msgBox2.clickedButton() == model3) {
+					filtro.DistSitiosLigacoes_Modelo_3();
+				} else if (msgBox2.clickedButton() == model4) {
+					filtro.DistSitiosLigacoes_Modelo_4();
+				}
+				/*
+				static int seqNumberSPT = 1;
+				filepath = tr(".rotated%1.%2").arg(QString::number(seqNumberSPT++)).arg(child->getFileExt());
+				pm->Write(filepath.toStdString());
+				filepath = child->getFilePath() + filepath;
+				open( filepath.toStdString() );
+				*/
+				QApplication::restoreOverrideCursor();
+				delete pm;
+			}
+		} else {
+			QMessageBox::information(this, tr("LVP"), tr("Error trying to create 3D image!"));
+			return;
+		}
+	//} else if ( activePbmImageViewer() != 0 ){
+	} else {
+		QMessageBox::information(this, tr("LVP"), tr("Error: Image viewer not active!"));
+		return;
+	}
+
+}
+
 void Lvp::rotate() {
 	QString filepath;
 	BaseImageViewer * child = NULL;
@@ -2162,7 +2248,7 @@ void Lvp::rotate() {
 	if ( child ) {
 		filepath = child->getFullFileName();
 	} else {
-		QMessageBox::information(this, tr("LVP"), tr("Error while trying to retrieve image!"));
+		QMessageBox::information(this, tr("LVP"), tr("Error trying to retrieve image!"));
 		return;
 	}
 	if ( ! filepath.isNull() ) {
@@ -3544,6 +3630,6 @@ void Lvp::options(){
 }
 
 void Lvp::optionsAccepted() {
-		writeSettings();
-		readSettings();
+	writeSettings();
+	readSettings();
 }

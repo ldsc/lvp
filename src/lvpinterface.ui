@@ -247,7 +247,7 @@
      <string>&amp;Segmentation</string>
     </property>
     <addaction name="actionConnectedObjects"/>
-    <addaction name="actionPoresTroats"/>
+    <addaction name="actionPoresThroats"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -1519,12 +1519,15 @@ p, li { white-space: pre-wrap; }
     <string>&amp;Connected Objects</string>
    </property>
   </action>
-  <action name="actionPoresTroats">
+  <action name="actionPoresThroats">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>&amp;Pores and Troats</string>
+    <string>&amp;Pores and Throats</string>
+   </property>
+   <property name="toolTip">
+    <string>Pores and Throats</string>
    </property>
   </action>
   <action name="actionOptions">

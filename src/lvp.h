@@ -225,6 +225,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void openEditor();
 		void options(); // abre diálogo de opções para o editor hexadecimal
 		void optionsAccepted(); // grava e lê as opções do editor hexadecimal
+		void segmentationPoresThroats(); // segmentação de poros e gargantas
 		void porosity();
 		void print();
 		void reconstructionES();
