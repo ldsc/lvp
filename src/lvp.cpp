@@ -2163,9 +2163,9 @@ void Lvp::segmentationPoresThroats(){
 	bool ok1, ok2, ok3;
 	if ( activeDbmImageViewer() != 0 ){
 		DbmImageViewer* child = activeDbmImageViewer();
-		TCMatriz3D<bool> * pm = NULL;
-		pm = new TCMatriz3D<bool>( *child->pm3D );
-		if ( pm ) {
+		//TCMatriz3D<bool> * pm = NULL;
+		//pm = new TCMatriz3D<bool>( *child->pm3D );
+		if ( child->pm3D ) {
 			QMessageBox msgBox(this);
 			msgBox.setWindowTitle(tr("LVP - 3D pores and throats segmentation"));
 			msgBox.setText(tr("Pore is:"));
@@ -2183,7 +2183,8 @@ void Lvp::segmentationPoresThroats(){
 			} else {
 				return;
 			}
-			CAberturaDilatacao3D filtro = CAberturaDilatacao3D(pm, child->getFileNameNoExt().toStdString(), indice, fundo );
+			CAberturaDilatacao3D filtro = CAberturaDilatacao3D(child->pm3D, child->getFileNameNoExt().toStdString(), indice, fundo );
+			/*
 			QMessageBox msgBox2(this);
 			msgBox2.setText(tr("Select a model:"));
 			QPushButton *cancel = msgBox2.addButton(QMessageBox::Cancel);
@@ -2192,12 +2193,13 @@ void Lvp::segmentationPoresThroats(){
 			QPushButton *model2 = msgBox2.addButton(tr("Model &2"), QMessageBox::ActionRole);
 			QPushButton *model3 = msgBox2.addButton(tr("Model &3"), QMessageBox::ActionRole);
 			QPushButton *model4 = msgBox2.addButton(tr("Model &4"), QMessageBox::ActionRole);
-			msgBox2.setDefaultButton(model3);
+			msgBox2.setDefaultButton(model4);
 			msgBox2.exec();
 			if (msgBox2.clickedButton() == cancel) {
 				delete pm;
 				return;
 			}
+			*/
 			int raioMaximo = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the maximum radius of the structuring element:"), 50, 1, 99, 1, &ok1);
 			int fatorReducao = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the reduction factor of the structuring element radius:"), 1, 1, raioMaximo, 1, &ok2);
 			int incrementoRaio = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the increment value for the structuring element radius:"), 1, 1, raioMaximo, 1, &ok3);
@@ -2208,7 +2210,7 @@ void Lvp::segmentationPoresThroats(){
 				filtro.FatorReducaoRaioElemEst(fatorReducao);
 				filtro.IncrementoRaioElementoEstruturante(incrementoRaio);
 
-				if (msgBox2.clickedButton() == model0) {
+				/*if (msgBox2.clickedButton() == model0) {
 					filtro.DistSitiosLigacoes_Modelo_0();
 				} else if (msgBox2.clickedButton() == model1) {
 					filtro.DistSitiosLigacoes_Modelo_1();
@@ -2218,16 +2220,18 @@ void Lvp::segmentationPoresThroats(){
 					filtro.DistSitiosLigacoes_Modelo_3();
 				} else if (msgBox2.clickedButton() == model4) {
 					filtro.DistSitiosLigacoes_Modelo_4();
-				}
-				/*
+				}*/
+				TCMatriz3D<int>* pm = filtro.DistSitiosLigacoes_Modelo_4();
+
 				static int seqNumberSPT = 1;
-				filepath = tr(".rotated%1.%2").arg(QString::number(seqNumberSPT++)).arg(child->getFileExt());
+				QString filepath = tr(".segmented%1.dgm").arg(QString::number(seqNumberSPT++));
+				pm->SetFormato(D5_X_Y_Z_GRAY_BINARY);
+				pm->NumCores(3);
 				pm->Write(filepath.toStdString());
-				filepath = child->getFilePath() + filepath;
+				//filepath = child->getFilePath() + filepath;
 				open( filepath.toStdString() );
-				*/
+
 				QApplication::restoreOverrideCursor();
-				delete pm;
 			}
 		} else {
 			QMessageBox::information(this, tr("LVP"), tr("Error trying to create 3D image!"));
