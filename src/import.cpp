@@ -1,7 +1,5 @@
 #include "import.h"
 
-using namespace std;
-
 Import::Import(QMainWindow *_parent, QString _file) {
 	setupUi(this); // this sets up GUI
 	parent = _parent;
@@ -11,6 +9,6 @@ Import::Import(QMainWindow *_parent, QString _file) {
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
-Import::~Import()
-{
+Import::~Import() {
+
 }

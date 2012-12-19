@@ -23,7 +23,8 @@ SOURCES +=  lvp.cpp \
             qHexEdit/qhexedit.cpp \
             qHexEdit/qhexedit_p.cpp \
             qHexEdit/xbytearray.cpp \
-            qHexEdit/commands.cpp
+            qHexEdit/commands.cpp \
+            crop3D.cpp
 
 HEADERS +=  lvp.h \
             confEq.h \
@@ -47,14 +48,16 @@ HEADERS +=  lvp.h \
             qHexEdit/qhexedit.h \
             qHexEdit/qhexedit_p.h \
             qHexEdit/xbytearray.h \
-            qHexEdit/commands.h
+            qHexEdit/commands.h \
+            crop3D.h
 
 FORMS +=    lvpinterface.ui \
             dialogImport.ui \
             dialogConfEq.ui \
             dialogReconstruction.ui \
             dialogReconstructionES.ui \
-            optionsdialog.ui
+            optionsdialog.ui \
+            dialogCrop3D.ui
             #searchdialog.ui
 
 TEMPLATE =  app

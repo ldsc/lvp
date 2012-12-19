@@ -309,10 +309,11 @@ void Lvp::createActions() {
 	connect( actionConnectedObjects,        SIGNAL( triggered() ),  this,			SLOT( connectedObjects() 					) );
 	connect( actionOptions,									SIGNAL( triggered() ),  this,			SLOT( options()										) );
 	connect( actionPoresThroats,						SIGNAL( triggered() ),  this,			SLOT( segmentationPoresThroats()	) );
+	connect( actionCrop3D,									SIGNAL( triggered() ),  this,			SLOT( crop3DImage()								) );
 }
 
 void Lvp::updateMenus() {
-	//cerr << "teste" << endl;
+	//cerr << "updateMenus()" << endl;
 	bool hasImageViewer			= false;
 	bool hasDbmImageViewer	= false;
 	bool hasDgmImageViewer	= false;
@@ -433,6 +434,7 @@ void Lvp::updateMenus() {
 	actionSave->setEnabled(false);
 	actionOptions->setEnabled(hasHexEditor);
 	actionPoresThroats->setEnabled(hasDbmImageViewer);
+	actionCrop3D->setEnabled(hasImageViewer3D);
 	if ( hasGLWidget ) {
 		GLWidget * childImage = activeGLWidget();
 		if(childImage->getViewType()==GLWidget::MPV){ //se o tipo de visualização for multiplanar
@@ -713,6 +715,8 @@ void Lvp::open(string _file, bool novo) {
 			} else {
 				statusBar()->showMessage(tr("Error"), 2000);
 			}
+		} else if (ext == "raw" or ext == "RAW" or ext == "Raw") {
+			import(fileName);
 		} else {
 			existing = findImageViewer(fileName);
 			if ( existing ) {
@@ -752,8 +756,8 @@ void Lvp::open(string _file, bool novo) {
 	} else {
 		statusBar()->showMessage(tr("File name error! - %1").arg(fileName), 3000);
 	}
-	updateMenus();
-	updateDockLista();
+	//updateMenus(); //já esta chamando atraves do connect com subWindowActivated(QMdiSubWindow *)
+	//updateDockLista();
 	QApplication::restoreOverrideCursor();
 }
 
@@ -785,8 +789,8 @@ void Lvp::open3DVisualization( ) {
 	} else if (GLWidget *mdiChild = activeGLWidget()){
 		mdiChild->setViewType(GLWidget::VIEW3D);
 	}
-	updateMenus();
-	updateDockLista();
+	//updateMenus();
+	//updateDockLista();
 }
 
 void Lvp::openMPV( ) {
@@ -805,8 +809,8 @@ void Lvp::openMPV( ) {
 	} else if (GLWidget *mdiChild = activeGLWidget()){
 		mdiChild->setViewType(GLWidget::MPV);
 	}
-	updateMenus();
-	updateDockLista();
+	//updateMenus();
+	//updateDockLista();
 }
 
 void Lvp::openEditor(){
@@ -895,7 +899,7 @@ openTextEditor: {
 				}
 			}
 		}
-		updateMenus();
+		//updateMenus();
 		return;
 	}
 openHexEditor: {
@@ -909,7 +913,7 @@ openHexEditor: {
 				}
 			}
 		}
-		updateMenus();
+		//updateMenus();
 		return;
 	}
 }
@@ -2396,6 +2400,12 @@ void Lvp::rotate() {
 void Lvp::import() {
 	// lista com o nome dos arquivos que serão abertos
 	QString file = QFileDialog::getOpenFileName(this, tr("Import RAW File"), lastOpenPath, tr("RAW Files (*.raw *.3fr *.ari *.arw *.srf *.sr2 *.bay *.crw *.kdc *.nrw *.orf *.rw2 *.rwz *.srw *.x3f)"));
+	if ( ! file.isNull() ) {
+		import(file);
+	}
+}
+
+void Lvp::import(QString file){
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	if ( ! file.isNull() ) {
 		if ( dialogImport ) {
@@ -2449,6 +2459,54 @@ void Lvp::exImport() {
 	delete pm3D;
 	delete dialogImport;
 	dialogImport = NULL;
+	QApplication::restoreOverrideCursor();
+}
+
+void Lvp::crop3DImage(){
+	BaseDnmImageViewer *mdiChild = active3DImageViewer();
+	dialogCrop = new Crop3D(this);
+	dialogCrop->spinBoxStartX->setMaximum(mdiChild->nx-2);
+	dialogCrop->spinBoxStartY->setMaximum(mdiChild->ny-2);
+	dialogCrop->spinBoxStartZ->setMaximum(mdiChild->nz-2);
+	dialogCrop->spinBoxEndX->setMaximum(mdiChild->nx-1);
+	dialogCrop->spinBoxEndY->setMaximum(mdiChild->ny-1);
+	dialogCrop->spinBoxEndZ->setMaximum(mdiChild->nz-1);
+	dialogCrop->spinBoxEndX->setValue(mdiChild->nx-1);
+	dialogCrop->spinBoxEndY->setValue(mdiChild->ny-1);
+	dialogCrop->spinBoxEndZ->setValue(mdiChild->nz-1);
+	dialogCrop->show();
+}
+
+void Lvp::exCrop3DImage() {
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	static int seqNumberCrop3D = 1;
+	string str;
+	if ( DbmImageViewer *mdiChild = activeDbmImageViewer() ) {
+		cerr << "aqui" << endl;
+		TCMatriz3D<bool> * pm3D = mdiChild->pm3D->Crop(dialogCrop->spinBoxStartX->value(), dialogCrop->spinBoxEndX->value(), dialogCrop->spinBoxStartY->value(), dialogCrop->spinBoxEndY->value(), dialogCrop->spinBoxStartZ->value(), dialogCrop->spinBoxEndZ->value());
+
+		str = tr(".croped%1.dbm").arg(QString::number(seqNumberCrop3D++)).toStdString();
+		pm3D->Write( str );
+		open( str );
+
+		dialogCrop->close();
+		delete dialogCrop;
+		dialogCrop = NULL;
+		delete pm3D;
+	} else if ( DgmImageViewer *mdiChild = activeDgmImageViewer() ) {
+		TCMatriz3D<int> * pm3D = mdiChild->pm3D->Crop(dialogCrop->spinBoxStartX->value(), dialogCrop->spinBoxEndX->value(), dialogCrop->spinBoxStartY->value(), dialogCrop->spinBoxEndY->value(), dialogCrop->spinBoxStartZ->value(), dialogCrop->spinBoxEndZ->value());
+
+		str = tr(".croped%1.dgm").arg(QString::number(seqNumberCrop3D++)).toStdString();
+		pm3D->Write( str );
+		open( str );
+
+		dialogCrop->close();
+		delete dialogCrop;
+		dialogCrop = NULL;
+		delete pm3D;
+	} else {
+		cerr << "não entrou..." << endl;
+	}
 	QApplication::restoreOverrideCursor();
 }
 

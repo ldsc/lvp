@@ -60,6 +60,8 @@
     <addaction name="actionCopy"/>
     <addaction name="actionRotate"/>
     <addaction name="separator"/>
+    <addaction name="actionCrop3D"/>
+    <addaction name="separator"/>
     <addaction name="actionOptions"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
@@ -1536,6 +1538,14 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Options</string>
+   </property>
+  </action>
+  <action name="actionCrop3D">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Crop 3D</string>
    </property>
   </action>
   <zorder>dockWidgetVisualisation3D</zorder>

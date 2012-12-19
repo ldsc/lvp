@@ -14,6 +14,7 @@
 #include "reconstruction.h"
 #include "reconstructionES.h"
 #include "import.h"
+#include "crop3D.h"
 #include "baseImageViewer.h"
 #include "dbmImageViewer.h"
 #include "dgmImageViewer.h"
@@ -139,11 +140,12 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 
 		QSignalMapper *windowMapper;
 
-		ConfEq * dialog;
+		OptionsDialog * dialogHexEditor;
 		Reconstruction   * dialogGT;
 		ReconstructionES * dialogES;
 		Import * dialogImport;
-		OptionsDialog * dialogHexEditor;
+		Crop3D * dialogCrop;
+		ConfEq * dialog;
 
 		QTranslator appTranslator;
 		QString qmPath;
@@ -157,6 +159,8 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 	public slots:
 		/// Método para abertura de arquivos suportados pelo LVP
 		void open(std::string _file, bool novo = true);
+		/// Método para importar arquivos RAW informando o nome do arquivo.
+		void import(QString file);
 
 	private slots:
 		void about();
@@ -174,6 +178,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void correlationFFT3D();
 		void correlationSpatial();
 		void correlationSpatial3D();
+		void crop3DImage();
 		void dilation();
 		void dilation3D();
 		void dtsSpatial();
@@ -205,6 +210,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void exConfEq();
 		void exConfEq3D();
 		void exImport();
+		void exCrop3DImage();
 		void exReconstructionGT();
 		void exReconstructionES();
 		void fitToWindow();

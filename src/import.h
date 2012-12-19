@@ -12,7 +12,7 @@ class Import : public QDialog, public Ui::DialogImport
 		Q_OBJECT
 
 	public:
-		Import( QMainWindow * _parent, QString _file );
+		explicit Import( QMainWindow * _parent, QString _file );
 
 		~Import();
 
