@@ -789,8 +789,8 @@ void Lvp::open3DVisualization( ) {
 	} else if (GLWidget *mdiChild = activeGLWidget()){
 		mdiChild->setViewType(GLWidget::VIEW3D);
 	}
-	//updateMenus();
-	//updateDockLista();
+	updateMenus();
+	updateDockLista();
 }
 
 void Lvp::openMPV( ) {
@@ -809,8 +809,8 @@ void Lvp::openMPV( ) {
 	} else if (GLWidget *mdiChild = activeGLWidget()){
 		mdiChild->setViewType(GLWidget::MPV);
 	}
-	//updateMenus();
-	//updateDockLista();
+	updateMenus();
+	updateDockLista();
 }
 
 void Lvp::openEditor(){

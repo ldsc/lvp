@@ -1,5 +1,6 @@
 SUBDIRS += src
 CONFIG += warn_on \
           qt \
-          thread 
+          thread \
+          console
 TEMPLATE = subdirs
