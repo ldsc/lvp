@@ -2229,8 +2229,8 @@ void Lvp::segmentationPoresThroats(){
 
 				static int seqNumberSPT = 1;
 				QString filepath = tr(".segmented%1.dgm").arg(QString::number(seqNumberSPT++));
-				pm->SetFormato(D5_X_Y_Z_GRAY_BINARY);
-				pm->NumCores(3);
+				//pm->SetFormato(D2_X_Y_Z_GRAY_ASCII);
+				//pm->NumCores(3);
 				pm->Write(filepath.toStdString());
 				//filepath = child->getFilePath() + filepath;
 				open( filepath.toStdString() );
