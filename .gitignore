@@ -10,6 +10,8 @@ cvs/
 *.DAT
 *.dbm
 *.DBM
+*.dgm
+*.DGM
 *.dtp
 *.DTP
 *.dts

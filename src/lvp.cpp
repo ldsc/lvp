@@ -411,8 +411,8 @@ void Lvp::updateMenus() {
 	actionSource->setEnabled( hasImageViewer || hasImageViewer3D || hasPloter );
 	actionTitle->setEnabled(mdiArea->subWindowList().size() > 0);
 	actionViewMode->setEnabled(mdiArea->subWindowList().size() > 0);
-	actionZoomIn->setEnabled(!actionFitToWindow->isChecked() && ( hasImageViewer || hasImageViewer3D ) && (activeImageViewer()->scaleFactor < 3.0));
-	actionZoomOut->setEnabled(!actionFitToWindow->isChecked() && ( hasImageViewer || hasImageViewer3D ) && (activeImageViewer()->scaleFactor > 0.333));
+	actionZoomIn->setEnabled(!actionFitToWindow->isChecked() && ( hasImageViewer || hasImageViewer3D ) && (activeImageViewer()->scaleFactor < 9.0));
+	actionZoomOut->setEnabled(!actionFitToWindow->isChecked() && ( hasImageViewer || hasImageViewer3D ) && (activeImageViewer()->scaleFactor > 0.1));
 	action3DVisualization->setEnabled( hasImageViewer3D );
 	menuCorrelation->setEnabled(hasImageViewer || hasImageViewer3D);
 	menuDTP->setEnabled(hasImageViewer || hasImageViewer3D);
@@ -806,6 +806,18 @@ void Lvp::openMPV( ) {
 			child->show();
 			statusBar()->showMessage(tr("File loaded"), 2000);
 		}
+	} else if (DgmImageViewer *mdiChild = activeDgmImageViewer()) {
+		QMdiSubWindow *existing = findGLWidget(mdiChild->getFullFileName());
+		if (existing) {
+			GLWidget * child = qobject_cast<GLWidget *>(existing->widget());
+			child->setViewType(GLWidget::VIEW3D);
+			mdiArea->setActiveSubWindow(existing);
+		} else {
+			GLWidget *child = createGLWidget(mdiChild);
+			child->setViewType(GLWidget::VIEW3D);
+			child->show();
+			statusBar()->showMessage(tr("File loaded"), 2000);
+		}
 	} else if (GLWidget *mdiChild = activeGLWidget()){
 		mdiChild->setViewType(GLWidget::MPV);
 	}
@@ -1110,13 +1122,13 @@ void Lvp::zoomIn() {
 	bool in = false;
 	BaseImageViewer *mdiChild;
 	foreach (mdiChild, selectedAllImagesList()) {
-		if (mdiChild->scaleFactor < 3.0) {
+		if (mdiChild->scaleFactor < 9.0) {
 			mdiChild->zoomIn();
 		}
 		in = true;
 	}
 	if (!in && (mdiChild = activeImageViewer())) {
-		if (mdiChild->scaleFactor < 3.0) {
+		if (mdiChild->scaleFactor < 9.0) {
 			mdiChild->zoomIn();
 		}
 	}
@@ -1127,13 +1139,13 @@ void Lvp::zoomOut() {
 	bool in = false;
 	BaseImageViewer *mdiChild;
 	foreach (mdiChild, selectedAllImagesList()) {
-		if (mdiChild->scaleFactor > 0.333) {
+		if (mdiChild->scaleFactor > 0.1) {
 			mdiChild->zoomOut();
 		}
 		in = true;
 	}
 	if (!in && (mdiChild = activeImageViewer())) {
-		if (mdiChild->scaleFactor > 0.333) {
+		if (mdiChild->scaleFactor > 0.1) {
 			mdiChild->zoomOut();
 		}
 	}
