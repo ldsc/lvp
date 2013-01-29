@@ -437,6 +437,8 @@ void Lvp::updateMenus() {
 	actionCrop3D->setEnabled(hasImageViewer3D);
 	if ( hasGLWidget ) {
 		GLWidget * childImage = activeGLWidget();
+		if (childImage->tonsList.size()==3)
+			actionInverter->setEnabled(false);
 		if(childImage->getViewType()==GLWidget::MPV){ //se o tipo de visualização for multiplanar
 			spinBox_x->setEnabled(true);
 			spinBox_y->setEnabled(true);

@@ -62,11 +62,13 @@ GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QW
 			for (int i = 0; i < nx; i++)
 				if ( ! tonsList.contains( pm3Di->data3D[i][j][k] ) )
 					tonsList << pm3Di->data3D[i][j][k];
+	qSort(tonsList.begin(), tonsList.end());
 	pore = tonsList[0];
 	foreach(int temp, tonsList) {
 		QVariant var(temp);
 		qstrTonsList << var.toString();
 	}
+
 	trolltechPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
 	setAutoFillBackground(false);
 	setMinimumSize(200, 200);
@@ -354,10 +356,15 @@ GLuint GLWidget::makeObject() {
 
 	if(pm3D != NULL)
 		goto drawByPm3D;
-	else if(pm3Di != NULL)
-		goto drawByPm3Di;
+	else if(pm3Di != NULL) {
+		if( tonsList.size() == 3 && tonsList.contains(0) ) { // existem 3 tons na imagem e um deles é 0 (fundo).
+			goto drawByPm3Di;
+		} else {
+			goto drawByPm3DiPB;
+		}
+	}
 
-drawByPm3D:
+drawByPm3D: {
 	//Desenhando o meio poroso
 	glBegin(GL_POINTS); //GL_POINTS
 	if (viewtype==VIEW3D){
@@ -399,49 +406,102 @@ drawByPm3D:
 	glEnd();
 	glEndList();
 	return list;
+}
 
-drawByPm3Di:
-	//Desenhando o meio poroso
-	glBegin(GL_POINTS); //GL_POINTS
-	if (viewtype==VIEW3D){
-		for (int k = 0; k < nz; k++){
-			for (int j = 0; j < ny; j++){
-				for (int i = 0; i < nx; i++){
-					if( pm3Di->data3D[i][j][k] == pore ){
-						//glNormal3d(0.0, 0.0, -1.0);
-						glColor3f(0.0, 0.0, 0.0);
-						glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(k-meionz) );
+drawByPm3Di: {
+		//Desenhando o meio poroso (solido tranparente + poro + garganta)
+		pore = tonsList[1];
+		int throat = tonsList[2];
+		glBegin(GL_POINTS); //GL_POINTS
+		if (viewtype==VIEW3D){
+			for (int k = 0; k < nz; k++){
+				for (int j = 0; j < ny; j++){
+					for (int i = 0; i < nx; i++){
+						if( pm3Di->data3D[i][j][k] == pore ){
+							//glNormal3d(0.0, 0.0, -1.0);
+							glColor3f(0.0, 0.0, 0.0);
+							glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(k-meionz) );
+						} else if( pm3Di->data3D[i][j][k] == throat ){
+							glColor3f(1.0, 1.0, 0.0);
+							glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(k-meionz) );
+						}
 					}
 				}
 			}
-		}
-	} else { //viewtype==MPV
-		for (int j = 0; j < ny; j++){
-			for (int i = 0; i < nx; i++){
-				if (pm3Di->data3D[planX][i][j] == pore){
-					glColor3f(0.0, 0.0, 0.0);
-				} else {
-					glColor3f(1.0, 1.0, 1.0);
+		} else { //viewtype==MPV
+			for (int j = 0; j < ny; j++){
+				for (int i = 0; i < nx; i++){
+					if (pm3Di->data3D[planX][i][j] == pore){
+						glColor3f(0.0, 0.0, 0.0);
+					} else if (pm3Di->data3D[planX][i][j] == throat){
+						glColor3f(1.0, 1.0, 0.0);
+					} else {
+						glColor3f(1.0, 1.0, 1.0);
+					}
+					glVertex3d( w*(planX-meionx) , w*(i-meiony) , w*(j-meionz) );
+					if (pm3Di->data3D[i][planY][j] == pore){
+						glColor3f(0.0, 0.0, 0.0);
+					} else {
+						glColor3f(1.0, 1.0, 1.0);
+					}
+					glVertex3d( w*(i-meionx) , w*(planY-meiony) , w*(j-meionz) );
+					if (pm3Di->data3D[i][j][planZ] == pore){
+						glColor3f(0.0, 0.0, 0.0);
+					} else {
+						glColor3f(1.0, 1.0, 1.0);
+					}
+					glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(planZ-meionz) );
 				}
-				glVertex3d( w*(planX-meionx) , w*(i-meiony) , w*(j-meionz) );
-				if (pm3Di->data3D[i][planY][j] == pore){
-					glColor3f(0.0, 0.0, 0.0);
-				} else {
-					glColor3f(1.0, 1.0, 1.0);
-				}
-				glVertex3d( w*(i-meionx) , w*(planY-meiony) , w*(j-meionz) );
-				if (pm3Di->data3D[i][j][planZ] == pore){
-					glColor3f(0.0, 0.0, 0.0);
-				} else {
-					glColor3f(1.0, 1.0, 1.0);
-				}
-				glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(planZ-meionz) );
 			}
 		}
+		glEnd();
+		glEndList();
+		return list;
 	}
-	glEnd();
-	glEndList();
-	return list;
+
+drawByPm3DiPB: {
+		//Desenhando o meio poroso (valor escolhido)
+		glBegin(GL_POINTS); //GL_POINTS
+		if (viewtype==VIEW3D){
+			for (int k = 0; k < nz; k++){
+				for (int j = 0; j < ny; j++){
+					for (int i = 0; i < nx; i++){
+						if( pm3Di->data3D[i][j][k] == pore ){
+							//glNormal3d(0.0, 0.0, -1.0);
+							glColor3f(0.0, 0.0, 0.0);
+							glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(k-meionz) );
+						}
+					}
+				}
+			}
+		} else { //viewtype==MPV
+			for (int j = 0; j < ny; j++){
+				for (int i = 0; i < nx; i++){
+					if (pm3Di->data3D[planX][i][j] == pore){
+						glColor3f(0.0, 0.0, 0.0);
+					} else {
+						glColor3f(1.0, 1.0, 1.0);
+					}
+					glVertex3d( w*(planX-meionx) , w*(i-meiony) , w*(j-meionz) );
+					if (pm3Di->data3D[i][planY][j] == pore){
+						glColor3f(0.0, 0.0, 0.0);
+					} else {
+						glColor3f(1.0, 1.0, 1.0);
+					}
+					glVertex3d( w*(i-meionx) , w*(planY-meiony) , w*(j-meionz) );
+					if (pm3Di->data3D[i][j][planZ] == pore){
+						glColor3f(0.0, 0.0, 0.0);
+					} else {
+						glColor3f(1.0, 1.0, 1.0);
+					}
+					glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(planZ-meionz) );
+				}
+			}
+		}
+		glEnd();
+		glEndList();
+		return list;
+	}
 }
 
 void GLWidget::normalizeAngle(int *angle) {

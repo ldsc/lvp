@@ -31,6 +31,8 @@ cvs/
 *.tif
 *.TIF
 *.tag
+*.raw
+*.RAW
 bin/*.txt
 bin/*.TXT
 CMakeFiles
