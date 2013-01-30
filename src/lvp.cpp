@@ -448,28 +448,28 @@ void Lvp::updateMenus() {
 			horizontalSlider_z->setEnabled(true);
 			action3DVisualization->setEnabled(true);
 			actionMPV->setEnabled(false);
+			if (childImage->getPM3D() != NULL) {
+				horizontalSlider_x->setMaximum( childImage->getPM3D()->NX() - 1 );
+				horizontalSlider_y->setMaximum( childImage->getPM3D()->NY() - 1 );
+				horizontalSlider_z->setMaximum( childImage->getPM3D()->NZ() - 1 );
+				spinBox_x->setMaximum( childImage->getPM3D()->NX() - 1 );
+				spinBox_y->setMaximum( childImage->getPM3D()->NY() - 1 );
+				spinBox_z->setMaximum( childImage->getPM3D()->NZ() - 1 );
+			} else if (childImage->getPM3Di() != NULL) {
+				horizontalSlider_x->setMaximum( childImage->getPM3Di()->NX() - 1 );
+				horizontalSlider_y->setMaximum( childImage->getPM3Di()->NY() - 1 );
+				horizontalSlider_z->setMaximum( childImage->getPM3Di()->NZ() - 1 );
+				spinBox_x->setMaximum( childImage->getPM3Di()->NX() - 1 );
+				spinBox_y->setMaximum( childImage->getPM3Di()->NY() - 1 );
+				spinBox_z->setMaximum( childImage->getPM3Di()->NZ() - 1 );
+			}
+			spinBox_x->setValue( childImage->getPlanX() );
+			spinBox_y->setValue( childImage->getPlanY() );
+			spinBox_z->setValue( childImage->getPlanZ() );
 		}else if(childImage->getViewType()==GLWidget::VIEW3D){ //se o tipo de visualização for 3D
 			action3DVisualization->setEnabled(false);
 			actionMPV->setEnabled(true);
 		}
-		if (hasDbmImageViewer) {
-			horizontalSlider_x->setMaximum( childImage->getPM3D()->NX() - 1 );
-			horizontalSlider_y->setMaximum( childImage->getPM3D()->NY() - 1 );
-			horizontalSlider_z->setMaximum( childImage->getPM3D()->NZ() - 1 );
-			spinBox_x->setMaximum( childImage->getPM3D()->NX() - 1 );
-			spinBox_y->setMaximum( childImage->getPM3D()->NY() - 1 );
-			spinBox_z->setMaximum( childImage->getPM3D()->NZ() - 1 );
-		} else if (hasDgmImageViewer) {
-			horizontalSlider_x->setMaximum( childImage->getPM3Di()->NX() - 1 );
-			horizontalSlider_y->setMaximum( childImage->getPM3Di()->NY() - 1 );
-			horizontalSlider_z->setMaximum( childImage->getPM3Di()->NZ() - 1 );
-			spinBox_x->setMaximum( childImage->getPM3Di()->NX() - 1 );
-			spinBox_y->setMaximum( childImage->getPM3Di()->NY() - 1 );
-			spinBox_z->setMaximum( childImage->getPM3Di()->NZ() - 1 );
-		}
-		spinBox_x->setValue( childImage->getPlanX() );
-		spinBox_y->setValue( childImage->getPlanY() );
-		spinBox_z->setValue( childImage->getPlanZ() );
 	}else{
 		spinBox_x->setEnabled(false);
 		spinBox_y->setEnabled(false);
@@ -812,11 +812,11 @@ void Lvp::openMPV( ) {
 		QMdiSubWindow *existing = findGLWidget(mdiChild->getFullFileName());
 		if (existing) {
 			GLWidget * child = qobject_cast<GLWidget *>(existing->widget());
-			child->setViewType(GLWidget::VIEW3D);
+			child->setViewType(GLWidget::MPV);
 			mdiArea->setActiveSubWindow(existing);
 		} else {
 			GLWidget *child = createGLWidget(mdiChild);
-			child->setViewType(GLWidget::VIEW3D);
+			child->setViewType(GLWidget::MPV);
 			child->show();
 			statusBar()->showMessage(tr("File loaded"), 2000);
 		}

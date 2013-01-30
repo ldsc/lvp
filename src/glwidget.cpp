@@ -441,12 +441,16 @@ drawByPm3Di: {
 					glVertex3d( w*(planX-meionx) , w*(i-meiony) , w*(j-meionz) );
 					if (pm3Di->data3D[i][planY][j] == pore){
 						glColor3f(0.0, 0.0, 0.0);
+					} else if (pm3Di->data3D[i][planY][j] == throat){
+						glColor3f(1.0, 1.0, 0.0);
 					} else {
 						glColor3f(1.0, 1.0, 1.0);
 					}
 					glVertex3d( w*(i-meionx) , w*(planY-meiony) , w*(j-meionz) );
 					if (pm3Di->data3D[i][j][planZ] == pore){
 						glColor3f(0.0, 0.0, 0.0);
+					} else if (pm3Di->data3D[i][j][planZ] == throat){
+						glColor3f(1.0, 1.0, 0.0);
 					} else {
 						glColor3f(1.0, 1.0, 1.0);
 					}
