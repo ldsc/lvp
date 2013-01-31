@@ -53,7 +53,7 @@ bool Ploter::loadFile(const QString & _fileName) {
 				setTitle ("Auto Correlation");
 				setAxisTitle ( QwtPlot::yLeft , "C(u)" );
 				setAxisTitle ( QwtPlot::xBottom , "Displacement" );
-         } else if ( fileExt == "dtp" or fileExt == "DTP" or fileExt == "dts" or fileExt == "DTS") {
+			} else if ( fileExt == "dtp" or fileExt == "DTP" or fileExt == "dts" or fileExt == "DTS" or fileExt == "dtg" or fileExt == "DTG") {
 				QwtPlotCurve *curve = new QwtPlotCurve( fileName );
 				double x[tam], y[tam];
 				while ( (! fin.fail()) && ( ! fin.eof()) && (cont < tam) ) {
@@ -73,13 +73,16 @@ bool Ploter::loadFile(const QString & _fileName) {
 				curve->setPen(QPen(colors[0], 2));
 				curve->setSamples(x , y, cont-1);
 				curve->attach(this);
-            if ( fileExt == "dts" or fileExt == "DTS") {
-               setTitle ("Solids Size Distribution");
-               setAxisTitle ( QwtPlot::yLeft, "Area of solids (%)" );
-            } else {
-               setTitle ("Pores Size Distribution");
-               setAxisTitle ( QwtPlot::yLeft, "Porosity (%)" );
-            }
+				if ( fileExt == "dts" or fileExt == "DTS") {
+					setTitle ("Solids Size Distribution");
+					setAxisTitle ( QwtPlot::yLeft, "Area of solids (%)" );
+				} else if ( fileExt == "dtg" or fileExt == "DTG") {\
+					setTitle ("Throat Size Distribution");
+					setAxisTitle ( QwtPlot::yLeft, "Porosity (%)" );
+				} else {
+					setTitle ("Pores Size Distribution");
+					setAxisTitle ( QwtPlot::yLeft, "Porosity (%)" );
+				}
 				setAxisTitle ( QwtPlot::xBottom, "Radius (pixel)" );
 			} else if ( fileExt == "rpc" or fileExt == "RPC" ) {
 				QwtPlotCurve *curveOil = new QwtPlotCurve(tr("Oil-%1").arg(fileName));
@@ -145,9 +148,9 @@ bool Ploter::addCurves(const QStringList & _filesName) {
 				int cont = 0, tam  = 512;
 				if (fin.good() && fin.is_open()) {
 					if ( ext == "cor" or ext == "COR" )	{
-                  //QwtPlotCurve *curve = new QwtPlotCurve(fileName.mid(fileName.lastIndexOf("/")+1));
-                  QwtPlotCurve *curve = new QwtPlotCurve(QFileInfo(fileName).fileName());
-                  double x[tam], y[tam];
+						//QwtPlotCurve *curve = new QwtPlotCurve(fileName.mid(fileName.lastIndexOf("/")+1));
+						QwtPlotCurve *curve = new QwtPlotCurve(QFileInfo(fileName).fileName());
+						double x[tam], y[tam];
 						while ( (fin >> x[cont] >> y[cont]) && (cont < tam) ) {
 							//cerr << x[cont] << " " << y[cont] << endl;
 							cont++;
@@ -155,9 +158,9 @@ bool Ploter::addCurves(const QStringList & _filesName) {
 						curve->setPen(QPen(colors[patchCurves.size()], 2));
 						curve->setSamples(x , y, cont);
 						curve->attach(this);
-               } else if ( fileExt == "dtp" or fileExt == "DTP" or fileExt == "dts" or fileExt == "DTS") {
-                  //QwtPlotCurve *curve = new QwtPlotCurve(fileName.mid(fileName.lastIndexOf("/")+1));
-                  QwtPlotCurve *curve = new QwtPlotCurve(QFileInfo(fileName).fileName());
+					} else if ( fileExt == "dtp" or fileExt == "DTP" or fileExt == "dts" or fileExt == "DTS") {
+						//QwtPlotCurve *curve = new QwtPlotCurve(fileName.mid(fileName.lastIndexOf("/")+1));
+						QwtPlotCurve *curve = new QwtPlotCurve(QFileInfo(fileName).fileName());
 						double x[tam], y[tam];
 						while ( (! fin.fail()) && ( ! fin.eof()) && (cont < tam) ) {
 							fin >> aux;
@@ -228,7 +231,7 @@ void Ploter::accumulated() {
 		double tmp = 0.0;
 		string aux;
 		if (fin.good() && fin.is_open()) {
-         if ( fileExt == "dtp" or fileExt == "DTP" or fileExt == "dts" or fileExt == "DTS") {
+			if ( fileExt == "dtp" or fileExt == "DTP" or fileExt == "dts" or fileExt == "DTS") {
 				curveAccumulated = new QwtPlotCurve(tr("accumulated-%1").arg(fileName));
 				double x[tam], y[tam];
 				while ( (! fin.fail()) && ( ! fin.eof()) && (cont < tam) ) {
@@ -262,13 +265,13 @@ void Ploter::accumulated() {
 }
 
 void Ploter::getFileNames(const QString & _fileName) {
-   fullFileName = _fileName;
-   fileName = QFileInfo(fullFileName).fileName(); 	// retorna a string existente apÃ³s a Ãºltima /
-   curFileNoExt = fileName.section('.', 0, -2); 		// retorna o nome do arquivo sem a extensÃ£o
-   fileExt = QFileInfo(fullFileName).suffix(); 	// retorna a string existente apÃ³s o Ãºltimo .
-   filePath = QFileInfo(fullFileName).canonicalPath() + "/";
+	fullFileName = _fileName;
+	fileName = QFileInfo(fullFileName).fileName(); 	// retorna a string existente apÃ³s a Ãºltima /
+	curFileNoExt = fileName.section('.', 0, -2); 		// retorna o nome do arquivo sem a extensÃ£o
+	fileExt = QFileInfo(fullFileName).suffix(); 	// retorna a string existente apÃ³s o Ãºltimo .
+	filePath = QFileInfo(fullFileName).canonicalPath() + "/";
 	if ( isNew ) {  										// é um novo arquivo.
-      fileName = fileName.remove(0,1); 						// remove o ponto no início do nome do arquivo
+		fileName = fileName.remove(0,1); 						// remove o ponto no início do nome do arquivo
 	}
 }
 
@@ -276,13 +279,13 @@ bool Ploter::save( QString * lop ) {
 	if (isNew) {
 		return saveAs( lop );
 	}/* else {
-  if( ! pm )
+	if( ! pm )
 	pm = new TCMatriz2D<int>(fullCurFile.toStdString());
-  if(pm->Write(curFile.toStdString())) {
+	if(pm->Write(curFile.toStdString())) {
 	return true;
-  } else {
+	} else {
 	return false;
-  }
+	}
  }*/
 	return false;
 }
@@ -293,20 +296,20 @@ bool Ploter::saveAs( QString * _lop ) {
 		newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Correlation Files (*.cor)"));
 	} else if( fileExt == "dtp" || fileExt == "DTP") {
 		newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Distribution Files (*.dtp)"));
-   } else if( fileExt == "dts" || fileExt == "DTS") {
-      newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Distribution Files (*.dts)"));
-   } else if( fileExt == "rpc" || fileExt == "RPC") {
+	} else if( fileExt == "dts" || fileExt == "DTS") {
+		newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Distribution Files (*.dts)"));
+	} else if( fileExt == "rpc" || fileExt == "RPC") {
 		newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Relative Permeability Curves (*.rpc)"));
 	}
 	if ( newFileName.isEmpty() ) {
 		return false;
 	}
-    *_lop = newFileName;
-    //QDir dir(newFileName);
-    //*_lop = dir.canonicalPath();
-    //cerr << "newFileName: " << newFileName.toStdString() << endl;
-    //cerr << "_lop: " << _lop->toStdString() << endl;
-    //cerr << "dir.canonicalPath(): " << dir.canonicalPath().toStdString() << endl;
+	*_lop = newFileName;
+	//QDir dir(newFileName);
+	//*_lop = dir.canonicalPath();
+	//cerr << "newFileName: " << newFileName.toStdString() << endl;
+	//cerr << "_lop: " << _lop->toStdString() << endl;
+	//cerr << "dir.canonicalPath(): " << dir.canonicalPath().toStdString() << endl;
 	if (QFile::copy(fullFileName, newFileName)){
 		if (isNew) {
 			QFile::remove(fullFileName);
@@ -340,7 +343,7 @@ bool Ploter::maybeSave() {
 		QMessageBox::StandardButton ret;
 		ret = QMessageBox::warning(parent, tr("LVP"), tr("'%1' isn't save.\n""Do you want to save it?").arg(getFileName()), QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 		if (ret == QMessageBox::Save) {
-            static QString lop("./");
+			static QString lop("./");
 			return save( & lop );
 		} else if (ret == QMessageBox::Cancel) {
 			return false;
@@ -352,7 +355,7 @@ bool Ploter::maybeSave() {
 void Ploter::labelPos(const QPoint &pos) {
 	QString info;
 	info.sprintf("Last active position:  X=%g , Y=%g",
-					 this->invTransform(QwtPlot::xBottom, pos.x()),
-					 this->invTransform(QwtPlot::yLeft, pos.y()));
+							 this->invTransform(QwtPlot::xBottom, pos.x()),
+							 this->invTransform(QwtPlot::yLeft, pos.y()));
 	parent->statusBar()->showMessage(info, 9999);
 }

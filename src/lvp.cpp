@@ -285,6 +285,7 @@ void Lvp::createActions() {
 	connect( actionDTPd5711_3D,             SIGNAL( triggered() ),	this,			SLOT( dtpD5711_3D()               ) );
 	connect( actionDTPeuclidian,            SIGNAL( triggered() ),	this,			SLOT( dtpEuclidian()							) );
 	connect( actionDTPeuclidian3D,          SIGNAL( triggered() ),	this,			SLOT( dtpEuclidian3D()       	    ) );
+	connect( actionDTPGd345_3D,							SIGNAL( triggered() ),	this,			SLOT( dtpgD345_3D()								) );
 	connect( actionPorosity,                SIGNAL( triggered() ),	this,			SLOT( porosity()									) );
 	connect( actionConnectivity,            SIGNAL( triggered() ),  this,			SLOT( connectivity3D()						) );
 	connect( actionClose,                   SIGNAL( triggered() ), 	mdiArea,	SLOT( closeActiveSubWindow()      ) );
@@ -364,6 +365,7 @@ void Lvp::updateMenus() {
 	actionDTPd5711_3D->setVisible(hasImageViewer3D);
 	actionDTPeuclidian->setVisible(hasImageViewer);
 	actionDTPeuclidian3D->setVisible(hasImageViewer3D);
+	actionDTPGd345_3D->setEnabled(hasImageViewer3D);
 	actionCascade->setEnabled(mdiArea->subWindowList().size() > 0);
 	actionClose->setEnabled(mdiArea->subWindowList().size() > 0);
 	actionCloseAll->setEnabled(mdiArea->subWindowList().size() > 0);
@@ -668,7 +670,7 @@ void Lvp::updateDockLista() {
 
 void Lvp::open( ) {
 	// lista com o nome dos arquivos que serão abertos
-	QStringList files = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Accepted Files (*.pgm *.pbm *.dbm *.dgm *.cor *.dtp *.dts *.rpc);;Image Files (*.pgm *.pbm *.dbm);;Binary Images (*.pbm);;3D Binary Images (*.dbm);;Grey Scale Images (*.pgm);;3DGrey Scale Images (*.dgm);;Relative Permeability Curves (*.rpc);;Correlation Files (*.cor);;Distribution Files (*.dtp *.dts)"));
+	QStringList files = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Accepted Files (*.pgm *.pbm *.dbm *.dgm *.cor *.dtp *.dts *.dtg *.rpc);;Image Files (*.pgm *.pbm *.dbm);;Binary Images (*.pbm);;3D Binary Images (*.dbm);;Grey Scale Images (*.pgm);;3DGrey Scale Images (*.dgm);;Relative Permeability Curves (*.rpc);;Correlation Files (*.cor);;Distribution Files (*.dtp *.dts *.dtg)"));
 	int numFiles = files.size(); //número de arquivos que serão abertos
 	
 	QProgressDialog progress("Opening files...", "&Cancel", 0, numFiles, this);
@@ -695,7 +697,7 @@ void Lvp::open(string _file, bool novo) {
 		lastOpenPath = lop.canonicalPath();
 		QString  qext = fileName.mid(fileName.lastIndexOf(".")+1); // pega todos os caracteres a partir do último ponto
 		string ext = qext.toStdString(); 		// converte para std string
-		if ( ext == "cor" or ext == "COR" or ext == "rpc" or ext == "RPC" or ext == "dtp" or ext == "DTP" or ext == "dts" or ext == "DTS") { 	// o arquivo será plotado
+		if ( ext == "cor" or ext == "COR" or ext == "rpc" or ext == "RPC" or ext == "dtp" or ext == "DTP" or ext == "dts" or ext == "DTS" or ext == "dtg" or ext == "DTG") { 	// o arquivo será plotado
 			existing = findPloter(fileName);
 			if (existing) {
 				mdiArea->setActiveSubWindow(existing);
@@ -2179,8 +2181,8 @@ void Lvp::relativePermeability() {
 void Lvp::segmentationPoresThroats(){
 	int indice, fundo;
 	bool ok1, ok2, ok3;
-	if ( activeDbmImageViewer() != 0 ){
-		DbmImageViewer* child = activeDbmImageViewer();
+	DbmImageViewer* child = activeDbmImageViewer();
+	if ( child != 0 ){
 		//TCMatriz3D<bool> * pm = NULL;
 		//pm = new TCMatriz3D<bool>( *child->pm3D );
 		if ( child->pm3D ) {
@@ -2239,16 +2241,17 @@ void Lvp::segmentationPoresThroats(){
 				} else if (msgBox2.clickedButton() == model4) {
 					filtro.DistSitiosLigacoes_Modelo_4();
 				}*/
-				TCMatriz3D<int>* pm = filtro.DistSitiosLigacoes_Modelo_4();
+				pair<TCMatriz3D<bool>*,TCMatriz3D<bool>*> pm = filtro.DistSitiosLigacoes_Modelo_4();
 
 				static int seqNumberSPT = 1;
 				QString filepath = tr(".segmented%1.dgm").arg(QString::number(seqNumberSPT++));
 				//pm->SetFormato(D2_X_Y_Z_GRAY_ASCII);
 				//pm->NumCores(3);
-				pm->Write(filepath.toStdString());
+				filtro.Write(filepath.toStdString(), pm.first, pm.second);
 				//filepath = child->getFilePath() + filepath;
 				open( filepath.toStdString() );
-
+				delete pm.first;
+				delete pm.second;
 				QApplication::restoreOverrideCursor();
 			}
 		} else {
@@ -2260,7 +2263,6 @@ void Lvp::segmentationPoresThroats(){
 		QMessageBox::information(this, tr("LVP"), tr("Error: Image viewer not active!"));
 		return;
 	}
-
 }
 
 void Lvp::rotate() {
@@ -3077,7 +3079,7 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 			break;
 		case m3Dd34: //d34
 			metrica2D = CDistribuicao::d34;
-			numPlanos = QInputDialog::getInteger(this, tr(":. 3D Distribution"), tr("Enter the number of plans to be considered.\nLeave 0 to consider 10% of plans of the image:"), 0, 0, 300, 1, &ok);
+			numPlanos = QInputDialog::getInteger(this, tr(":. 3D Distribution"), tr("Enter the number of plans to be considered.\nLeave 0 to consider 10% of plans of the image:"), 0, 0, 1000, 1, &ok);
 			if ( ! ok ) return;
 			suf << "d34_np-" << numPlanos;
 			sufixo = suf.str();
@@ -3088,7 +3090,7 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 			break;
 		case m3Dd5711: //d5711
 			metrica2D = CDistribuicao::d5711;
-			numPlanos = QInputDialog::getInteger(this, tr(":. 3D Distribution"), tr("Enter the number of plans to be considered.\nLeave 0 to consider 10% of plans of the image:"), 0, 0, 300, 1, &ok);
+			numPlanos = QInputDialog::getInteger(this, tr(":. 3D Distribution"), tr("Enter the number of plans to be considered.\nLeave 0 to consider 10% of plans of the image:"), 0, 0, 1000, 1, &ok);
 			if ( ! ok ) return;
 			suf << "d5711_np-" << numPlanos;
 			sufixo = suf.str();
@@ -3147,6 +3149,91 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 	}
 	progress.setValue(numFiles);
 	QApplication::restoreOverrideCursor();
+}
+
+void Lvp::dtpgD345_3D(){
+	int indice, fundo;
+	bool ok1, ok2, ok3;
+	CDistribuicao3D *distP = NULL;
+	CDistribuicao3D *distG = NULL;
+	DbmImageViewer* child = activeDbmImageViewer();
+	if ( child != 0 ){
+		if ( child->pm3D ) {
+			QMessageBox msgBox(this);
+			msgBox.setWindowTitle(tr("LVP - 3D pores and throats size distribution"));
+			msgBox.setText(tr("Pore is:"));
+			msgBox.addButton(QMessageBox::Cancel);
+			QPushButton *writeButton = msgBox.addButton(tr("&Write (0)"), QMessageBox::ActionRole);
+			QPushButton *blackButton = msgBox.addButton(tr("&Black (1)"), QMessageBox::ActionRole);
+			msgBox.setDefaultButton(blackButton);
+			msgBox.exec();
+			if (msgBox.clickedButton() == blackButton) {
+				indice = 1;
+				fundo = 0;
+			} else if (msgBox.clickedButton() == writeButton) {
+				indice = 0;
+				fundo = 1;
+			} else {
+				return;
+			}
+			CAberturaDilatacao3D filtro = CAberturaDilatacao3D(child->pm3D, child->getFileNameNoExt().toStdString(), indice, fundo );
+			int raioMaximo = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the maximum radius of the structuring element:"), 50, 1, 99, 1, &ok1);
+			int fatorReducao = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the reduction factor of the structuring element radius:"), 1, 1, raioMaximo, 1, &ok2);
+			int incrementoRaio = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the increment value for the structuring element radius:"), 1, 1, raioMaximo, 1, &ok3);
+			if (ok1 and ok2 and ok3) {
+				QApplication::setOverrideCursor(Qt::WaitCursor);
+
+				filtro.RaioMaximoElementoEstruturante(raioMaximo);
+				filtro.FatorReducaoRaioElemEst(fatorReducao);
+				filtro.IncrementoRaioElementoEstruturante(incrementoRaio);
+
+				pair<TCMatriz3D<bool>*,TCMatriz3D<bool>*> pm = filtro.DistSitiosLigacoes_Modelo_4();
+
+				distP = new CDistribuicao3D ( pm.first );
+				distG = new CDistribuicao3D ( pm.second );
+				if ( ! distP || ! distG ) {
+					cerr << "Não foi possível alocar CDistribuicao3D em Lvp::dtpgD345_3D()" << endl;
+					QApplication::restoreOverrideCursor();
+					delete pm.first;
+					delete pm.second;
+					if(distP) delete distP;
+					if(distG) delete distG;
+					return;
+				}
+				ok1 = distP->Go( CBaseDistribuicao::dtp, CDistribuicao3D::d345, indice, fundo);
+				ok2 = distG->Go( CBaseDistribuicao::dtg, CDistribuicao3D::d345, indice, fundo);
+
+				if ( ok1 and ok2 ) {
+					static int seqNumberDTPG = 0;
+					seqNumberDTPG++;
+					QString filepath = tr(".distribution%1").arg(QString::number(seqNumberDTPG));
+					filepath = validateFileName(filepath);
+					ok1 = distP->Write(filepath.toStdString());
+					ok2 = distG->Write(filepath.toStdString());
+					if ( ok1 and ok2 ) {
+						open( (filepath + ".dtp").toStdString() );
+						open( (filepath + ".dtg").toStdString() );
+					} else {
+						QMessageBox::information(this, tr("LVP"), tr("Erro! - Can not save the distribution file!"));
+					}
+				} else {
+					QApplication::restoreOverrideCursor();
+					QMessageBox::information(this, tr("LVP"), tr("Erro! - Distribution3D class returned false!"));
+				}
+				QApplication::restoreOverrideCursor();
+				delete pm.first;
+				delete pm.second;
+				delete distP;
+				delete distG;
+			}
+		} else {
+			QMessageBox::information(this, tr("LVP"), tr("Error trying to create 3D image!"));
+			return;
+		}
+	} else {
+		QMessageBox::information(this, tr("LVP"), tr("Error: Image viewer not active!"));
+		return;
+	}
 }
 
 void Lvp::porosity() {
@@ -3559,14 +3646,15 @@ QMdiSubWindow *Lvp::findPloter(const QString & _fileName) {
 }
 
 QMdiSubWindow *Lvp::findTextEditor(const QString & _fileName) {
-	QString canonicalFilePath = QFileInfo(_fileName).canonicalFilePath();
+	//QString canonicalFilePath = QFileInfo(_fileName).canonicalFilePath();
 	TextEditor *mdiChild;
 	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
 		mdiChild = NULL;
 		if (qobject_cast<TextEditor *>(window->widget()) != 0)
 			mdiChild = qobject_cast<TextEditor *>(window->widget());
 		if (mdiChild)
-			if (mdiChild->getFullFileName() == canonicalFilePath)
+			//if (mdiChild->getFullFileName() == canonicalFilePath)
+			if (mdiChild->getFullFileName() == _fileName)
 				return window;
 	}
 	return 0;

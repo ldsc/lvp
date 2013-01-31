@@ -199,6 +199,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void dtpD5711_3D();
 		void dtpEuclidian();
 		void dtpEuclidian3D();
+		void dtpgD345_3D();
 		void updateActionSave();
 		void erosion();
 		void erosion3D();

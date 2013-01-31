@@ -229,6 +229,7 @@
     <addaction name="menuCorrelation"/>
     <addaction name="menuDTS"/>
     <addaction name="menuDTP"/>
+    <addaction name="actionDTPGd345_3D"/>
     <addaction name="actionIntrinsicPermeability"/>
     <addaction name="actionRelativePermeability"/>
    </widget>
@@ -1546,6 +1547,11 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>&amp;Crop 3D</string>
+   </property>
+  </action>
+  <action name="actionDTPGd345_3D">
+   <property name="text">
+    <string>Pores/Throats Size Distribution</string>
    </property>
   </action>
   <zorder>dockWidgetVisualisation3D</zorder>
