@@ -426,7 +426,7 @@ void Lvp::updateMenus() {
 	menu3DFilters->setEnabled(hasDbmImageViewer);
 	pushButtonAddCurve->setEnabled( hasPloter && ( activePloter()->patchCurves.size() < 16 ) ); // permite plotar no máximo 15 curvas.
 	pushButtonAverage->setEnabled( hasPloter && ( activePloter()->patchCurves.size() > 1 ) && (ext == "cor" or ext == "COR" or ext == "dtp" or ext == "DTP" or ext == "dts" or ext == "DTS") ); // Só ativa a média se tiver plotada mais de uma curva de correlação.
-	pushButtonAccumulated->setEnabled( hasPloter && ( activePloter()->patchCurves.size() == 1 ) && (ext == "dtp" or ext == "DTP" or ext == "dts" or ext == "DTS") );
+	pushButtonAccumulated->setEnabled( hasPloter && ( activePloter()->patchCurves.size() == 1 ) && (ext == "dtp" or ext == "DTP" or ext == "dts" or ext == "DTS" or ext == "dtg" or ext == "DTG") );
 	pushButtonSource->setEnabled(hasPloter);
 	radioButtonX->setEnabled(hasImageViewer3D);
 	radioButtonY->setEnabled(hasImageViewer3D);
@@ -1817,10 +1817,8 @@ void Lvp::addCurve() {
 		QString ext = plot->getFileExt();
 		if (ext == "cor" or ext == "COR")
 			filespath = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Correlation Files (*.cor)"));
-		else if (ext == "dtp" or ext == "DTP")
-			filespath = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Distribution Files (*.dtp)"));
-		else if (ext == "dts" or ext == "DTS")
-			filespath = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Distribution Files (*.dts)"));
+		else if (ext == "dtp" or ext == "DTP" or ext == "dts" or ext == "DTS" or ext == "dtg" or ext == "DTG")
+			filespath = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Distribution Files (*.dtp *.dts *.dtg)"));
 		else if (ext == "rpc" or ext == "RPC")
 			filespath = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Relative Permeability Curves (*.rpc)"));
 	}
@@ -3632,14 +3630,15 @@ QMdiSubWindow *Lvp::findGLWidget(const QString &_fileName) {
 }
 
 QMdiSubWindow *Lvp::findPloter(const QString & _fileName) {
-	QString canonicalFilePath = QFileInfo(_fileName).canonicalFilePath();
+	//QString canonicalFilePath = QFileInfo(_fileName).canonicalFilePath();
 	Ploter *mdiChild;
 	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
 		mdiChild = NULL;
 		if (qobject_cast<Ploter *>(window->widget()) != 0)
 			mdiChild = qobject_cast<Ploter *>(window->widget());
 		if (mdiChild)
-			if (mdiChild->getFullFileName() == canonicalFilePath)
+			//if (mdiChild->getFullFileName() == canonicalFilePath)
+			if (mdiChild->getFullFileName() == _fileName)
 				return window;
 	}
 	return 0;

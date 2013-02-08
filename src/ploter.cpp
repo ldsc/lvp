@@ -231,7 +231,7 @@ void Ploter::accumulated() {
 		double tmp = 0.0;
 		string aux;
 		if (fin.good() && fin.is_open()) {
-			if ( fileExt == "dtp" or fileExt == "DTP" or fileExt == "dts" or fileExt == "DTS") {
+			if ( fileExt == "dtp" or fileExt == "DTP" or fileExt == "dts" or fileExt == "DTS" or fileExt == "dtg" or fileExt == "DTG") {
 				curveAccumulated = new QwtPlotCurve(tr("accumulated-%1").arg(fileName));
 				double x[tam], y[tam];
 				while ( (! fin.fail()) && ( ! fin.eof()) && (cont < tam) ) {
