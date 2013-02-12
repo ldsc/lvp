@@ -85,9 +85,13 @@ INCLUDEPATH += ../../qwt/include \
 LIBS +=  -L../../qwt/lib \
          -L../../libldsc/src \
          -lqwt \
-         -lldsc
+         -lldsc \
+         -lgomp
 
 TARGET = lvp
 
 OTHER_FILES += \
     ../Doxyfile
+
+QMAKE_CXXFLAGS += -fopenmp
+QMAKE_LFLAGS += -fopenmp

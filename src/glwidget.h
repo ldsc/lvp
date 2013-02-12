@@ -10,6 +10,7 @@
 #include <QStringList>
 #include <QVariant>
 #include <Matriz/TCMatriz3D.h>
+#include "omp.h"
 
 QT_BEGIN_NAMESPACE
 class QPaintEvent;
