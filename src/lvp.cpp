@@ -680,6 +680,7 @@ void Lvp::open( ) {
 		progress.setValue(i);
 		if (progress.wasCanceled())
 			break;
+		//cerr << "Abrindo " << files.at(i).toStdString() << endl;
 		open( files.at(i).toStdString(), false);
 	}
 	
@@ -1187,6 +1188,7 @@ void Lvp::inversion() {
 		if (progress.wasCanceled())
 			break;
 		QString qstr = mdiChild->getFullFileName();
+		cerr << "Nome do arquivo em Lvp::inversion() " << qstr.toStdString() << endl;
 		if ( mdiChild->pm == NULL )
 			pmInv = new TCMatriz2D<bool>( qstr.toStdString() );
 		else
@@ -1196,6 +1198,7 @@ void Lvp::inversion() {
 			static int seqNumberInversion = 1;
 			qstr = tr(".inversion%1.%2").arg(QString::number(seqNumberInversion++)).arg(mdiChild->getFileExt());
 			pmInv->Write( qstr.toStdString() );
+			cerr << "Tentando abrir: " << (mdiChild->getFilePath() + qstr).toStdString() << endl;
 			open( (mdiChild->getFilePath() + qstr).toStdString() );
 			cont++;
 			pmInv = NULL;

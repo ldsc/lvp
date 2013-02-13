@@ -370,7 +370,7 @@ drawByPm3D: {
 	glBegin(GL_POINTS); //GL_POINTS
 	if (viewtype==VIEW3D){
 		glColor3f(0.0, 0.0, 0.0);
-		//#pragma omp parallel for collapse(3) schedule(dynamic,chunk)
+		#pragma omp parallel for collapse(3) schedule(dynamic,chunk)
 		for (int k = 0; k < nz; k++){
 			for (int j = 0; j < ny; j++){
 				for (int i = 0; i < nx; i++){
