@@ -21,6 +21,7 @@
 #include <QSplashScreen>
 //#include <QTranslator>
 #include "lvp.h"
+#include "omp.h"
 
 int main(int argc, char *argv[]) {
 	Q_INIT_RESOURCE(application); //inicia os recursos especificados no arquivo .qrc
@@ -31,8 +32,11 @@ int main(int argc, char *argv[]) {
 	QPixmap pixmap(":/images/splashScream.png");
 	QSplashScreen splash(pixmap);
 	splash.show();
-	Qt::Alignment topRight = Qt::AlignBottom | Qt::AlignRight;
-	splash.showMessage(QObject::tr("Loading Main Window"), topRight, Qt::white);
+	Qt::Alignment BottomRight = Qt::AlignBottom | Qt::AlignRight;
+	Qt::Alignment BottomLeft = Qt::AlignBottom | Qt::AlignLeft;
+	splash.showMessage(QObject::tr("Working on %1 cores.").arg(omp_get_num_procs()), BottomLeft, Qt::white);
+	std::cerr << "LVP: " << omp_get_num_procs() << " núcleo(s) de processamento disponível(is)!" << endl;
+	splash.showMessage(QObject::tr("Loading Main Window"), BottomRight, Qt::white);
 
 	// Identify locale and load translation if available
 	QString locale = QLocale::system().name();
@@ -42,7 +46,7 @@ int main(int argc, char *argv[]) {
 	app.installTranslator(&translator);
 
 	//sleep(1);
-	splash.showMessage(QObject::tr("Main Window Loaded."), topRight, Qt::white);
+	splash.showMessage(QObject::tr("Main Window Loaded."), BottomRight, Qt::white);
 	//sleep(1);
 
 	Lvp *mw = new Lvp();
