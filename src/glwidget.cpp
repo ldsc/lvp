@@ -276,7 +276,6 @@ GLuint GLWidget::makeObject() {
 		static GLfloat logoDiffuseColor[4] = {trolltechPurple.red()/255.0, trolltechPurple.green()/255.0, trolltechPurple.blue()/255.0, 1.0};
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, logoDiffuseColor);
 		*/
-	int chunk = 10;
 	double w = distpoints;
 	int meionx = nx/2;
 	int meiony = ny/2;
@@ -370,7 +369,7 @@ drawByPm3D: {
 	glBegin(GL_POINTS); //GL_POINTS
 	if (viewtype==VIEW3D){
 		glColor3f(0.0, 0.0, 0.0);
-		#pragma omp parallel for collapse(3) schedule(dynamic,chunk)
+		//#pragma omp parallel for collapse(3) schedule(dynamic,10)
 		for (int k = 0; k < nz; k++){
 			for (int j = 0; j < ny; j++){
 				for (int i = 0; i < nx; i++){
@@ -381,7 +380,7 @@ drawByPm3D: {
 			}
 		}
 	} else { //viewtype==MPV
-		//#pragma omp parallel for collapse(2) schedule(dynamic,chunk)
+		//#pragma omp parallel for collapse(2) schedule(dynamic,10)
 		for (int j = 0; j < ny; j++){
 			for (int i = 0; i < nx; i++){
 				if (pm3D->data3D[planX][i][j] == pore){
@@ -470,7 +469,7 @@ drawByPm3DiPB: {
 		glBegin(GL_POINTS); //GL_POINTS
 		if (viewtype==VIEW3D){
 			glColor3f(0.0, 0.0, 0.0);
-			#pragma omp parallel for collapse(3) schedule(dynamic,chunk)
+			//#pragma omp parallel for collapse(3) schedule(dynamic,10)
 			for (int k = 0; k < nz; k++){
 				for (int j = 0; j < ny; j++){
 					for (int i = 0; i < nx; i++){
