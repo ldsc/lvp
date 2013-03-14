@@ -210,11 +210,17 @@ void GLWidget::paintGL() {
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	qglClearColor(trolltechPurple.dark());
 
-	//glEnable(GL_LIGHTING);  //Habilita o uso de iluminação
+	glEnable(GL_POINT_SMOOTH);
+	//glEnable (GL_BLEND);
+	//glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glHint (GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
+	glEnable(GL_NORMALIZE);
+
+	glEnable(GL_LIGHTING);  //Habilita o uso de iluminação
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_COLOR_MATERIAL);
 
-	glEnable(GL_LIGHT0);  // Habilita a luz de número 0
+	//glEnable(GL_LIGHT0);  // Habilita a luz de número 0
 	GLfloat lightPosition[4] = { 1.0, 1.0, 1.0, 1.0}; // x, y, z, w
 	GLfloat luzAmbiente[4]    = { 1.0, 1.0, 1.0, 1.0}; // r, g, b, a
 	//GLfloat luzDifusa[4]	 = {1.0, 1.0, 1.0, 1.0}; // "cor"
@@ -232,8 +238,6 @@ void GLWidget::paintGL() {
 	glShadeModel (GL_SMOOTH);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especularidade);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-	//
-
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbiente);	// Ativa o uso da luz ambiente
 	/*
 		glPushMatrix();
@@ -290,11 +294,6 @@ GLuint GLWidget::makeObject() {
 	double meionzw = w*(meionz-1);
 
 	glPointSize(pointsize);
-	glEnable(GL_POINT_SMOOTH);
-	//glEnable (GL_BLEND);
-	//glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glHint (GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
-	glEnable(GL_NORMALIZE);
 
 	//Desenhando linhas do cubo
 	glColor3f(0.0, 1.0, 0.0); // cor verde

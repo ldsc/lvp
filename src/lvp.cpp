@@ -2205,22 +2205,22 @@ void Lvp::segmentationPoresThroats(){
 				return;
 			}
 			CAberturaDilatacao3D filtro = CAberturaDilatacao3D(child->pm3D, child->getFileNameNoExt().toStdString(), indice, fundo );
-			/*
+
 			QMessageBox msgBox2(this);
 			msgBox2.setText(tr("Select a model:"));
 			QPushButton *cancel = msgBox2.addButton(QMessageBox::Cancel);
-			QPushButton *model0 = msgBox2.addButton(tr("Model &0"), QMessageBox::ActionRole);
-			QPushButton *model1 = msgBox2.addButton(tr("Model &1"), QMessageBox::ActionRole);
-			QPushButton *model2 = msgBox2.addButton(tr("Model &2"), QMessageBox::ActionRole);
-			QPushButton *model3 = msgBox2.addButton(tr("Model &3"), QMessageBox::ActionRole);
+			//QPushButton *model0 = msgBox2.addButton(tr("Model &0"), QMessageBox::ActionRole);
+			//QPushButton *model1 = msgBox2.addButton(tr("Model &1"), QMessageBox::ActionRole);
+			//QPushButton *model2 = msgBox2.addButton(tr("Model &2"), QMessageBox::ActionRole);
+			//QPushButton *model3 = msgBox2.addButton(tr("Model &3"), QMessageBox::ActionRole);
 			QPushButton *model4 = msgBox2.addButton(tr("Model &4"), QMessageBox::ActionRole);
-			msgBox2.setDefaultButton(model4);
+			QPushButton *model5 = msgBox2.addButton(tr("Model &5"), QMessageBox::ActionRole);
+			msgBox2.setDefaultButton(model5);
 			msgBox2.exec();
 			if (msgBox2.clickedButton() == cancel) {
-				delete pm;
 				return;
 			}
-			*/
+
 			int raioMaximo = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the maximum radius of the structuring element:"), 50, 1, 99, 1, &ok1);
 			int fatorReducao = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the reduction factor of the structuring element radius:"), 1, 1, raioMaximo, 1, &ok2);
 			int incrementoRaio = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the increment value for the structuring element radius:"), 1, 1, raioMaximo, 1, &ok3);
@@ -2239,11 +2239,14 @@ void Lvp::segmentationPoresThroats(){
 					filtro.DistSitiosLigacoes_Modelo_2();
 				} else if (msgBox2.clickedButton() == model3) {
 					filtro.DistSitiosLigacoes_Modelo_3();
-				} else if (msgBox2.clickedButton() == model4) {
-					filtro.DistSitiosLigacoes_Modelo_4();
-				}*/
-				pair<TCMatriz3D<bool>*,TCMatriz3D<bool>*> pm = filtro.DistSitiosLigacoes_Modelo_4();
-
+				} else
+				*/
+				pair<TCMatriz3D<bool>*,TCMatriz3D<bool>*> pm;
+				if (msgBox2.clickedButton() == model4) {
+					pm = filtro.DistSitiosLigacoes_Modelo_4();
+				} else {
+					pm = filtro.DistSitiosLigacoes_Modelo_5();
+				}
 				static int seqNumberSPT = 1;
 				QString filepath = tr(".segmented%1.dgm").arg(QString::number(seqNumberSPT++));
 				//pm->SetFormato(D2_X_Y_Z_GRAY_ASCII);
