@@ -25,6 +25,7 @@
 #include "textEditor.h"
 #include "hexEditor.h"
 #include "optionsdialog.h"
+#include "poresThroats.h"
 #include <Correlacao/CCorrelacao3D.h>
 #include <Distribuicao/CBaseDistribuicao.h>
 
@@ -77,10 +78,11 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		/// Destrutor
 		virtual ~Lvp() {
 			delete settings;
-			if (dialog)				delete dialog;
-			if (dialogGT)			delete dialogGT;
-			if (dialogES)			delete dialogES;
-			if (dialogImport)	delete dialogImport;
+			if (dialog)							delete dialog;
+			if (dialogGT)						delete dialogGT;
+			if (dialogES)						delete dialogES;
+			if (dialogImport)				delete dialogImport;
+			if (dialogPoresThroats) delete dialogPoresThroats;
 		}
 	// Enums
 	private:
@@ -140,6 +142,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 
 		QSignalMapper *windowMapper;
 
+		PoresThroats * dialogPoresThroats;
 		OptionsDialog * dialogHexEditor;
 		Reconstruction   * dialogGT;
 		ReconstructionES * dialogES;
@@ -214,6 +217,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void exCrop3DImage();
 		void exReconstructionGT();
 		void exReconstructionES();
+		void exSegmentationPoresThroats();
 		void fitToWindow();
 		void highPass();
 		void idf();
