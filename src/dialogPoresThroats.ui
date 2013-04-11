@@ -65,6 +65,11 @@
      <widget class="QComboBox" name="comboBoxModel">
       <item>
        <property name="text">
+        <string>Model 7</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>Model 6</string>
        </property>
       </item>

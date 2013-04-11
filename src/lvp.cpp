@@ -2210,7 +2210,9 @@ void Lvp::exSegmentationPoresThroats(){
 	filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
 	pair<TCMatriz3D<bool>*,TCMatriz3D<bool>*> pm;
 
-	if (dialogPoresThroats->comboBoxModel->currentText() == "Model 6" ) {
+	if (dialogPoresThroats->comboBoxModel->currentText() == "Model 7" ) {
+		pm = filtro.DistSitiosLigacoes_Modelo_7();
+	} else if (dialogPoresThroats->comboBoxModel->currentText() == "Model 6" ) {
 		pm = filtro.DistSitiosLigacoes_Modelo_6();
 	} else if (dialogPoresThroats->comboBoxModel->currentText() == "Model 5" ) {
 		pm = filtro.DistSitiosLigacoes_Modelo_5();
