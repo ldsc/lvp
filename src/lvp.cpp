@@ -317,7 +317,7 @@ void Lvp::updateMenus() {
 	//cerr << "updateMenus()" << endl;
 	bool hasImageViewer			= false;
 	bool hasDbmImageViewer	= false;
-	bool hasDgmImageViewer	= false;
+	//bool hasDgmImageViewer	= false;
 	bool hasPbmImageViewer	= false;
 	bool hasImageViewer3D		= false;
 	bool hasGLWidget				= false;
@@ -333,8 +333,8 @@ void Lvp::updateMenus() {
 		hasImageViewer3D = true;
 		if ( activeDbmImageViewer() != 0 )
 			hasDbmImageViewer = true;
-		else if ( activeDgmImageViewer() != 0 )
-			hasDgmImageViewer = true;
+	//	else if ( activeDgmImageViewer() != 0 )
+	//		hasDgmImageViewer = true;
 	} else if ( activeGLWidget() != 0 ) {
 		hasGLWidget = true;
 	} else if ( activePloter() != 0 ) {
