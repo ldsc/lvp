@@ -10,9 +10,7 @@ bool DgmImageViewer::loadFile(const QString &fileName) {
 			delete pm3D;
 			pm3D = NULL;
 		}
-		cerr << "entrou loadFile" << endl;
 		pm3D = new TCImagem3D<int>( fileName.toStdString() ); //cria matriz 3D só para pegar o valor da dimensão NZ.
-		cerr << "saiu loadFile" << endl;
 		if ( ! pm3D )
 			return false;
 		nx = pm3D->NX();
