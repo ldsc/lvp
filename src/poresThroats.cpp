@@ -1,7 +1,7 @@
 #include <QtGui>
 #include "poresThroats.h"
 
-PoresThroats::PoresThroats(QMainWindow *_parent, DbmImageViewer *_child) {
+PoresThroats::PoresThroats(QMainWindow *_parent, DbmImageViewer *_child) : QDialog(_parent) {
 	setupUi(this);
 	parent = _parent;
 	child	= _child;

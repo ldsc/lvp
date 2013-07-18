@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>440</width>
-    <height>340</height>
+    <height>284</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,8 +19,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>440</width>
-    <height>340</height>
+    <width>100</width>
+    <height>100</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -40,7 +40,7 @@
    <property name="geometry">
     <rect>
      <x>15</x>
-     <y>291</y>
+     <y>249</y>
      <width>410</width>
      <height>27</height>
     </rect>
@@ -101,9 +101,9 @@
    <property name="geometry">
     <rect>
      <x>14</x>
-     <y>127</y>
-     <width>411</width>
-     <height>90</height>
+     <y>106</y>
+     <width>410</width>
+     <height>71</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -204,9 +204,9 @@
    <property name="geometry">
     <rect>
      <x>14</x>
-     <y>221</y>
+     <y>181</y>
      <width>411</width>
-     <height>80</height>
+     <height>61</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -324,7 +324,7 @@
      <x>14</x>
      <y>41</y>
      <width>411</width>
-     <height>82</height>
+     <height>61</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">

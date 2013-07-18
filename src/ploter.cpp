@@ -3,7 +3,7 @@
 using namespace std;
 
 //Ploter::Ploter( Lvp * _parent ) {
-Ploter::Ploter( QMainWindow * _parent ) {
+Ploter::Ploter( QMainWindow * _parent ) : QwtPlot(_parent) {
 	parent = _parent;
 	setAttribute(Qt::WA_DeleteOnClose);
 	setBackgroundRole(QPalette::Base);

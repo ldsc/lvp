@@ -1,6 +1,6 @@
 #include "crop3D.h"
 
-Crop3D::Crop3D(QMainWindow *_parent) {
+Crop3D::Crop3D(QMainWindow *_parent) : QDialog(_parent) {
 	setupUi(this);
 	parent = _parent;
 

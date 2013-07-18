@@ -2067,16 +2067,21 @@ void Lvp::exReconstructionES() {
 }
 
 void Lvp::intrinsicPermeability() {
-	QMessageBox::information(this, tr("LVP"), tr("Funcionalidade não implementada!"));
+	//QMessageBox::information(this, tr("LVP"), tr("Funcionalidade não implementada!"));
 	//Antes de mudar a classe CPermeabilidadeIntrinseca para template precisa
 	//implmentar template em Grafo...
-	/*
+	//Antes de implementar template no GCS, resolvi criar nova matriz<int> e copiar os dados da matiz<bool>
 	DbmImageViewer * child3D = NULL;
 	if ( (child3D = activeDbmImageViewer()) ) {
+		/*
 		if ( ! child3D->pm3D ) {
 			child3D->pm3D = new TCImagem3D<bool>( child3D->getFullFileName().toStdString() );
 		}
 		if ( child3D->pm3D ) {
+		*/
+		// A matriz precisa ser do tipo int para funcionar com o grafo.
+		TCImagem3D<int> * pm3D = new TCImagem3D<int>( child3D->getFullFileName().toStdString() );
+		if ( pm3D ) {
 			CPermeabilidadeIntrinseca * objPerIn = NULL;
 			objPerIn = new CPermeabilidadeIntrinseca();
 			if ( objPerIn ) {
@@ -2092,7 +2097,8 @@ void Lvp::intrinsicPermeability() {
 				}
 				if (ok) {
 					QApplication::setOverrideCursor(Qt::WaitCursor);
-					double permeabilidade = objPerIn->Go ( child3D->pm3D );
+					//double permeabilidade = objPerIn->Go ( child3D->pm3D );
+					double permeabilidade = objPerIn->Go ( pm3D );
 					QApplication::restoreOverrideCursor();
 					QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));
 				}
@@ -2104,7 +2110,6 @@ void Lvp::intrinsicPermeability() {
 		QMessageBox::information(this, tr("LVP"), tr("Error while trying to retrieve 3D image!"));
 		return;
 	}
-	*/
 }
 
 void Lvp::relativePermeability() {

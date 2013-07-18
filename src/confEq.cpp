@@ -3,7 +3,7 @@
 
 using namespace std;
 
-ConfEq::ConfEq( QMainWindow * _parent, BaseImageViewer *_obj ){	
+ConfEq::ConfEq( QMainWindow * _parent, BaseImageViewer *_obj ) : QDialog(_parent) {
 	setupUi(this); // this sets up GUI
 	parent = _parent;
 	obj = _obj;

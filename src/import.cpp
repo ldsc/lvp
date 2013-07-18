@@ -1,6 +1,6 @@
 #include "import.h"
 
-Import::Import(QMainWindow *_parent, QString _file) {
+Import::Import(QMainWindow *_parent, QString _file) : QDialog(_parent) {
 	setupUi(this); // this sets up GUI
 	parent = _parent;
 	fullFileName = _file;

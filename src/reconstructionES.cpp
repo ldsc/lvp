@@ -8,7 +8,7 @@
 
 using namespace std;
 
-ReconstructionES::ReconstructionES( QString & _filepath, QMainWindow * _parent ) {
+ReconstructionES::ReconstructionES( QString & _filepath, QMainWindow * _parent ) : QDialog(_parent) {
 	setupUi(this); // this sets up GUI
 	parent = _parent;
 	lineEditFile->setText(_filepath);

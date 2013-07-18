@@ -2,7 +2,7 @@
 
 using namespace std;
 
-TextEditor::TextEditor( QMainWindow * _parent ) {
+TextEditor::TextEditor( QMainWindow * _parent ) : QTextEdit(_parent) {
 	parent = _parent;
 	setAttribute(Qt::WA_DeleteOnClose);
 	setBackgroundRole(QPalette::Base);
