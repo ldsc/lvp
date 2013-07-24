@@ -1,4 +1,5 @@
 QT += opengl
+QT += printsupport
 
 SOURCES +=  lvp.cpp \
             main.cpp \

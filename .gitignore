@@ -48,4 +48,5 @@ pushToGithub
 ui_*.h
 qrc_*.cpp
 tmp/
+*.pro.user.*
 
