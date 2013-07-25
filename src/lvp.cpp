@@ -1635,18 +1635,19 @@ void Lvp::idf() {
 	//QMessageBox::information(this, tr("LVP"), tr("Funcionalidade não implementada!"));
 	bool ok;
 	static int seqNumberIDF = 1;
+	//cria diálogo para informar quem é poro
+	QMessageBox msgBox(this);
+	msgBox.setWindowTitle(tr("LVP - IDF"));
+	msgBox.setText(tr("Pore is:"));
+	msgBox.addButton(QMessageBox::Cancel);
+	QPushButton *writeButton = msgBox.addButton(tr("&Write (0)"), QMessageBox::ActionRole);
+	QPushButton *blackButton = msgBox.addButton(tr("&Black (1)"), QMessageBox::ActionRole);
+	msgBox.setDefaultButton(blackButton);
+	int indice, fundo;
 	if ( PbmImageViewer *mdiChild = activePbmImageViewer() ) {
 		QString qstr = mdiChild->getFullFileName();
 		string stdstr = qstr.toStdString();
-		QMessageBox msgBox(this);
-		msgBox.setWindowTitle(tr("LVP - IDF"));
-		msgBox.setText(tr("Pore is:"));
-		msgBox.addButton(QMessageBox::Cancel);
-		QPushButton *writeButton = msgBox.addButton(tr("&Write (0)"), QMessageBox::ActionRole);
-		QPushButton *blackButton = msgBox.addButton(tr("&Black (1)"), QMessageBox::ActionRole);
-		msgBox.setDefaultButton(blackButton);
 		msgBox.exec();
-		int indice, fundo;
 		if (msgBox.clickedButton() == blackButton) {
 			indice = 1; fundo = 0;
 		} else if (msgBox.clickedButton() == writeButton) {
@@ -1682,12 +1683,21 @@ void Lvp::idf() {
 	} else if ( DbmImageViewer *mdiChild = activeDbmImageViewer() ) {
 		QString qstr = mdiChild->getFullFileName();
 		string stdstr = qstr.toStdString();
+		msgBox.exec();
+		if (msgBox.clickedButton() == blackButton) {
+			indice = 1; fundo = 0;
+		} else if (msgBox.clickedButton() == writeButton) {
+			indice = 0; fundo = 1;
+		} else {
+			QApplication::restoreOverrideCursor();
+			return;
+		}
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		if ( mdiChild->pm3D == NULL )
 			mdiChild->pm3D = new TCImagem3D<bool>(stdstr);
 		TCFEMMIDFd3453D<bool> *idf3D = NULL;
 		TCMatriz3D<bool> * obj3D = dynamic_cast<TCMatriz3D<bool> *>(mdiChild->pm3D);
-		idf3D = new TCFEMMIDFd3453D<bool>(obj3D);
+		idf3D = new TCFEMMIDFd3453D<bool>(obj3D, indice, fundo);
 		idf3D->Go(obj3D);
 		qstr = tr(".idf%1.dgm").arg(QString::number(seqNumberIDF++));
 		stdstr = qstr.toStdString();
