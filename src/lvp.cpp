@@ -2467,15 +2467,15 @@ void Lvp::exImport() {
 void Lvp::crop3DImage(){
 	BaseDnmImageViewer *mdiChild = active3DImageViewer();
 	dialogCrop = new Crop3D(this);
-	dialogCrop->spinBoxStartX->setMaximum(mdiChild->nx-2);
-	dialogCrop->spinBoxStartY->setMaximum(mdiChild->ny-2);
-	dialogCrop->spinBoxStartZ->setMaximum(mdiChild->nz-2);
-	dialogCrop->spinBoxEndX->setMaximum(mdiChild->nx-1);
-	dialogCrop->spinBoxEndY->setMaximum(mdiChild->ny-1);
-	dialogCrop->spinBoxEndZ->setMaximum(mdiChild->nz-1);
-	dialogCrop->spinBoxEndX->setValue(mdiChild->nx-1);
-	dialogCrop->spinBoxEndY->setValue(mdiChild->ny-1);
-	dialogCrop->spinBoxEndZ->setValue(mdiChild->nz-1);
+	dialogCrop->spinBoxStartX->setMaximum(mdiChild->nx-1);
+	dialogCrop->spinBoxStartY->setMaximum(mdiChild->ny-1);
+	dialogCrop->spinBoxStartZ->setMaximum(mdiChild->nz-1);
+	dialogCrop->spinBoxEndX->setMaximum(mdiChild->nx);
+	dialogCrop->spinBoxEndY->setMaximum(mdiChild->ny);
+	dialogCrop->spinBoxEndZ->setMaximum(mdiChild->nz);
+	dialogCrop->spinBoxEndX->setValue(mdiChild->nx);
+	dialogCrop->spinBoxEndY->setValue(mdiChild->ny);
+	dialogCrop->spinBoxEndZ->setValue(mdiChild->nz);
 	dialogCrop->show();
 }
 
