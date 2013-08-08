@@ -221,6 +221,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void fitToWindow();
 		void highPass();
 		void idf();
+		void ira();
 		void intrinsicPermeability();
 		void import();
 		void inversion();

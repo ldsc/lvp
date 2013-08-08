@@ -13,6 +13,7 @@
 #include <Filtro/FEspacial/TCFEPassaAlta.h>
 #include <Filtro/FEspacial/TCFEPassaBaixa.h>
 #include <Filtro/FEspacial/FEMorfologiaMatematica/TCFEMorfologiaMatematica.h>
+#include <Filtro/FEspacial/FEMorfologiaMatematica/TCFEMMIRA.h>
 #include <Filtro/FEspacial/FEMorfologiaMatematica/TCFEMMIDFd4.h>
 #include <Filtro/FEspacial/FEMorfologiaMatematica/TCFEMMIDFd8.h>
 #include <Filtro/FEspacial/FEMorfologiaMatematica/TCFEMMIDFd34.h>
@@ -305,6 +306,7 @@ void Lvp::createActions() {
 	connect( actionInversion,               SIGNAL( triggered() ),  this,			SLOT( inversion()									) );
 	connect( actionInversion3D,             SIGNAL( triggered() ),  this,			SLOT( inversion3D() 		          ) );
 	connect( actionIDF,                     SIGNAL( triggered() ),  this,			SLOT( idf()												) );
+	connect( actionIRA,                     SIGNAL( triggered() ),  this,			SLOT( ira()												) );
 	connect( actionIDF3D,                   SIGNAL( triggered() ),  this,			SLOT( idf()												) );
 	connect( actionImport,                  SIGNAL( triggered() ),  this,			SLOT( import()										) );
 	connect( actionConnectedObjects,        SIGNAL( triggered() ),  this,			SLOT( connectedObjects() 					) );
@@ -333,8 +335,8 @@ void Lvp::updateMenus() {
 		hasImageViewer3D = true;
 		if ( activeDbmImageViewer() != 0 )
 			hasDbmImageViewer = true;
-	//	else if ( activeDgmImageViewer() != 0 )
-	//		hasDgmImageViewer = true;
+		//	else if ( activeDgmImageViewer() != 0 )
+		//		hasDgmImageViewer = true;
 	} else if ( activeGLWidget() != 0 ) {
 		hasGLWidget = true;
 	} else if ( activePloter() != 0 ) {
@@ -392,6 +394,7 @@ void Lvp::updateMenus() {
 	actionV4->setEnabled(hasImageViewer);
 	actionZhangSuen->setEnabled(hasImageViewer);
 	actionIDF->setEnabled(hasPbmImageViewer);
+	actionIRA->setEnabled(hasPbmImageViewer);
 	actionIDF3D->setEnabled(hasDbmImageViewer);
 	actionInversion->setEnabled(hasPbmImageViewer);
 	actionInversion3D->setEnabled(hasDbmImageViewer);
@@ -1708,6 +1711,51 @@ void Lvp::idf() {
 		qstr = mdiChild->getFilePath() + qstr;
 		open(qstr.toStdString());
 		delete idf3D;
+	}
+	QApplication::restoreOverrideCursor();
+}
+
+void Lvp::ira() {
+	//QMessageBox::information(this, tr("LVP"), tr("Funcionalidade não implementada!"));
+	static int seqNumberIRA = 1;
+	//cria diálogo para informar quem é poro
+	QMessageBox msgBox(this);
+	msgBox.setWindowTitle(tr("LVP - IRA"));
+	msgBox.setText(tr("Pore is:"));
+	msgBox.addButton(QMessageBox::Cancel);
+	QPushButton *writeButton = msgBox.addButton(tr("&Write (0)"), QMessageBox::ActionRole);
+	QPushButton *blackButton = msgBox.addButton(tr("&Black (1)"), QMessageBox::ActionRole);
+	msgBox.setDefaultButton(blackButton);
+	int indice, fundo;
+	if ( PbmImageViewer *mdiChild = activePbmImageViewer() ) {
+		QString qstr = mdiChild->getFullFileName();
+		string stdstr = qstr.toStdString();
+		msgBox.exec();
+		if (msgBox.clickedButton() == blackButton) {
+			indice = 1; fundo = 0;
+		} else if (msgBox.clickedButton() == writeButton) {
+			indice = 0; fundo = 1;
+		} else {
+			QApplication::restoreOverrideCursor();
+			return;
+		}
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		if ( mdiChild->pm == NULL )
+			mdiChild->pm = new TCMatriz2D<bool>(stdstr);
+		TCFEMMIRA<bool> *ira2D = NULL;
+		TCMatriz2D<int> *pmira2D = NULL;
+		ira2D = new TCFEMMIRA<bool>(mdiChild->pm, indice, fundo);
+		pmira2D = ira2D->Go();
+		qstr = tr(".ira%1.pgm").arg(QString::number(seqNumberIRA++));
+		stdstr = qstr.toStdString();
+		pmira2D->SetFormato(P2_X_Y_GRAY_ASCII);
+		pmira2D->NumCores(pmira2D->MaiorValor());
+		pmira2D->salvarAlinhado = true;
+		pmira2D->Path(mdiChild->getFilePath().toStdString());
+		pmira2D->Write(stdstr);
+		open( (mdiChild->getFilePath() + qstr).toStdString() );
+		delete ira2D;
+		delete pmira2D;
 	}
 	QApplication::restoreOverrideCursor();
 }

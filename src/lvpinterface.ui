@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>785</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -131,6 +131,7 @@
      <addaction name="actionHighPass"/>
      <addaction name="actionInversion"/>
      <addaction name="actionIDF"/>
+     <addaction name="actionIRA"/>
     </widget>
     <widget class="QMenu" name="menuMorphology">
      <property name="enabled">
@@ -1552,6 +1553,14 @@ p, li { white-space: pre-wrap; }
   <action name="actionDTPGd345_3D">
    <property name="text">
     <string>Pores/Throats Size Distribution</string>
+   </property>
+  </action>
+  <action name="actionIRA">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>IRA</string>
    </property>
   </action>
   <zorder>dockWidgetVisualisation3D</zorder>

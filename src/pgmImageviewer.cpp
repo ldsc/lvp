@@ -88,6 +88,7 @@ bool PgmImageViewer::saveAs() {
 	}
 	string tmp = pm->Path();
 	pm->Path("");
+	pm->salvarAlinhado = true;
 	if( pm->Write( fileName.toStdString() ) ) {
 		if ( isNew && (fileName != fullFileName) ) {
 			QFile::remove(fullFileName);
