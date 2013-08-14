@@ -159,6 +159,7 @@
      <addaction name="actionConnectivity"/>
      <addaction name="actionInversion3D"/>
      <addaction name="actionIDF3D"/>
+     <addaction name="actionIRA3D"/>
     </widget>
     <widget class="QMenu" name="menuSkeleton">
      <property name="enabled">
@@ -1556,6 +1557,14 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionIRA">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>IRA</string>
+   </property>
+  </action>
+  <action name="actionIRA3D">
    <property name="enabled">
     <bool>false</bool>
    </property>
