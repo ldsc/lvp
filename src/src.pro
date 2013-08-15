@@ -52,7 +52,7 @@ HEADERS +=  lvp.h \
             qHexEdit/xbytearray.h \
             qHexEdit/commands.h \
             crop3D.h \
-            qdebugstream.h \
+            #qdebugstream.h \
             poresThroats.h
 
 

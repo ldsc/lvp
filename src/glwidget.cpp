@@ -475,7 +475,7 @@ drawByPm3DiGray: { //Desenhando o meio poroso em tons de cinza
 				for (int j = 0; j < ny; ++j){
 					for (int i = 0; i < nx; ++i){
 						if( pm3Di->data3D[i][j][k] != 0 ){ // neste caso pore representa o fundo (0) o qual ficará transparente.
-							ton = grayTon * pm3Di->data3D[i][j][k];
+							ton = 1.0 - (grayTon * pm3Di->data3D[i][j][k]);
 							glColor3f(ton, ton, ton);
 							glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(k-meionz) );
 						}
@@ -486,15 +486,15 @@ drawByPm3DiGray: { //Desenhando o meio poroso em tons de cinza
 			for (int j = 0; j < ny; ++j){
 				for (int i = 0; i < nx; ++i){
 					// Eixo x
-					ton = grayTon * pm3Di->data3D[planX][i][j];
+					ton = 1.0 - (grayTon * pm3Di->data3D[planX][i][j]);
 					glColor3f(ton, ton, ton);
 					glVertex3d( w*(planX-meionx) , w*(i-meiony) , w*(j-meionz) );
 					// Eixo y
-					ton = grayTon * pm3Di->data3D[i][planY][j];
+					ton = 1.0 - (grayTon * pm3Di->data3D[i][planY][j]);
 					glColor3f(ton, ton, ton);
 					glVertex3d( w*(i-meionx) , w*(planY-meiony) , w*(j-meionz) );
 					// Eixo z
-					ton = grayTon * pm3Di->data3D[i][j][planZ];
+					ton = 1.0 - (grayTon * pm3Di->data3D[i][j][planZ]);
 					glColor3f(ton, ton, ton);
 					glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(planZ-meionz) );
 				}

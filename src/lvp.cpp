@@ -3,7 +3,7 @@
 #include <set>
 #include <cstdlib> // Utilizada em Correlation
 #include "lvp.h"
-#include "qdebugstream.h"
+//#include "qdebugstream.h"
 //Bibliotecas LIB_LDSC
 #include <ConEqu/CConfiguracoesEquilibrio2D.h>
 #include <ConEqu/CConfiguracoesEquilibrio3D.h>
@@ -167,7 +167,7 @@ Lvp::Lvp() {
 	textEditMessages = new QTextEdit(dockWidgetMessages);
 	textEditMessages->setContentsMargins(0, 0, 0, 0);
 	dockWidgetMessages->setWidget(textEditMessages);
-	dockWidgetMessages->setVisible( true );
+	dockWidgetMessages->setVisible( false );
 
 	//tentativa de redirecionar cout e cerr para QTextEdit
 	//process = new QProcess( this );
@@ -177,8 +177,8 @@ Lvp::Lvp() {
 	//connect(process, SIGNAL(readyReadStandardError()), this, SLOT(readStdError()));
 	//connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(readError()));
 
-	QDebugStream qout(std::cout, textEditMessages);
-	QDebugStream qerr(std::cerr, textEditMessages);
+	//QDebugStream qout(std::cout, textEditMessages);
+	//QDebugStream qerr(std::cerr, textEditMessages);
 
 	//Objeto para salvar as preferências do usuário
 	settings = new QSettings("LENEP", "LVP");
