@@ -35,7 +35,6 @@ int main(int argc, char *argv[]) {
 	Qt::Alignment BottomRight = Qt::AlignBottom | Qt::AlignRight;
 	Qt::Alignment BottomLeft = Qt::AlignBottom | Qt::AlignLeft;
 	splash.showMessage(QObject::tr("Working on %1 cores.").arg(omp_get_num_procs()), BottomLeft, Qt::white);
-	std::cerr << "LVP: " << omp_get_num_procs() << " núcleo(s) de processamento disponível(is)!" << endl;
 	splash.showMessage(QObject::tr("Loading Main Window"), BottomRight, Qt::white);
 
 	// Identify locale and load translation if available
@@ -55,6 +54,7 @@ int main(int argc, char *argv[]) {
 		for (int i=1; i < argc; i++)
 			mw->open(argv[i], false);
 
+	std::cout << "LVP: " << omp_get_num_procs() << " núcleo(s) de processamento disponível(is)!" << endl;
 	splash.finish(mw);
 	return app.exec();
 }

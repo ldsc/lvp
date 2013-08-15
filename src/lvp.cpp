@@ -3,6 +3,7 @@
 #include <set>
 #include <cstdlib> // Utilizada em Correlation
 #include "lvp.h"
+#include "qdebugstream.h"
 //Bibliotecas LIB_LDSC
 #include <ConEqu/CConfiguracoesEquilibrio2D.h>
 #include <ConEqu/CConfiguracoesEquilibrio3D.h>
@@ -161,7 +162,24 @@ Lvp::Lvp() {
 	listWidgetEditor->setSelectionMode( QAbstractItemView::ExtendedSelection );
 	dockWidgetListaTextEditor->setWidget(listWidgetEditor);
 	dockWidgetListaTextEditor->setVisible( false );
-	
+
+	//Dock de mensagens
+	textEditMessages = new QTextEdit(dockWidgetMessages);
+	textEditMessages->setContentsMargins(0, 0, 0, 0);
+	dockWidgetMessages->setWidget(textEditMessages);
+	dockWidgetMessages->setVisible( true );
+
+	//tentativa de redirecionar cout e cerr para QTextEdit
+	//process = new QProcess( this );
+	//process->setProcessChannelMode(QProcess::MergedChannels);
+	//process->start("yum update");
+	//connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(readStdOutput()));
+	//connect(process, SIGNAL(readyReadStandardError()), this, SLOT(readStdError()));
+	//connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(readError()));
+
+	QDebugStream qout(std::cout, textEditMessages);
+	QDebugStream qerr(std::cerr, textEditMessages);
+
 	//Objeto para salvar as preferências do usuário
 	settings = new QSettings("LENEP", "LVP");
 	
@@ -401,7 +419,7 @@ void Lvp::updateMenus() {
 	actionIRA3D->setEnabled(hasDbmImageViewer);
 	actionInversion->setEnabled(hasPbmImageViewer);
 	actionInversion3D->setEnabled(hasDbmImageViewer);
-	actionInverter->setEnabled(hasGLWidget);
+	actionInverter->setEnabled(hasGLWidget && activeGLWidget()->getPM3D()!=NULL);
 	actionLowPass->setEnabled(hasImageViewer);
 	actionMPV->setEnabled( hasImageViewer3D );
 	actionNext->setEnabled(mdiArea->subWindowList().size() > 1);

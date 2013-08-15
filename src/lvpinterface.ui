@@ -541,7 +541,7 @@ p, li { white-space: pre-wrap; }
    <property name="minimumSize">
     <size>
      <width>228</width>
-     <height>226</height>
+     <height>200</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -593,7 +593,7 @@ p, li { white-space: pre-wrap; }
    <property name="minimumSize">
     <size>
      <width>228</width>
-     <height>226</height>
+     <height>200</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -642,7 +642,7 @@ p, li { white-space: pre-wrap; }
    <property name="minimumSize">
     <size>
      <width>260</width>
-     <height>250</height>
+     <height>200</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -687,7 +687,7 @@ p, li { white-space: pre-wrap; }
    <property name="minimumSize">
     <size>
      <width>260</width>
-     <height>250</height>
+     <height>200</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -721,6 +721,29 @@ p, li { white-space: pre-wrap; }
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsListaTextEditor"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetMessages">
+   <property name="minimumSize">
+    <size>
+     <width>58</width>
+     <height>150</height>
+    </size>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::BottomDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>:. Messages</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContentsMessages"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -1573,6 +1596,7 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <zorder>dockWidgetVisualisation3D</zorder>
+  <zorder>dockWidgetMessages</zorder>
  </widget>
  <resources>
   <include location="application.qrc"/>

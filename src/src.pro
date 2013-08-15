@@ -52,7 +52,9 @@ HEADERS +=  lvp.h \
             qHexEdit/xbytearray.h \
             qHexEdit/commands.h \
             crop3D.h \
+            qdebugstream.h \
             poresThroats.h
+
 
 FORMS +=    lvpinterface.ui \
             dialogImport.ui \

@@ -40,7 +40,7 @@ public:
     int yRotation() const { return yRot; }
     int zRotation() const { return zRot; }
     QString getFullFileName() const { return fullFileName; }
-    QList<int> tonsList;
+		QList<int> tonsList;
     QStringList qstrTonsList;
 
 public slots:
@@ -97,6 +97,7 @@ private:
     int viewtype;
     float pointsize; //tamanho dos pontos;
     float distpoints; //distancia entre pontos;
+		float grayTon; //divisor da escala de tons de cinza (1/numCores)
 };
 
 #endif

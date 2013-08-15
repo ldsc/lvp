@@ -1,4 +1,6 @@
 #include "glwidget.h"
+#include <iostream>     // std::cout, std::fixed
+#include <iomanip>      // std::setprecision
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
@@ -31,6 +33,7 @@ GLWidget::GLWidget(TCMatriz3D<bool> * _pm3D, QString _fileName, int _viewtype, Q
 	planZ = nz/2;
 	pore = 1;
 	tonsList << 0 << 1;
+	grayTon = 1; // não utilizado em imagens binárias
 	trolltechPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
 	setAutoFillBackground(false);
 	setMinimumSize(200, 200);
@@ -59,19 +62,20 @@ GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QW
 	planX = nx/2;
 	planY = ny/2;
 	planZ = nz/2;
+	grayTon = ( pm3Di->NumCores() !=0 ) ? ((float)1.0 / pm3Di->NumCores()) : 1.0; //divisor da escala de tons de cinza (1/numCores)
+	tonsList << 0; //força pra que a lista tenha o valor de fundo;
+	qstrTonsList << "0";
 	for (int k = 0; k < nz; k++)
 		for (int j = 0; j < ny; j++)
 			for (int i = 0; i < nx; i++)
-				if ( ! tonsList.contains( pm3Di->data3D[i][j][k] ) )
+				if ( ! tonsList.contains( pm3Di->data3D[i][j][k] ) ) {
 					tonsList << pm3Di->data3D[i][j][k];
-	qSort(tonsList.begin(), tonsList.end());
-	pore = tonsList[0];
-	foreach(int temp, tonsList) {
-		QVariant var(temp);
-		qstrTonsList << var.toString();
-	}
-
-	trolltechPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
+					QVariant var(pm3Di->data3D[i][j][k]);
+					qstrTonsList << var.toString();
+				}
+	qSort(tonsList.begin(), tonsList.end()); // Ordena a lista
+	pore = 0; //qualquer valor != 0 representa poro.
+	trolltechPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0); //cor do fundo
 	setAutoFillBackground(false);
 	setMinimumSize(200, 200);
 	setWindowTitle(tr("3D Visualization [%1]").arg( QFileInfo(fullFileName).fileName() ) );
@@ -355,25 +359,24 @@ GLuint GLWidget::makeObject() {
 	glVertex3d( 0.0, 0.0, meionzw);
 	glEnd();
 
-	if(pm3D != NULL)
-		goto drawByPm3D;
-	else if(pm3Di != NULL) {
+	if(pm3D != NULL) //matriz bool
+		goto drawByPm3D; // Desenha meio poroso binário (poro preto e fundo transparente)
+	else if(pm3Di != NULL) { //matriz int
 		if( tonsList.size() == 3 && tonsList.contains(0) ) { // existem 3 tons na imagem e um deles é 0 (fundo).
-			goto drawByPm3Di;
+			goto drawByPm3Di; //Desenha sítios e ligações (sítio preto, ligação amarela e fundo transparente)
 		} else {
-			goto drawByPm3DiPB;
+			goto drawByPm3DiGray; //Desenha meio poroso em tons de cinza.
 		}
 	}
 
-drawByPm3D: {
-	//Desenhando o meio poroso
+drawByPm3D: { //Desenhando meio poroso binário (preto e transparente)
 	glBegin(GL_POINTS); //GL_POINTS
 	if (viewtype==VIEW3D){
 		glColor3f(0.0, 0.0, 0.0);
 		//#pragma omp parallel for collapse(3) schedule(dynamic,10)
-		for (int k = 0; k < nz; k++){
-			for (int j = 0; j < ny; j++){
-				for (int i = 0; i < nx; i++){
+		for (int k = 0; k < nz; ++k){
+			for (int j = 0; j < ny; ++j){
+				for (int i = 0; i < nx; ++i){
 					if( pm3D->data3D[i][j][k] == pore ){
 						glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(k-meionz) );
 					}
@@ -382,8 +385,8 @@ drawByPm3D: {
 		}
 	} else { //viewtype==MPV
 		//#pragma omp parallel for collapse(2) schedule(dynamic,10)
-		for (int j = 0; j < ny; j++){
-			for (int i = 0; i < nx; i++){
+		for (int j = 0; j < ny; ++j){
+			for (int i = 0; i < nx; ++i){
 				if (pm3D->data3D[planX][i][j] == pore){
 					glColor3f(0.0, 0.0, 0.0);
 				} else {
@@ -410,17 +413,15 @@ drawByPm3D: {
 	return list;
 }
 
-drawByPm3Di: {
-		//Desenhando o meio poroso (solido tranparente + poro + garganta)
-		pore = tonsList[1];
-		int throat = tonsList[2];
+drawByPm3Di: { //Desenhando o meio poroso (solido tranparente + poro preto + garganta amarela)
+		pore = 1;
+		int throat = 2;
 		glBegin(GL_POINTS); //GL_POINTS
 		if (viewtype==VIEW3D){
-			for (int k = 0; k < nz; k++){
-				for (int j = 0; j < ny; j++){
-					for (int i = 0; i < nx; i++){
+			for (int k = 0; k < nz; ++k){
+				for (int j = 0; j < ny; ++j){
+					for (int i = 0; i < nx; ++i){
 						if( pm3Di->data3D[i][j][k] == pore ){
-							//glNormal3d(0.0, 0.0, -1.0);
 							glColor3f(0.0, 0.0, 0.0);
 							glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(k-meionz) );
 						} else if( pm3Di->data3D[i][j][k] == throat ){
@@ -431,8 +432,8 @@ drawByPm3Di: {
 				}
 			}
 		} else { //viewtype==MPV
-			for (int j = 0; j < ny; j++){
-				for (int i = 0; i < nx; i++){
+			for (int j = 0; j < ny; ++j){
+				for (int i = 0; i < nx; ++i){
 					if (pm3Di->data3D[planX][i][j] == pore){
 						glColor3f(0.0, 0.0, 0.0);
 					} else if (pm3Di->data3D[planX][i][j] == throat){
@@ -465,41 +466,36 @@ drawByPm3Di: {
 		return list;
 	}
 
-drawByPm3DiPB: {
-		//Desenhando o meio poroso (valor escolhido)
+drawByPm3DiGray: { //Desenhando o meio poroso em tons de cinza
+		float ton;
 		glBegin(GL_POINTS); //GL_POINTS
 		if (viewtype==VIEW3D){
-			glColor3f(0.0, 0.0, 0.0);
 			//#pragma omp parallel for collapse(3) schedule(dynamic,10)
-			for (int k = 0; k < nz; k++){
-				for (int j = 0; j < ny; j++){
-					for (int i = 0; i < nx; i++){
-						if( pm3Di->data3D[i][j][k] == pore ){
+			for (int k = 0; k < nz; ++k){
+				for (int j = 0; j < ny; ++j){
+					for (int i = 0; i < nx; ++i){
+						if( pm3Di->data3D[i][j][k] != 0 ){ // neste caso pore representa o fundo (0) o qual ficará transparente.
+							ton = grayTon * pm3Di->data3D[i][j][k];
+							glColor3f(ton, ton, ton);
 							glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(k-meionz) );
 						}
 					}
 				}
 			}
 		} else { //viewtype==MPV
-			for (int j = 0; j < ny; j++){
-				for (int i = 0; i < nx; i++){
-					if (pm3Di->data3D[planX][i][j] == pore){
-						glColor3f(0.0, 0.0, 0.0);
-					} else {
-						glColor3f(1.0, 1.0, 1.0);
-					}
+			for (int j = 0; j < ny; ++j){
+				for (int i = 0; i < nx; ++i){
+					// Eixo x
+					ton = grayTon * pm3Di->data3D[planX][i][j];
+					glColor3f(ton, ton, ton);
 					glVertex3d( w*(planX-meionx) , w*(i-meiony) , w*(j-meionz) );
-					if (pm3Di->data3D[i][planY][j] == pore){
-						glColor3f(0.0, 0.0, 0.0);
-					} else {
-						glColor3f(1.0, 1.0, 1.0);
-					}
+					// Eixo y
+					ton = grayTon * pm3Di->data3D[i][planY][j];
+					glColor3f(ton, ton, ton);
 					glVertex3d( w*(i-meionx) , w*(planY-meiony) , w*(j-meionz) );
-					if (pm3Di->data3D[i][j][planZ] == pore){
-						glColor3f(0.0, 0.0, 0.0);
-					} else {
-						glColor3f(1.0, 1.0, 1.0);
-					}
+					// Eixo z
+					ton = grayTon * pm3Di->data3D[i][j][planZ];
+					glColor3f(ton, ton, ton);
 					glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(planZ-meionz) );
 				}
 			}

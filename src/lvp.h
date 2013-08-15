@@ -5,10 +5,11 @@
 #include <QCloseEvent>
 #include <QPrinter>
 #include <QDir>
+//#include <QProcess>
+
 #include <QTranslator>
 #include <QtGui/QRadioButton>
 #include <QtGui/QGroupBox>
-//#include <QVariant>
 #include "ui_lvpinterface.h"
 #include "confEq.h"
 #include "reconstruction.h"
@@ -77,6 +78,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 
 		/// Destrutor
 		virtual ~Lvp() {
+			//delete
 			delete settings;
 			if (dialog)							delete dialog;
 			if (dialogGT)						delete dialogGT;
@@ -126,6 +128,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		QPushButton *pushButtonAverage;
 		QPushButton *pushButtonSource;
 		QPushButton *pushButtonAccumulated;
+		QTextEdit		*textEditMessages;
 
 		//QVBoxLayout *verticalLayout;
 		QGridLayout *gridLayout;
@@ -270,6 +273,16 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		Ploter * createPloter();
 		TextEditor * createTextEditor();
 		HexEditor * createHexEditor();
+		/*
+		void readStdOutput() {
+			textEditMessages->append(process->readAllStandardOutput());
+		}
+		void readStdError() {
+			textEditMessages->append(process->readAllStandardError());
+		}
+		void readError() {
+			textEditMessages->append("An Error Occured! Error Code is: "+QString::number(process->error()));
+		}*/
 
 	protected:
 		/// Sobrecarrega método chamado quando o usuário fecha o software.
@@ -321,6 +334,8 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		//verifica se existe arquivo com o nome informado. Caso exista retorna o nome de um arquivo inexistente.
 		string validateFileName( const string _strname );
 		QString validateFileName( const QString _name);
+
+		//QProcess * process;
 
 		//From HexEditor
 //		QLabel *lbAddress, *lbAddressName;
