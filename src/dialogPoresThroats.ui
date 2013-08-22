@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>312</width>
-    <height>242</height>
+    <width>350</width>
+    <height>220</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>350</width>
+    <height>220</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>350</width>
+    <height>220</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Pores and Throats Segmentation</string>
@@ -25,72 +37,23 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>291</width>
-     <height>221</height>
+     <width>331</width>
+     <height>201</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Pore is:</string>
+    <item row="3" column="2">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QRadioButton" name="radioButtonBlack">
-      <property name="text">
-       <string>&amp;Black</string>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
       </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QRadioButton" name="radioButtonWrite">
-      <property name="text">
-       <string>&amp;Write</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Model:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1" colspan="2">
-     <widget class="QComboBox" name="comboBoxModel">
-      <item>
-       <property name="text">
-        <string>Model 7</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Model 6</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Model 5</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Model 4</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="2" column="1" colspan="2">
-     <widget class="QCheckBox" name="checkBox">
-      <property name="text">
-       <string>Save partial results</string>
-      </property>
-     </widget>
+     </spacer>
     </item>
     <item row="3" column="0" rowspan="2" colspan="2">
      <widget class="QGroupBox" name="groupBox">
@@ -159,19 +122,6 @@
       </widget>
      </widget>
     </item>
-    <item row="3" column="2">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item row="4" column="2">
      <widget class="QDialogButtonBox" name="buttonBox">
       <property name="inputMethodHints">
@@ -185,12 +135,79 @@
       </property>
      </widget>
     </item>
+    <item row="0" column="0" alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Pore is:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1" colspan="2">
+     <widget class="QComboBox" name="comboBoxModel">
+      <item>
+       <property name="text">
+        <string>Pores Throats By IRA Model 0</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Openning Dilatation Model 7</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Openning Dilatation Model 6</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Openning Dilatation Model 5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Openning Dilatation Model 4</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="2" column="1" colspan="2" alignment="Qt::AlignHCenter">
+     <widget class="QCheckBox" name="checkBox">
+      <property name="text">
+       <string>Save partial results</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" alignment="Qt::AlignHCenter">
+     <widget class="QRadioButton" name="radioButtonWrite">
+      <property name="text">
+       <string>&amp;Write</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" alignment="Qt::AlignHCenter">
+     <widget class="QRadioButton" name="radioButtonBlack">
+      <property name="text">
+       <string>&amp;Black</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" colspan="2" alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Model:</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
+  <zorder>layoutWidget1</zorder>
+  <zorder>radioButtonBlack</zorder>
  </widget>
  <tabstops>
-  <tabstop>radioButtonBlack</tabstop>
-  <tabstop>radioButtonWrite</tabstop>
   <tabstop>comboBoxModel</tabstop>
   <tabstop>checkBox</tabstop>
   <tabstop>spinBoxRmax</tabstop>

@@ -42,6 +42,7 @@
 #include <Rotulador/TCRotulador2D.h>
 #include <Segmentacao/2D/PorosGargantas/CAberturaDilatacao.h>
 #include <Segmentacao/3D/PorosGargantas/CAberturaDilatacao3D.h>
+#include <Segmentacao/3D/PorosGargantas/CSegPorosGargantas3D.h>
 
 using namespace std;
 
@@ -2305,7 +2306,11 @@ void Lvp::segmentationPoresThroats() {
 }
 
 void Lvp::exSegmentationPoresThroats(){
+	pair<TCMatriz3D<bool>*,TCMatriz3D<bool>*> pm;
+	static int seqNumberSPT = 1;
+	QString filepath = tr(".segmented%1.dgm").arg(QString::number(seqNumberSPT++));
 	int indice, fundo;
+
 	if (dialogPoresThroats->radioButtonBlack->isChecked()) {
 		indice = 1;
 		fundo = 0;
@@ -2313,33 +2318,55 @@ void Lvp::exSegmentationPoresThroats(){
 		indice = 0;
 		fundo = 1;
 	}
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-	CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
-	filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
-	filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
-	filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
-	filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
-	pair<TCMatriz3D<bool>*,TCMatriz3D<bool>*> pm;
 
-	if (dialogPoresThroats->comboBoxModel->currentText() == "Model 7" ) {
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	if (dialogPoresThroats->comboBoxModel->currentText() == "Pores Throats By IRA Model 0" ) {
+		CSegPorosGargantas3D filtro = CSegPorosGargantas3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
+		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
+		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
+		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
+		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
+		pm = filtro.Go(0);
+		filtro.Write(filepath.toStdString(), pm.first, pm.second);
+	} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 7" ) {
+		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
+		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
+		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
+		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
+		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
 		pm = filtro.DistSitiosLigacoes_Modelo_7();
-	} else if (dialogPoresThroats->comboBoxModel->currentText() == "Model 6" ) {
+		filtro.Write(filepath.toStdString(), pm.first, pm.second);
+	} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 6" ) {
+		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
+		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
+		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
+		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
+		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
 		pm = filtro.DistSitiosLigacoes_Modelo_6();
-	} else if (dialogPoresThroats->comboBoxModel->currentText() == "Model 5" ) {
+		filtro.Write(filepath.toStdString(), pm.first, pm.second);
+	} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 5" ) {
+		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
+		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
+		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
+		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
+		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
 		pm = filtro.DistSitiosLigacoes_Modelo_5();
+		filtro.Write(filepath.toStdString(), pm.first, pm.second);
 	} else {
+		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
+		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
+		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
+		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
+		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
 		pm = filtro.DistSitiosLigacoes_Modelo_4();
+		filtro.Write(filepath.toStdString(), pm.first, pm.second);
 	}
-	static int seqNumberSPT = 1;
-	QString filepath = tr(".segmented%1.dgm").arg(QString::number(seqNumberSPT++));
-	//pm->SetFormato(D2_X_Y_Z_GRAY_ASCII);
-	//pm->NumCores(3);
-	filtro.Write(filepath.toStdString(), pm.first, pm.second);
-	//filepath = child->getFilePath() + filepath;
 	open( filepath.toStdString() );
 
 	delete pm.first;
 	delete pm.second;
+
 	QApplication::restoreOverrideCursor();
 
 	dialogPoresThroats->close();
