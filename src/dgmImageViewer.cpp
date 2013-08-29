@@ -114,15 +114,20 @@ bool DgmImageViewer::saveAs() {
 	msgBox.setText(tr("Saving Format:"));
 	QPushButton *cancelButton = msgBox.addButton(QMessageBox::Cancel);
 	msgBox.addButton(tr("&Binary"), QMessageBox::ActionRole);
+	QPushButton *alignedAsciiButton = msgBox.addButton(tr("A&ligned ASCII"), QMessageBox::ActionRole);
 	QPushButton *asciiButton = msgBox.addButton(tr("&ASCII"), QMessageBox::ActionRole);
 	msgBox.setDefaultButton(asciiButton);
 	msgBox.exec();
 	if ( msgBox.clickedButton() == cancelButton )
 		return false;
-	if (msgBox.clickedButton() == asciiButton) //ascii
+	if (msgBox.clickedButton() == asciiButton) { //ascii
 		pm3D->SetFormato(D2_X_Y_Z_GRAY_ASCII);
-	else //binario.
+	} else if (msgBox.clickedButton() == alignedAsciiButton) { //ascii alinhado
+		pm3D->SetFormato(D2_X_Y_Z_GRAY_ASCII);
+		pm3D->salvarAlinhado = true;
+	} else { //binario.
 		pm3D->SetFormato(D5_X_Y_Z_GRAY_BINARY);
+	}
 	string tmp = pm3D->Path();
 	pm3D->Path("");
 	if ( pm3D->Write( fileName.toStdString() ) ) {

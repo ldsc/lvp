@@ -7,6 +7,7 @@
 #include <QPrinter>
 #include <Matriz/TCMatriz2D.h>
 #include <Matriz/TCImagem3D.h>
+#include <QPushButton>
 
 class QLabel;
 class QListWidgetItem;

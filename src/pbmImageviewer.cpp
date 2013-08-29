@@ -56,6 +56,7 @@ bool PbmImageViewer::saveAs() {
 	msgBox.setText(tr("Saving Format:"));
 	QPushButton *cancelButton = msgBox.addButton(QMessageBox::Cancel);
 	msgBox.addButton(tr("&Binary"), QMessageBox::ActionRole);
+	QPushButton *alignedAsciiButton = msgBox.addButton(tr("A&ligned ASCII"), QMessageBox::ActionRole);
 	QPushButton *asciiButton = msgBox.addButton(tr("&ASCII"), QMessageBox::ActionRole);
 	msgBox.setDefaultButton(asciiButton);
 	msgBox.exec();
@@ -63,6 +64,9 @@ bool PbmImageViewer::saveAs() {
 		return false;
 	if (msgBox.clickedButton() == asciiButton) { //ascii
 		pm->SetFormato(P1_X_Y_ASCII);
+	} else if (msgBox.clickedButton() == alignedAsciiButton) { //ascii alinhado
+		pm->SetFormato(P1_X_Y_ASCII);
+		pm->salvarAlinhado = true;
 	} else { //binario.
 		pm->SetFormato(P4_X_Y_BINARY);
 	}
