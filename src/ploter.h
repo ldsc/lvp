@@ -4,6 +4,10 @@
 #include <QtGui>
 #include <QScrollArea>
 #include <QList>
+#include <QApplication>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QStatusBar>
 #include <iostream>
 #include <fstream>
 #include "qwt_plot.h"
@@ -14,7 +18,7 @@
 #include "qwt_plot_dict.h"
 //#include "qwt_plot_zoomer.h"
 
-class QMainWindow;
+#include <QMainWindow>
 class QListWidgetItem;
 
 /*! Ploter é a classe que representa a visualização de gráficos através do QwtPlot.*/

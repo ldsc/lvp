@@ -4,7 +4,7 @@
 #include <QtGui>
 #include "ui_dialogCrop3D.h"
 
-class QMainWindow;
+#include <QMainWindow>
 
 /*! Crop3D é a classe que implementa a janela de diálogo para cortar imagens 3D. */
 class Crop3D : public QDialog, public Ui::Crop3D

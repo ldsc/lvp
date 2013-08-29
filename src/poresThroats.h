@@ -4,7 +4,7 @@
 #include "ui_dialogPoresThroats.h"
 #include "dbmImageViewer.h"
 
-class QMainWindow;
+#include <QMainWindow>
 
 /*! PoresThroats é a classe que implementa a janela de diálogo para segmentação de poros e gargantas. */
 class PoresThroats : public QDialog, public Ui::DialogPoresThroats

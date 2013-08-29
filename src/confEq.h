@@ -6,7 +6,7 @@
 #include "pbmImageviewer.h"
 #include "dbmImageViewer.h"
 
-class QMainWindow;
+#include <QMainWindow>
 
 /*! ConfEq é a classe que implementa a janela de diálogo para o método das configurações de equilíbrio. */
 class ConfEq : public QDialog, public Ui::DialogConfEq

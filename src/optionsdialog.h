@@ -3,6 +3,9 @@
 
 #include <QtCore>
 #include <QtGui>
+#include <QDialog>
+#include <QColorDialog>
+#include <QFontDialog>
 
 namespace Ui {
     class OptionsDialog;

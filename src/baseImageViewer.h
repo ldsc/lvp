@@ -2,9 +2,18 @@
 #define BASEIMAGEVIEWER_H
 
 #include <iostream>
+#include <QApplication>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QtGui>
+#include <QLabel>
 #include <QPrinter>
+#include <QPrintDialog>
+#include <QMainWindow>
+#include <QMessageBox>
+#include <QStatusBar>
+#include <QFileDialog>
+#include <QPushButton>
 #include <Matriz/TCMatriz2D.h>
 #include <Matriz/TCImagem3D.h>
 #include <QPushButton>
@@ -13,7 +22,6 @@ class QLabel;
 class QListWidgetItem;
 class QImage;
 class QSignalMapper;
-class QMainWindow;
 class QWhellEvent;
 
 /*! BaseImageViewer é a classe base para representar imagens.*/

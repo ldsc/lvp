@@ -3,7 +3,7 @@
 
 #include "ui_dialogReconstruction.h"
 
-class QMainWindow;
+#include <QMainWindow>
 
 /*! Reconstruction é a classe que implementa a janela de diálogo para o método de reconstrução tridimensional Gaussiana Truncada. */
 class Reconstruction : public QDialog, public Ui::DialogReconstruction

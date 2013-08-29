@@ -4,6 +4,12 @@
 #include "qHexEdit/qhexedit.h"
 //#include "optionsdialog.h"
 //#include "searchdialog.h"
+
+#include <QMainWindow>
+#include <QLabel>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QStatusBar>
 /*
 QT_BEGIN_NAMESPACE
 class QAction;

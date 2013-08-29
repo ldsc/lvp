@@ -3,7 +3,7 @@
 
 #include "ui_dialogReconstructionES.h"
 
-class QMainWindow;
+#include <QMainWindow>
 
 /*! ReconstructionES é a classe que implementa a janela de diálogo para o método de reconstrução tridimensional Esferas Sobrepostas. */
 class ReconstructionES : public QDialog, public Ui::DialogReconstructionES

@@ -82,19 +82,19 @@ Lvp::Lvp() {
 	
 	groupBox = new QGroupBox(dockWidgetContents3D);
 	groupBox->setObjectName(QString::fromUtf8("groupBox"));
-	groupBox->setTitle(QApplication::translate("Form", "axis", 0, QApplication::UnicodeUTF8));
+	groupBox->setTitle(QApplication::translate("Form", "axis", 0, -1));
 	
 	radioButtonX = new QRadioButton(groupBox);
 	radioButtonX->setGeometry(QRect(0, 55, 41, 25));
-	radioButtonX->setText(QApplication::translate("Form", "X", 0, QApplication::UnicodeUTF8));
+	radioButtonX->setText(QApplication::translate("Form", "X", 0, -1));
 	
 	radioButtonY = new QRadioButton(groupBox);
 	radioButtonY->setGeometry(QRect(20, 18, 41, 25));
-	radioButtonY->setText(QApplication::translate("Form", "Y", 0, QApplication::UnicodeUTF8));
+	radioButtonY->setText(QApplication::translate("Form", "Y", 0, -1));
 	
 	radioButtonZ = new QRadioButton(groupBox);
 	radioButtonZ->setGeometry(QRect(45, 45, 41, 25));
-	radioButtonZ->setText(QApplication::translate("Form", "Z", 0, QApplication::UnicodeUTF8));
+	radioButtonZ->setText(QApplication::translate("Form", "Z", 0, -1));
 	radioButtonZ->setChecked(true);
 	
 	labelAxis = new QLabel(groupBox);
@@ -1419,7 +1419,7 @@ void Lvp::lowPass() {
 		if ( (tamMask % 2) == 0 ) {
 			QMessageBox::information(this, tr("LVP"), tr("The mask size must be an odd number"));
 		}
-		tamMask = QInputDialog::getInteger(this, tr(":. Low Pass"), tr("Enter the Mask size:"), 5, 1, 99, 2, &ok);
+		tamMask = QInputDialog::getInt(this, tr(":. Low Pass"), tr("Enter the Mask size:"), 5, 1, 99, 2, &ok);
 	} while ( (tamMask % 2) == 0 );
 	if (ok) {
 		int numFiles = pbmImagesList.size(); //número de arquivos que serão abertos
@@ -1474,7 +1474,7 @@ void Lvp::highPass() {
 		if ( (tamMask % 2) == 0 ) {
 			QMessageBox::information(this, tr("LVP"), tr("The mask size must be an odd number"));
 		}
-		tamMask = QInputDialog::getInteger(this, tr(":. High Pass"), tr("Enter the Mask size:"), 5, 1, 99, 2, &ok);
+		tamMask = QInputDialog::getInt(this, tr(":. High Pass"), tr("Enter the Mask size:"), 5, 1, 99, 2, &ok);
 	} while ( (tamMask % 2) == 0 );
 	if (ok) {
 		int numFiles = pbmImagesList.size(); //número de arquivos que serão abertos
@@ -1543,7 +1543,7 @@ void Lvp::mathematicalMorphology( MorphType mtype ) {
 	//CBCDiscreta *maskd = dynamic_cast < CBCDiscreta * > ( mask );
 	QList<PbmImageViewer *> imagesList = selectedPbmImagesList(); //lista de ponteiros para imagens selecionadas.
 	bool ok;
-	int tamStruElem = QInputDialog::getInteger(this, tr(":. LVP"), tr("Enter the Structuring Element size:"), 1, 0, 99, 1, &ok);
+	int tamStruElem = QInputDialog::getInt(this, tr(":. LVP"), tr("Enter the Structuring Element size:"), 1, 0, 99, 1, &ok);
 	if (ok) {
 		QMessageBox msgBox(this);
 		msgBox.setWindowTitle(tr("LVP - Mathematical Morphology"));
@@ -1647,7 +1647,7 @@ void Lvp::mathematicalMorphology3D( MorphType mtype ){
 	//CBCDiscreta *maskd = dynamic_cast < CBCDiscreta * > ( mask );
 	QList<DbmImageViewer *> imagesList = selectedDbmImagesList(); //lista de ponteiros para imagens selecionadas.
 	bool ok;
-	int tamStruElem = QInputDialog::getInteger(this, tr(":. LVP"), tr("Enter the Structuring Element size:"), 1, 0, 99, 1, &ok);
+	int tamStruElem = QInputDialog::getInt(this, tr(":. LVP"), tr("Enter the Structuring Element size:"), 1, 0, 99, 1, &ok);
 	if (ok) {
 		QMessageBox msgBox(this);
 		msgBox.setWindowTitle(tr("LVP - Mathematical Morphology"));
@@ -1749,7 +1749,7 @@ void Lvp::skeletonV5() {
 void Lvp::skeleton(int type) {
 	QList<PbmImageViewer *> imagesList = selectedPbmImagesList(); //lista de ponteiros para imagens selecionadas.
 	bool ok;
-	int tamMask = QInputDialog::getInteger(this, tr(":. Skeleton"), tr("Enter the mask size:"), 1, 0, 99, 1, &ok);
+	int tamMask = QInputDialog::getInt(this, tr(":. Skeleton"), tr("Enter the mask size:"), 1, 0, 99, 1, &ok);
 	if (ok) {
 		int numFiles = imagesList.size(); //número de arquivos que serão abertos
 		int cont = 0;
@@ -2338,7 +2338,7 @@ void Lvp::intrinsicPermeability() {
 			objPerIn = new CPermeabilidadeIntrinseca();
 			if ( objPerIn ) {
 				bool ok;
-				objPerIn->limiteIteracoes = QInputDialog::getInteger(this, tr("Intrinsic Permeability"), tr("Enter the limit iterations number:"), 100000, 1000, 10000000, 1, &ok);
+				objPerIn->limiteIteracoes = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the limit iterations number:"), 100000, 1000, 10000000, 1, &ok);
 				if (ok) {
 					QStringList itens = ( QStringList() << tr("1.0e-10") << tr("1.0e-09") << tr("1.0e-08") << tr("1.0e-07") << tr("1.0e-06") << tr("1.0e-05") << tr("1.0e-04") << tr("1.0e-03") << tr("1.0e-02") << tr("1.0e-01") );
 					QString item = QInputDialog::getItem(this, tr("Intrinsic Permeability"), tr("Enter the limit error number:"), itens, 4, false, &ok);
@@ -2374,8 +2374,8 @@ void Lvp::relativePermeability() {
 		objPerRel = new CPermeabilidadeRelativa( fout );
 		if ( objPerRel ) {
 			bool ok;
-			//int limiteIteracoes = QInputDialog::getInteger(this, tr("Relative Permeability"), tr("Enter the limit iterations number:"), 10000, 1000, 10000000, 1, &ok);
-			objPerRel->limiteIteracoes = QInputDialog::getInteger(this, tr("Relative Permeability"), tr("Enter the limit iterations number:"), 100000, 1000, 10000000, 1, &ok);
+			//int limiteIteracoes = QInputDialog::getInt(this, tr("Relative Permeability"), tr("Enter the limit iterations number:"), 10000, 1000, 10000000, 1, &ok);
+			objPerRel->limiteIteracoes = QInputDialog::getInt(this, tr("Relative Permeability"), tr("Enter the limit iterations number:"), 100000, 1000, 10000000, 1, &ok);
 			if (ok) {
 				QStringList itens = ( QStringList() << tr("1.0e-10") << tr("1.0e-09") << tr("1.0e-08") << tr("1.0e-07") << tr("1.0e-06") << tr("1.0e-05") << tr("1.0e-04") << tr("1.0e-03") << tr("1.0e-02") << tr("1.0e-01") );
 				QString item = QInputDialog::getItem(this, tr("Relative Permeability"), tr("Enter the limit error number:"), itens, 4, false, &ok);
@@ -2936,7 +2936,7 @@ void Lvp::correlation3D ( CCorrelacao3D::Tipos tipo ){
 	} else {
 		return;
 	}
-	int numPlanos = QInputDialog::getInteger(this, tr(":. 3D Correlation"), tr("Enter the number of plans to be considered.\nLeave 0 to consider 10% of plans of the image:"), 0, 0, 300, 1, &ok);
+	int numPlanos = QInputDialog::getInt(this, tr(":. 3D Correlation"), tr("Enter the number of plans to be considered.\nLeave 0 to consider 10% of plans of the image:"), 0, 0, 300, 1, &ok);
 	if ( ok ){
 		int numFiles = imagesList.size(); //número de arquivos que serão abertos
 		int cont = 0;
@@ -3333,7 +3333,7 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 			break;
 		case m3Dd34: //d34
 			metrica2D = CDistribuicao::d34;
-			numPlanos = QInputDialog::getInteger(this, tr(":. 3D Distribution"), tr("Enter the number of plans to be considered.\nLeave 0 to consider 10% of plans of the image:"), 0, 0, 1000, 1, &ok);
+			numPlanos = QInputDialog::getInt(this, tr(":. 3D Distribution"), tr("Enter the number of plans to be considered.\nLeave 0 to consider 10% of plans of the image:"), 0, 0, 1000, 1, &ok);
 			if ( ! ok ) return;
 			suf << "d34_np-" << numPlanos;
 			sufixo = suf.str();
@@ -3344,7 +3344,7 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 			break;
 		case m3Dd5711: //d5711
 			metrica2D = CDistribuicao::d5711;
-			numPlanos = QInputDialog::getInteger(this, tr(":. 3D Distribution"), tr("Enter the number of plans to be considered.\nLeave 0 to consider 10% of plans of the image:"), 0, 0, 1000, 1, &ok);
+			numPlanos = QInputDialog::getInt(this, tr(":. 3D Distribution"), tr("Enter the number of plans to be considered.\nLeave 0 to consider 10% of plans of the image:"), 0, 0, 1000, 1, &ok);
 			if ( ! ok ) return;
 			suf << "d5711_np-" << numPlanos;
 			sufixo = suf.str();
@@ -3435,9 +3435,9 @@ void Lvp::dtpgD345_3D(){
 				return;
 			}
 			filtro = new CAberturaDilatacao3D(child->pm3D, indice, fundo );
-			int raioMaximo = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the maximum radius of the structuring element:"), 50, 1, 99, 1, &ok1);
-			int fatorReducao = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the reduction factor of the structuring element radius:"), 1, 1, raioMaximo, 1, &ok2);
-			int incrementoRaio = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the increment value for the structuring element radius:"), 1, 1, raioMaximo, 1, &ok3);
+			int raioMaximo = QInputDialog::getInt(this, tr(":. Segmentation"), tr("Enter the maximum radius of the structuring element:"), 50, 1, 99, 1, &ok1);
+			int fatorReducao = QInputDialog::getInt(this, tr(":. Segmentation"), tr("Enter the reduction factor of the structuring element radius:"), 1, 1, raioMaximo, 1, &ok2);
+			int incrementoRaio = QInputDialog::getInt(this, tr(":. Segmentation"), tr("Enter the increment value for the structuring element radius:"), 1, 1, raioMaximo, 1, &ok3);
 			int raioDilatacao = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the radius for the dilatation:"), 1, 1, 10, 1, &ok4);
 			if (ok1 and ok2 and ok3 and ok4) {
 				QApplication::setOverrideCursor(Qt::WaitCursor);

@@ -6,9 +6,11 @@
 #include <QFile>
 #include <iostream>
 #include <fstream>
-
-class QMainWindow;
-class QListWidgetItem;
+#include <QMainWindow>
+#include <QMessageBox>
+#include <QListWidgetItem>
+#include <QApplication>
+#include <QFileDialog>
 
 /*! TextEditor é a classe que implementa o editor de arquivos texto. */
 class TextEditor : public QTextEdit

@@ -9,8 +9,10 @@
 //#include <QProcess>
 
 #include <QTranslator>
-#include <QtGui/QRadioButton>
-#include <QtGui/QGroupBox>
+#include <QRadioButton>
+#include <QGroupBox>
+#include <QApplication>
+#include <QCoreApplication>
 #include "ui_lvpinterface.h"
 #include "confEq.h"
 #include "reconstruction.h"
