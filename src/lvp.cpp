@@ -2329,6 +2329,14 @@ void Lvp::exSegmentationPoresThroats(){
 		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
 		pm = filtro.Go(0);
 		filtro.Write(filepath.toStdString(), pm.first, pm.second);
+	} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 8" ) {
+		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
+		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
+		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
+		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
+		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
+		pm = filtro.DistSitiosLigacoes_Modelo_8();
+		filtro.Write(filepath.toStdString(), pm.first, pm.second);
 	} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 7" ) {
 		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
 		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());

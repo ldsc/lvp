@@ -151,6 +151,11 @@
       </item>
       <item>
        <property name="text">
+        <string>Openning Dilatation Model 8</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>Openning Dilatation Model 7</string>
        </property>
       </item>
@@ -204,8 +209,6 @@
     </item>
    </layout>
   </widget>
-  <zorder>layoutWidget1</zorder>
-  <zorder>radioButtonBlack</zorder>
  </widget>
  <tabstops>
   <tabstop>comboBoxModel</tabstop>
