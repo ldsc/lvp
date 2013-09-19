@@ -2306,7 +2306,6 @@ void Lvp::segmentationPoresThroats() {
 }
 
 void Lvp::exSegmentationPoresThroats(){
-	pair<TCMatriz3D<bool>*,TCMatriz3D<bool>*> pm;
 	static int seqNumberSPT = 1;
 	QString filepath = tr(".segmented%1.dgm").arg(QString::number(seqNumberSPT++));
 	int indice, fundo;
@@ -2322,6 +2321,7 @@ void Lvp::exSegmentationPoresThroats(){
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
 	if (dialogPoresThroats->comboBoxModel->currentText() == "Pores Throats By IRA Model 0" ) {
+		pair<TCMatriz3D<bool>*,TCMatriz3D<bool>*> pm;
 		CSegPorosGargantas3D filtro = CSegPorosGargantas3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
 		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
 		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
@@ -2329,51 +2329,39 @@ void Lvp::exSegmentationPoresThroats(){
 		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
 		pm = filtro.Go(0);
 		filtro.Write(filepath.toStdString(), pm.first, pm.second);
-	} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 8" ) {
-		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
-		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
-		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
-		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
-		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
-		pm = filtro.DistSitiosLigacoes_Modelo_8();
-		filtro.Write(filepath.toStdString(), pm.first, pm.second);
-	} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 7" ) {
-		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
-		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
-		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
-		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
-		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
-		pm = filtro.DistSitiosLigacoes_Modelo_7();
-		filtro.Write(filepath.toStdString(), pm.first, pm.second);
-	} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 6" ) {
-		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
-		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
-		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
-		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
-		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
-		pm = filtro.DistSitiosLigacoes_Modelo_6();
-		filtro.Write(filepath.toStdString(), pm.first, pm.second);
-	} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 5" ) {
-		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
-		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
-		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
-		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
-		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
-		pm = filtro.DistSitiosLigacoes_Modelo_5();
-		filtro.Write(filepath.toStdString(), pm.first, pm.second);
+		delete pm.first;
+		delete pm.second;
+		open( filepath.toStdString() );
 	} else {
+		EModelo model;
+		if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 8" ) {
+			model = OITO;
+		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 7" ) {
+			model = SETE;
+		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 6" ) {
+			model = SEIS;
+		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 5" ) {
+			model = CINCO;
+		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 4" ) {
+			model = QUATRO;
+		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 3" ) {
+			model = TRES;
+		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 2" ) {
+			model = DOIS;
+		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 1" ) {
+			model = UM;
+		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 0" ) {
+			model = ZERO;
+		}
 		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
 		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
 		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
 		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
 		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
-		pm = filtro.DistSitiosLigacoes_Modelo_4();
-		filtro.Write(filepath.toStdString(), pm.first, pm.second);
+		filtro.Go(model);
+		filtro.Write(filepath.toStdString());
+		open( filepath.toStdString() );
 	}
-	open( filepath.toStdString() );
-
-	delete pm.first;
-	delete pm.second;
 
 	QApplication::restoreOverrideCursor();
 
@@ -3304,15 +3292,13 @@ void Lvp::dtpgD345_3D(){
 				filtro.FatorReducaoRaioElemEst(fatorReducao);
 				filtro.IncrementoRaioElementoEstruturante(incrementoRaio);
 
-				pair<TCMatriz3D<bool>*,TCMatriz3D<bool>*> pm = filtro.DistSitiosLigacoes_Modelo_4();
+				filtro.Go(SETE);
 
-				distP = new CDistribuicao3D ( pm.first );
-				distG = new CDistribuicao3D ( pm.second );
+				distP = new CDistribuicao3D ( filtro.GetMatrizSitios() );
+				distG = new CDistribuicao3D ( filtro.GetMatrizLigacoes() );
 				if ( ! distP || ! distG ) {
 					cerr << "Não foi possível alocar CDistribuicao3D em Lvp::dtpgD345_3D()" << endl;
 					QApplication::restoreOverrideCursor();
-					delete pm.first;
-					delete pm.second;
 					if(distP) delete distP;
 					if(distG) delete distG;
 					return;
@@ -3338,8 +3324,6 @@ void Lvp::dtpgD345_3D(){
 					QMessageBox::information(this, tr("LVP"), tr("Erro! - Distribution3D class returned false!"));
 				}
 				QApplication::restoreOverrideCursor();
-				delete pm.first;
-				delete pm.second;
 				delete distP;
 				delete distG;
 			}

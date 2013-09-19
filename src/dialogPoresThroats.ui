@@ -146,16 +146,6 @@
      <widget class="QComboBox" name="comboBoxModel">
       <item>
        <property name="text">
-        <string>Pores Throats By IRA Model 0</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Openning Dilatation Model 8</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
         <string>Openning Dilatation Model 7</string>
        </property>
       </item>
@@ -172,6 +162,31 @@
       <item>
        <property name="text">
         <string>Openning Dilatation Model 4</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Openning Dilatation Model 3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Openning Dilatation Model 2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Openning Dilatation Model 1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Openning Dilatation Model 0</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Pores Throats By IRA Model 0</string>
        </property>
       </item>
      </widget>
