@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>350</width>
-    <height>220</height>
+    <height>245</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>350</width>
-    <height>220</height>
+    <height>245</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>350</width>
-    <height>220</height>
+    <height>245</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,7 @@
      <x>10</x>
      <y>10</y>
      <width>331</width>
-     <height>201</height>
+     <height>231</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
@@ -63,15 +63,50 @@
       <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
-         <x>3</x>
-         <y>24</y>
+         <x>10</x>
+         <y>27</y>
          <width>190</width>
-         <height>95</height>
+         <height>116</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Reduction factor:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
          <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Dilatation radius:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Radius increment:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QSpinBox" name="spinBoxRinc">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QSpinBox" name="spinBoxRreduction">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_6">
           <property name="text">
            <string>Maximum radius:</string>
           </property>
@@ -90,30 +125,15 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Radius increment:</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="1">
-         <widget class="QSpinBox" name="spinBoxRinc">
+         <widget class="QSpinBox" name="spinBoxRdilatation">
           <property name="minimum">
            <number>1</number>
           </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Reduction factor:</string>
+          <property name="maximum">
+           <number>10</number>
           </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QSpinBox" name="spinBoxRreduction">
-          <property name="minimum">
+          <property name="value">
            <number>1</number>
           </property>
          </widget>
@@ -144,6 +164,11 @@
     </item>
     <item row="1" column="1" colspan="2">
      <widget class="QComboBox" name="comboBoxModel">
+      <item>
+       <property name="text">
+        <string>Openning Dilatation Model 8</string>
+       </property>
+      </item>
       <item>
        <property name="text">
         <string>Openning Dilatation Model 7</string>
@@ -228,7 +253,6 @@
  <tabstops>
   <tabstop>comboBoxModel</tabstop>
   <tabstop>checkBox</tabstop>
-  <tabstop>spinBoxRmax</tabstop>
   <tabstop>spinBoxRinc</tabstop>
   <tabstop>spinBoxRreduction</tabstop>
   <tabstop>buttonBox</tabstop>

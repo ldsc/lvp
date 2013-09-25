@@ -2355,6 +2355,7 @@ void Lvp::exSegmentationPoresThroats(){
 		}
 		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
 		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
+		filtro.RaioEEDilatacao(dialogPoresThroats->spinBoxRdilatation->value());
 		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
 		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
 		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
