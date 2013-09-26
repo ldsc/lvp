@@ -2308,7 +2308,6 @@ void Lvp::segmentationPoresThroats() {
 void Lvp::exSegmentationPoresThroats(){
 	static int seqNumberSPT = 1;
 	QString filepath = tr(".segmented%1.dgm").arg(QString::number(seqNumberSPT++));
-	QString filepath2 = tr("listOfObjects%1.txt").arg(QString::number(seqNumberSPT++));
 	int indice, fundo;
 
 	if (dialogPoresThroats->radioButtonBlack->isChecked()) {
@@ -2327,7 +2326,7 @@ void Lvp::exSegmentationPoresThroats(){
 		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
 		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
 		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
-		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
+		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBoxSPR->isChecked());
 		pm = filtro.Go(0);
 		filtro.Write(filepath.toStdString(), pm.first, pm.second);
 		delete pm.first;
@@ -2342,16 +2341,19 @@ void Lvp::exSegmentationPoresThroats(){
 		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 7" ) {
 			model = SETE;
 		}
-		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
+		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, indice, fundo );
 		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
 		filtro.RaioEEDilatacao(dialogPoresThroats->spinBoxRdilatation->value());
 		filtro.FatorReducaoRaioElemEst(dialogPoresThroats->spinBoxRreduction->value());
 		filtro.IncrementoRaioElementoEstruturante(dialogPoresThroats->spinBoxRinc->value());
-		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
+		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBoxSPR->isChecked());
+		filtro.GerarDetalhesObjetos(dialogPoresThroats->checkBoxGOD->isChecked());
 		filtro.Go(model);
 		filtro.Write(filepath.toStdString());
-		filtro.SalvarListaObjetos(dialogPoresThroats->child->getFilePath().toStdString() + filepath2.toStdString());
 		open( filepath.toStdString() );
+		filepath = dialogPoresThroats->child->getFilePath();
+		filepath+= dialogPoresThroats->child->getFileNameNoExt() + "_objectsList.txt";
+		filtro.SalvarListaObjetos(filepath.toStdString());
 	}
 
 	QApplication::restoreOverrideCursor();
@@ -3272,7 +3274,7 @@ void Lvp::dtpgD345_3D(){
 			} else {
 				return;
 			}
-			CAberturaDilatacao3D filtro = CAberturaDilatacao3D(child->pm3D, child->getFileNameNoExt().toStdString(), indice, fundo );
+			CAberturaDilatacao3D filtro = CAberturaDilatacao3D(child->pm3D, indice, fundo );
 			int raioMaximo = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the maximum radius of the structuring element:"), 50, 1, 99, 1, &ok1);
 			int fatorReducao = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the reduction factor of the structuring element radius:"), 1, 1, raioMaximo, 1, &ok2);
 			int incrementoRaio = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the increment value for the structuring element radius:"), 1, 1, raioMaximo, 1, &ok3);
