@@ -3817,16 +3817,20 @@ void Lvp::writeSettings() { //Grava a posição e tamanho atuais da aplicação
 	settings->setValue("pos", pos());
 	settings->setValue("size", size());
 	settings->setValue("maximized", isMaximized());
+	settings->setValue("lastOpenPath", lastOpenPath);
 }
 
 void Lvp::readSettings() { //Carrega a última posição e tamanho usadas para a aplicação.
 	QPoint pos = settings->value("pos", QPoint(200, 200)).toPoint();
-	QSize size = settings->value("size", QSize(400, 400)).toSize();
 	move(pos);
+
+	QSize size = settings->value("size", QSize(400, 400)).toSize();
 	resize(size);
 
 	bool maximized = settings->value("maximized", bool(false)).toBool();
 	if ( maximized ) showMaximized ();
+
+	lastOpenPath = settings->value("lastOpenPath", QString()).toString();
 
 	QString locale = settings->value("language", QString("English")).toString();
 	appTranslator.load("lvp_" + locale, qmPath);
