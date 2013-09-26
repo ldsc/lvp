@@ -2335,24 +2335,12 @@ void Lvp::exSegmentationPoresThroats(){
 		open( filepath.toStdString() );
 	} else {
 		EModelo model;
-		if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 8" ) {
+		if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 9" ) {
+			model = NOVE;
+		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 8" ) {
 			model = OITO;
 		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 7" ) {
 			model = SETE;
-		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 6" ) {
-			model = SEIS;
-		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 5" ) {
-			model = CINCO;
-		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 4" ) {
-			model = QUATRO;
-		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 3" ) {
-			model = TRES;
-		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 2" ) {
-			model = DOIS;
-		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 1" ) {
-			model = UM;
-		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 0" ) {
-			model = ZERO;
 		}
 		CAberturaDilatacao3D filtro = CAberturaDilatacao3D(dialogPoresThroats->child->pm3D, dialogPoresThroats->child->getFileNameNoExt().toStdString(), indice, fundo );
 		filtro.RaioMaximoElementoEstruturante(dialogPoresThroats->spinBoxRmax->value());
