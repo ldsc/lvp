@@ -2308,6 +2308,7 @@ void Lvp::segmentationPoresThroats() {
 void Lvp::exSegmentationPoresThroats(){
 	static int seqNumberSPT = 1;
 	QString filepath = tr(".segmented%1.dgm").arg(QString::number(seqNumberSPT++));
+	QString filepath2 = tr("listOfObjects%1.txt").arg(QString::number(seqNumberSPT++));
 	int indice, fundo;
 
 	if (dialogPoresThroats->radioButtonBlack->isChecked()) {
@@ -2361,6 +2362,7 @@ void Lvp::exSegmentationPoresThroats(){
 		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBox->isChecked());
 		filtro.Go(model);
 		filtro.Write(filepath.toStdString());
+		filtro.SalvarListaObjetos(dialogPoresThroats->child->getFilePath().toStdString() + filepath2.toStdString());
 		open( filepath.toStdString() );
 	}
 
