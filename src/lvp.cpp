@@ -54,6 +54,8 @@ Lvp::Lvp() {
 	mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	mdiArea->setViewMode( QMdiArea::TabbedView );
 	setCentralWidget(mdiArea);
+
+	fileWatcher = new QFileSystemWatcher(this);
 	
 	//Lista de imagens 2D
 	listWidget = new QListWidget(dockWidgetLista);
@@ -233,6 +235,7 @@ void Lvp::dropEvent(QDropEvent *event) {
 void Lvp::createActions() {
 	windowMapper = new QSignalMapper(this);
 	connect( windowMapper,									SIGNAL( mapped(QWidget *) ),										this, SLOT( setActiveSubWindow(QWidget *)) );
+	connect( fileWatcher,										SIGNAL( fileChanged(QString) ),									this, SLOT( fileChanged(QString) ) );
 	connect( listWidget,										SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
 	connect( listWidget3D,									SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
 	connect( listWidgetChart,								SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
@@ -309,8 +312,8 @@ void Lvp::createActions() {
 	connect( actionDTPGd345_3D,							SIGNAL( triggered() ),	this,			SLOT( dtpgD345_3D()								) );
 	connect( actionPorosity,                SIGNAL( triggered() ),	this,			SLOT( porosity()									) );
 	connect( actionConnectivity,            SIGNAL( triggered() ),  this,			SLOT( connectivity3D()						) );
-	connect( actionClose,                   SIGNAL( triggered() ), 	mdiArea,	SLOT( closeActiveSubWindow()      ) );
-	connect( actionCloseAll,                SIGNAL( triggered() ), 	mdiArea,	SLOT( closeAllSubWindows()				) );
+	connect( actionClose,                   SIGNAL( triggered() ), 	this,			SLOT( closeActiveSubWindow()      ) );
+	connect( actionCloseAll,                SIGNAL( triggered() ), 	this,			SLOT( closeAllSubWindows()				) );
 	connect( actionTitle,                   SIGNAL( triggered() ), 	mdiArea,	SLOT( tileSubWindows()						) );
 	connect( actionCascade,                 SIGNAL( triggered() ), 	mdiArea,	SLOT( cascadeSubWindows() 	      ) );
 	connect( actionNext,                    SIGNAL( triggered() ), 	mdiArea,	SLOT( activateNextSubWindow()     ) );
@@ -334,6 +337,93 @@ void Lvp::createActions() {
 	connect( actionOptions,									SIGNAL( triggered() ),  this,			SLOT( options()										) );
 	connect( actionPoresThroats,						SIGNAL( triggered() ),  this,			SLOT( segmentationPoresThroats()	) );
 	connect( actionCrop3D,									SIGNAL( triggered() ),  this,			SLOT( crop3DImage()								) );
+}
+
+void Lvp::closeActiveSubWindow() {
+	QString filename;
+	QWidget * widget = mdiArea->activeSubWindow()->widget();
+	if ( BaseDnmImageViewer *child = qobject_cast<BaseDnmImageViewer *>(widget) ) {
+		filename = child->getFullFileName();
+	} else if (BasePnmImageViewer * child = qobject_cast<BasePnmImageViewer *>(widget)) {
+		filename = child->getFullFileName();
+	} else if (Ploter * child = qobject_cast<Ploter *>(widget)) {
+		filename = child->getFullFileName();
+	} else if (TextEditor * child = qobject_cast<TextEditor *>(widget)) {
+		if (child->getFileExt().toLower()=="txt") //só remove o path se a extensão for txt
+			filename = child->getFullFileName();
+	}
+	fileWatcher->removePath( filename );
+	mdiArea->closeActiveSubWindow();
+}
+
+void Lvp::closeAllSubWindows() {
+	QString filename;
+	QWidget * widget;
+	QMdiSubWindow * subWindow;
+	QList<QMdiSubWindow *> list = mdiArea->subWindowList();
+	foreach(subWindow, list) {
+		widget = subWindow->widget();
+		if ( BaseDnmImageViewer *child = qobject_cast<BaseDnmImageViewer *>(widget) ) {
+			filename = child->getFullFileName();
+		} else if (BasePnmImageViewer * child = qobject_cast<BasePnmImageViewer *>(widget)) {
+			filename = child->getFullFileName();
+		} else if (Ploter * child = qobject_cast<Ploter *>(widget)) {
+			filename = child->getFullFileName();
+		} else if (TextEditor * child = qobject_cast<TextEditor *>(widget)) {
+			if (child->getFileExt().toLower()=="txt") //só remove o path se a extensão for txt
+				filename = child->getFullFileName();
+		}
+		fileWatcher->removePath( filename );
+	}
+	mdiArea->closeAllSubWindows();
+}
+
+void Lvp::fileChanged( QString _file ){
+	bool finded = false;
+	QWidget * widget;
+	QMdiSubWindow * subWindow;
+	QList<QMdiSubWindow *> list = mdiArea->subWindowList();
+	BaseDnmImageViewer * dnm = NULL;
+	BasePnmImageViewer * pnm = NULL;
+	Ploter * ploter = NULL;
+	TextEditor * text = NULL;
+	foreach(subWindow, list) {
+		widget = subWindow->widget();
+		if ( BaseDnmImageViewer *child = qobject_cast<BaseDnmImageViewer *>(widget) ) {
+			if ( _file == child->getFullFileName() ) {
+				dnm = child;
+				finded = true;
+			}
+		} else if (BasePnmImageViewer * child = qobject_cast<BasePnmImageViewer *>(widget)) {
+			if ( _file == child->getFullFileName() ) {
+				pnm = child;
+				finded = true;
+			}
+		} else if (Ploter * child = qobject_cast<Ploter *>(widget)) {
+			if ( _file == child->getFullFileName() ) {
+				ploter = child;
+				finded = true;
+			}
+		} else if (TextEditor * child = qobject_cast<TextEditor *>(widget)) {
+			if ( _file == child->getFullFileName() ) {
+				text = child;
+				finded = true;
+			}
+		}
+	}
+	if (finded) {
+		QMessageBox::StandardButton ret = QMessageBox::question(this,tr(".:LVP - Atention!"), tr("The file %1 was modified. Do you want reload it?").arg(_file), QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
+		if (ret == QMessageBox::Ok) {
+//			if (dnm)
+//				dnm->reloadFile();
+//			if (pnm)
+//				pnm->reloadFile();
+//			if (ploter)
+//				ploter->reloadFile();
+			if (text)
+				text->reloadFile();
+		}
+	}
 }
 
 void Lvp::updateMenus() {
@@ -695,7 +785,7 @@ void Lvp::updateDockLista() {
 
 void Lvp::open( ) {
 	// lista com o nome dos arquivos que serão abertos
-	QStringList files = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Accepted Files (*.pgm *.pbm *.dbm *.dgm *.cor *.dtp *.dts *.dtg *.rpc);;Image Files (*.pgm *.pbm *.dbm);;Binary Images (*.pbm);;3D Binary Images (*.dbm);;Grey Scale Images (*.pgm);;3DGrey Scale Images (*.dgm);;Relative Permeability Curves (*.rpc);;Correlation Files (*.cor);;Distribution Files (*.dtp *.dts *.dtg)"));
+	QStringList files = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Accepted Files (*.pgm *.pbm *.dbm *.dgm *.cor *.dtp *.dts *.dtg *.rpc *.txt);;Image Files (*.pgm *.pbm *.dbm);;Binary Images (*.pbm);;3D Binary Images (*.dbm);;Grey Scale Images (*.pgm);;3DGrey Scale Images (*.dgm);;Relative Permeability Curves (*.rpc);;Correlation Files (*.cor);;Distribution Files (*.dtp *.dts *.dtg);;Text Files (*.txt)"));
 	int numFiles = files.size(); //número de arquivos que serão abertos
 	
 	QProgressDialog progress("Opening files...", "&Cancel", 0, numFiles, this);
@@ -715,15 +805,15 @@ void Lvp::open(string _file, bool novo) {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QString fileName;  // nome do arquivo atual
 	fileName = fileName.fromStdString(_file);
-	BaseImageViewer *child = NULL;
-	Ploter *childPloter = NULL;
 	QMdiSubWindow *existing = NULL;
 	if ( ! fileName.isEmpty() && QFile::exists ( fileName ) ) {
+		fileWatcher->addPath(fileName);
 		QDir lop(fileName);
 		lastOpenPath = lop.canonicalPath();
 		QString  qext = fileName.mid(fileName.lastIndexOf(".")+1); // pega todos os caracteres a partir do último ponto
-		string ext = qext.toStdString(); 		// converte para std string
-		if ( ext == "cor" or ext == "COR" or ext == "rpc" or ext == "RPC" or ext == "dtp" or ext == "DTP" or ext == "dts" or ext == "DTS" or ext == "dtg" or ext == "DTG") { 	// o arquivo será plotado
+		string ext = qext.toLower().toStdString(); 		// converte para std string
+		if ( ext == "cor" or ext == "rpc" or ext == "dtp" or ext == "dts" or ext == "dtg") { 	// o arquivo será plotado
+			Ploter *childPloter = NULL;
 			existing = findPloter(fileName);
 			if (existing) {
 				mdiArea->setActiveSubWindow(existing);
@@ -745,22 +835,44 @@ void Lvp::open(string _file, bool novo) {
 			} else {
 				statusBar()->showMessage(tr("Error"), 2000);
 			}
-		} else if (ext == "raw" or ext == "RAW" or ext == "Raw") {
+		} else if (ext == "raw") {
 			import(fileName);
+		} else if (ext == "txt") {
+			TextEditor *childText= NULL;
+			existing = findTextEditor(fileName);
+			if ( existing ) {
+				mdiArea->setActiveSubWindow(existing);
+				QApplication::restoreOverrideCursor();
+				return;
+			}
+			childText = createTextEditor();
+			if ( novo ) {  // é um novo arquivo.
+				childText->isNew = true;
+			}
+			if ( childText->loadFile(fileName) ) {
+				actionPrint->setEnabled(true);
+				actionFitToWindow->setEnabled(false);
+				childText->show();
+				statusBar()->showMessage(tr("File %1 loaded!").arg(fileName), 2000);
+			} else {
+				statusBar()->showMessage(tr("Error"), 2000);
+				childText->close();
+			}
 		} else {
+			BaseImageViewer *child = NULL;
 			existing = findImageViewer(fileName);
 			if ( existing ) {
 				mdiArea->setActiveSubWindow(existing);
 				QApplication::restoreOverrideCursor();
 				return;
 			}
-			if ( ext == "dbm" or ext == "DBM" ) {
+			if ( ext == "dbm" ) {
 				child = createDbmImageViewer();
-			} else if ( ext == "dgm" or ext == "DGM") {
+			} else if ( ext == "dgm" ) {
 				child = createDgmImageViewer();
-			} else if ( ext == "pbm" or ext == "PBM") {
+			} else if ( ext == "pbm" ) {
 				child = createPbmImageViewer();
-			} else if ( ext == "pgm" or ext == "PGM") {
+			} else if ( ext == "pgm" ) {
 				child = createPgmImageViewer();
 			} else {
 				QApplication::restoreOverrideCursor();
@@ -1064,7 +1176,7 @@ void Lvp::updateActionSave(){
 }
 
 void Lvp::closeEvent(QCloseEvent *event) {
-	mdiArea->closeAllSubWindows();
+	closeAllSubWindows();
 	if (activeImageViewer() or activeGLWidget() or activePloter() or activeTextEditor()) {
 		event->ignore();
 	} else {

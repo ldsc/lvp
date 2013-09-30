@@ -6,8 +6,11 @@ TextEditor::TextEditor( QMainWindow * _parent ) : QTextEdit(_parent) {
 	parent = _parent;
 	setAttribute(Qt::WA_DeleteOnClose);
 	setBackgroundRole(QPalette::Base);
-    item = NULL;
-    connect(this->document(), SIGNAL(contentsChanged()), this, SLOT(documentWasModified()));
+	setFontFamily("Monospace");
+	setFontPointSize(12);
+	item = NULL;
+	isNew = false;
+	connect( this->document(), SIGNAL(contentsChanged()), this, SLOT(documentWasModified()));
 	connect( this, SIGNAL( destroyed() ), parent, SLOT( updateDockLista() ) );
 }
 
@@ -19,21 +22,34 @@ bool TextEditor::loadFile(const QString & _fileName)
 {
 	if ( ! _fileName.isEmpty() ) {
 		getFileNames ( _fileName );
-        //setWindowTitle ( fileName );
-        QFile file( fullFileName );
-        if (!file.open(QFile::ReadOnly | QFile::Text)) {
-            QMessageBox::warning(this, tr("Application"), tr("Cannot read file %1:\n%2.").arg(fullFileName).arg(file.errorString()));
-            return false;
-        }
-        QTextStream in(&file);
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-        this->setPlainText(in.readAll());
-        setWindowModified(false);
-        QApplication::restoreOverrideCursor();
-        return true;
+		//setWindowTitle ( fileName );
+		QFile file( fullFileName );
+		if (!file.open(QFile::ReadOnly | QFile::Text)) {
+			QMessageBox::warning(this, tr("Application"), tr("Cannot read file %1:\n%2.").arg(fullFileName).arg(file.errorString()));
+			return false;
+		}
+		QTextStream in(&file);
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		this->setPlainText(in.readAll());
+		setWindowModified(false);
+		QApplication::restoreOverrideCursor();
+		return true;
 	} else {
 		return false;
 	}
+}
+
+void TextEditor::reloadFile( ) {
+	QFile file( fullFileName );
+	if (!file.open(QFile::ReadOnly | QFile::Text)) {
+		QMessageBox::warning(this, tr("Application"), tr("Cannot read file %1:\n%2.").arg(fullFileName).arg(file.errorString()));
+		return;
+	}
+	QTextStream in(&file);
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	this->setPlainText(in.readAll());
+	setWindowModified(false);
+	QApplication::restoreOverrideCursor();
 }
 
 void TextEditor::getFileNames(const QString & _fileName)
@@ -45,7 +61,7 @@ void TextEditor::getFileNames(const QString & _fileName)
 }
 
 bool TextEditor::save( ) {
-    return saveFile(fullFileName);
+	return saveFile(fullFileName);
 
 }
 
@@ -54,26 +70,26 @@ bool TextEditor::saveAs( ) {
 	if ( newFileName.isEmpty() ) {
 		return false;
 	}
-    return saveFile(newFileName);
+	return saveFile(newFileName);
 }
 
 bool TextEditor::saveFile(const QString & _fileName)
 {
-    QFile file(_fileName);
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr(".: LVP"), tr("Cannot write file %1:\n%2.").arg(_fileName).arg(file.errorString()));
-        return false;
-    }
+	QFile file(_fileName);
+	if (!file.open(QFile::WriteOnly | QFile::Text)) {
+		QMessageBox::warning(this, tr(".: LVP"), tr("Cannot write file %1:\n%2.").arg(_fileName).arg(file.errorString()));
+		return false;
+	}
 
-    QTextStream out(&file);
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    out << this->toPlainText();
-    QApplication::restoreOverrideCursor();
+	QTextStream out(&file);
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	out << this->toPlainText();
+	QApplication::restoreOverrideCursor();
 
-    getFileNames(_fileName);
-    this->document()->setModified(false);
-    setWindowModified(false);
-    return true;
+	getFileNames(_fileName);
+	this->document()->setModified(false);
+	setWindowModified(false);
+	return true;
 }
 
 void TextEditor::closeEvent(QCloseEvent *event) {
@@ -85,23 +101,23 @@ void TextEditor::closeEvent(QCloseEvent *event) {
 }
 
 bool TextEditor::maybeSave() {
-    if (this->document()->isModified()) {
-        QMessageBox::StandardButton ret;
-        ret = QMessageBox::warning(this, tr(".: LVP"), tr("The document has been modified.\nDo you want to save your changes?"), QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-        if (ret == QMessageBox::Save)
-            return save();
-        else if (ret == QMessageBox::Cancel)
-            return false;
-    }
-    return true;
+	if (this->document()->isModified()) {
+		QMessageBox::StandardButton ret;
+		ret = QMessageBox::warning(this, tr(".: LVP"), tr("The document has been modified.\nDo you want to save your changes?"), QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+		if (ret == QMessageBox::Save)
+			return save();
+		else if (ret == QMessageBox::Cancel)
+			return false;
+	}
+	return true;
 }
 
 void TextEditor::documentWasModified() {
-    updateTitle();
-    setWindowModified(this->document()->isModified());
+	updateTitle();
+	setWindowModified(this->document()->isModified());
 }
 
 void TextEditor::updateTitle(){
-    setWindowTitle(tr("%1[*]").arg(fileName));
+	setWindowTitle(tr("%1[*]").arg(fileName));
 }
 

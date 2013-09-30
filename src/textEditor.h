@@ -22,6 +22,7 @@ class TextEditor : public QTextEdit
 		// Atributos
 	public:
 		QListWidgetItem *item;
+		bool isNew;
 
 	private:
 		QMainWindow *parent;
@@ -33,6 +34,7 @@ class TextEditor : public QTextEdit
 		// Métodos
 	public:
 		bool loadFile( const QString & _fileName );
+		void reloadFile();
 		bool save();
 		bool saveAs();
 

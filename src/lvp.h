@@ -5,6 +5,7 @@
 #include <QCloseEvent>
 #include <QPrinter>
 #include <QDir>
+#include <QFileSystemWatcher>
 //#include <QProcess>
 
 #include <QTranslator>
@@ -144,6 +145,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		QLabel *labelAxis;
 
 		QSignalMapper *windowMapper;
+		QFileSystemWatcher *fileWatcher; ///< The QFileSystemWatcher class provides an interface for monitoring files and directories for modifications
 
 		PoresThroats * dialogPoresThroats;
 		OptionsDialog * dialogHexEditor;
@@ -174,6 +176,8 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void addCurve();
 		void average();
 		void changeViewMode();
+		void closeActiveSubWindow();
+		void closeAllSubWindows();
 		void closing();
 		void closing3D();
 		void connectedObjects();
@@ -221,6 +225,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void exReconstructionGT();
 		void exReconstructionES();
 		void exSegmentationPoresThroats();
+		void fileChanged( QString _file );
 		void fitToWindow();
 		void highPass();
 		void idf();

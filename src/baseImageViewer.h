@@ -18,8 +18,8 @@ class QMainWindow;
 /*! BaseImageViewer é a classe base para representar imagens.*/
 class BaseImageViewer : public QScrollArea
 {
-		// Construtor / Destrutor
 	public:
+		// Construtor / Destrutor
 		BaseImageViewer( QMainWindow * _parent );
 		virtual ~ BaseImageViewer( ) {
 			//std::cerr << "virtual ~ BaseImageViewer( ) "<< std::endl;
