@@ -11,6 +11,7 @@
 #include "qwt_symbol.h"
 #include "qwt_legend.h"
 #include "qwt_plot_picker.h"
+#include "qwt_plot_dict.h"
 //#include "qwt_plot_zoomer.h"
 
 class QMainWindow;
@@ -29,7 +30,7 @@ class Ploter : public QwtPlot //public QScrollArea
 		// Atributos
 	public:
 		bool isNew; //true se for um novo gráfico.
-		QStringList patchCurves;
+		QStringList pathCurves;
 		QListWidgetItem *item;
 
 	private:
@@ -45,14 +46,12 @@ class Ploter : public QwtPlot //public QScrollArea
 		QwtLegend *legend;
 		bool isAccumulated;
 		QwtPlotCurve *curveAccumulated;
-		//QwtPicker::DragSelection PointSelection;
-		//QwtPlotZoomer * zoomer;
 
 		// Métodos
 	public:
-
 		bool addCurves( const QStringList & _filesName );
 		bool loadFile( const QString & _fileName );
+		void reloadFile();
 		bool save( QString * lop );
 		bool saveAs( QString * lop );
 
@@ -62,7 +61,6 @@ class Ploter : public QwtPlot //public QScrollArea
 		inline QString getFileExt() { return fileExt; }
 		inline QString getFilePath() { return filePath; }
 		inline bool IsAccumulated() { return isAccumulated; }
-
 
 	public slots:
 		void labelPos(const QPoint &pos);

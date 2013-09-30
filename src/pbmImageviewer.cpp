@@ -19,6 +19,17 @@ bool PbmImageViewer::loadFile(const QString &fileName) {
 	return false;
 }
 
+void PbmImageViewer::reloadFile() {
+	if (pm) {
+		delete pm;
+		pm = NULL;
+	}
+	pm = new TCMatriz2D<bool>( fullFileName.toStdString() );
+	if ( ! reloadImage(pm) ){
+		QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot load image."));
+	}
+}
+
 bool PbmImageViewer::save() {
 	if (isNew) {
 		return saveAs();

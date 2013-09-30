@@ -5,37 +5,28 @@ PgmImageViewer::PgmImageViewer(QMainWindow * _parent) : BasePnmImageViewer( _par
 	//setBackgroundRole(QPalette::Shadow);
 }
 
-//bool PgmImageViewer::loadFile(const QString &fileName) {
-//	if (!fileName.isEmpty()) {
-//		pm = new TCMatriz2D<int>(fileName.toStdString());
-//		if( pm ){
-//			getFileNames(fileName);
-//			if ( loadImage(pm)){
-//				return true;
-//			}
-//		}
-//	}
-//	QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot load %1.").arg(fileName));
-//	return false;
-//}
-
 bool PgmImageViewer::loadFile(const QString &fileName) {
 	if (!fileName.isEmpty()) {
 		pm = new TCMatriz2D<int>(fileName.toStdString());
-		image = new QImage(fileName);
-		if (image->isNull()) {
-			QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot load %1.").arg(fileName));
-			return false;
+		if( pm ){
+			getFileNames(fileName);
+			if ( loadImage(pm)){
+				return true;
+			}
 		}
-		QApplication::setOverrideCursor(Qt::WaitCursor);
-		imageLabel->setPixmap(QPixmap::fromImage(*image));
-		//QMessageBox::information(this, tr("LVP"), tr("Formato da imagem: %1").arg(image->format()));
-		QApplication::restoreOverrideCursor();
-		getFileNames(fileName);
-		setWindowTitle(getFileName());
-		return true;
-	} else {
-		return false;
+	}
+	QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot load %1.").arg(fileName));
+	return false;
+}
+
+void PgmImageViewer::reloadFile() {
+	if (pm) {
+		delete pm;
+		pm = NULL;
+	}
+	pm = new TCMatriz2D<int>( fullFileName.toStdString() );
+	if ( ! reloadImage(pm) ){
+		QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot load image."));
 	}
 }
 

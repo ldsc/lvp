@@ -68,10 +68,15 @@ class BaseImageViewer : public QScrollArea
 		// Métodos
 	public:
 		virtual bool loadFile(const QString &fileName) = 0;
+		virtual void reloadFile() = 0;
 		bool loadImage(TCMatriz2D<bool> *&_pm);
 		bool loadImage(TCMatriz2D<int>* &_pm);
+		bool reloadImage(TCMatriz2D<bool> *&_pm);
+		bool reloadImage(TCMatriz2D<int> *&_pm);
 		virtual bool save() = 0;
 		virtual bool saveAs() = 0;
+		virtual TCMatriz2D<bool> * getPMBool() = 0;
+		virtual TCMatriz2D<int> * getPMInt() = 0;
 		inline QString getFullFileName() { return fullFileName; }
 		inline QString getFileName() { return curFile; }
 		inline QString getFileNameNoExt() { return curFileNoExt; }

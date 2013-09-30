@@ -25,8 +25,11 @@ class DbmImageViewer : public BaseDnmImageViewer
 		//Métodos
 	public:
 		virtual bool loadFile(const QString &fileName);
+		virtual void reloadFile();
 		virtual bool save();
 		virtual bool saveAs();
+		inline virtual TCMatriz2D<bool> * getPMBool() { return pm; }
+		inline virtual TCMatriz2D<int> * getPMInt() { return NULL; }
 		bool ChangePlan( unsigned int plano, E_eixo axis );
 
 };

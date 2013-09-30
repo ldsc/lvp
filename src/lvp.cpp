@@ -340,40 +340,36 @@ void Lvp::createActions() {
 }
 
 void Lvp::closeActiveSubWindow() {
-	QString filename;
 	QWidget * widget = mdiArea->activeSubWindow()->widget();
 	if ( BaseDnmImageViewer *child = qobject_cast<BaseDnmImageViewer *>(widget) ) {
-		filename = child->getFullFileName();
+		fileWatcher->removePath( child->getFullFileName() );
 	} else if (BasePnmImageViewer * child = qobject_cast<BasePnmImageViewer *>(widget)) {
-		filename = child->getFullFileName();
+		fileWatcher->removePath( child->getFullFileName() );
 	} else if (Ploter * child = qobject_cast<Ploter *>(widget)) {
-		filename = child->getFullFileName();
+		fileWatcher->removePaths( child->pathCurves );
 	} else if (TextEditor * child = qobject_cast<TextEditor *>(widget)) {
 		if (child->getFileExt().toLower()=="txt") //só remove o path se a extensão for txt
-			filename = child->getFullFileName();
+			fileWatcher->removePath( child->getFullFileName() );
 	}
-	fileWatcher->removePath( filename );
 	mdiArea->closeActiveSubWindow();
 }
 
 void Lvp::closeAllSubWindows() {
-	QString filename;
 	QWidget * widget;
 	QMdiSubWindow * subWindow;
 	QList<QMdiSubWindow *> list = mdiArea->subWindowList();
 	foreach(subWindow, list) {
 		widget = subWindow->widget();
 		if ( BaseDnmImageViewer *child = qobject_cast<BaseDnmImageViewer *>(widget) ) {
-			filename = child->getFullFileName();
+			fileWatcher->removePath( child->getFullFileName() );
 		} else if (BasePnmImageViewer * child = qobject_cast<BasePnmImageViewer *>(widget)) {
-			filename = child->getFullFileName();
+			fileWatcher->removePath( child->getFullFileName() );
 		} else if (Ploter * child = qobject_cast<Ploter *>(widget)) {
-			filename = child->getFullFileName();
+			fileWatcher->removePaths( child->pathCurves );
 		} else if (TextEditor * child = qobject_cast<TextEditor *>(widget)) {
 			if (child->getFileExt().toLower()=="txt") //só remove o path se a extensão for txt
-				filename = child->getFullFileName();
+				fileWatcher->removePath( child->getFullFileName() );
 		}
-		fileWatcher->removePath( filename );
 	}
 	mdiArea->closeAllSubWindows();
 }
@@ -400,7 +396,7 @@ void Lvp::fileChanged( QString _file ){
 				finded = true;
 			}
 		} else if (Ploter * child = qobject_cast<Ploter *>(widget)) {
-			if ( _file == child->getFullFileName() ) {
+			if ( child->pathCurves.contains(_file) ) {
 				ploter = child;
 				finded = true;
 			}
@@ -414,12 +410,12 @@ void Lvp::fileChanged( QString _file ){
 	if (finded) {
 		QMessageBox::StandardButton ret = QMessageBox::question(this,tr(".:LVP - Atention!"), tr("The file %1 was modified. Do you want reload it?").arg(_file), QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
 		if (ret == QMessageBox::Ok) {
-//			if (dnm)
-//				dnm->reloadFile();
-//			if (pnm)
-//				pnm->reloadFile();
-//			if (ploter)
-//				ploter->reloadFile();
+			if (dnm)
+				dnm->reloadFile();
+			if (pnm)
+				pnm->reloadFile();
+			if (ploter)
+				ploter->reloadFile();
 			if (text)
 				text->reloadFile();
 		}
@@ -539,9 +535,9 @@ void Lvp::updateMenus() {
 	menuSpatial->setEnabled(hasImageViewer);
 	menuSkeleton->setEnabled(hasImageViewer);
 	menu3DFilters->setEnabled(hasDbmImageViewer);
-	pushButtonAddCurve->setEnabled( hasPloter && ( activePloter()->patchCurves.size() < 16 ) ); // permite plotar no máximo 15 curvas.
-	pushButtonAverage->setEnabled( hasPloter && ( activePloter()->patchCurves.size() > 1 ) && (ext == "cor" or ext == "COR" or ext == "dtp" or ext == "DTP" or ext == "dts" or ext == "DTS") ); // Só ativa a média se tiver plotada mais de uma curva de correlação.
-	pushButtonAccumulated->setEnabled( hasPloter && ( activePloter()->patchCurves.size() == 1 ) && (ext == "dtp" or ext == "DTP" or ext == "dts" or ext == "DTS" or ext == "dtg" or ext == "DTG") );
+	pushButtonAddCurve->setEnabled( hasPloter && ( activePloter()->pathCurves.size() < 16 ) ); // permite plotar no máximo 15 curvas.
+	pushButtonAverage->setEnabled( hasPloter && ( activePloter()->pathCurves.size() > 1 ) && (ext == "cor" or ext == "COR" or ext == "dtp" or ext == "DTP" or ext == "dts" or ext == "DTS") ); // Só ativa a média se tiver plotada mais de uma curva de correlação.
+	pushButtonAccumulated->setEnabled( hasPloter && ( activePloter()->pathCurves.size() == 1 ) && (ext == "dtp" or ext == "DTP" or ext == "dts" or ext == "DTS" or ext == "dtg" or ext == "DTG") );
 	pushButtonSource->setEnabled(hasPloter);
 	radioButtonX->setEnabled(hasImageViewer3D);
 	radioButtonY->setEnabled(hasImageViewer3D);
@@ -2048,6 +2044,7 @@ void Lvp::addCurve() {
 		QDir lop( filespath.at(0) );
 		lastOpenPath = lop.canonicalPath();
 		plot->addCurves( filespath );
+		fileWatcher->addPaths(filespath);
 	}
 }
 
@@ -2072,8 +2069,8 @@ void Lvp::average() {
 		QString ext = plot->getFileExt();
 		
 		set<string> fnames;
-		for (int it = 0; it < plot->patchCurves.size(); ++it){
-			fnames.insert((plot->patchCurves[it]).toStdString());
+		for (int it = 0; it < plot->pathCurves.size(); ++it){
+			fnames.insert((plot->pathCurves[it]).toStdString());
 		}
 		if ( ext == "cor" or ext == "COR" ){
 			CCorrelacaoFFT obj( 512 );

@@ -79,45 +79,50 @@ bool DbmImageViewer::loadFile(const QString &fileName) {
 		getFileNames(fileName);
 		//setWindowTitle(curFile);
 		if (! loadImage(pm)) {
-			QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot load %1.").arg(curPlanoFile));
+			QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot load image."));
 			return false;
 		}
-		curPlanoFile = tr(".lvp_%1.pbm").arg(getFileNameNoExt());
-		curPlanoFile = tr("%1%2").arg(QString::fromStdString(pm->Path())).arg(curPlanoFile); //Pega o nome do arquivo temporário com o caminho relativo para poder ser apagado posteriormente.
 		return true;
 	}
 	return false;
 }
 
-//bool DbmImageViewer::ChangePlan( unsigned int plano, E_eixo axis ) {
-//	if ( ! pm ) {
-//		pm = new TCMatriz2D<bool>(pm3D->NX(), pm3D->NY());
-//		if ( ! pm )
-//			return false;
-//		pm->Path(pm3D->Path());
-//	}
-//	pm3D->LePlano(pm, plano, axis);
-//	if ( pm3D->GetFormato() == D1_X_Y_Z_ASCII ) {
-//		pm->SetFormato(P1_X_Y_ASCII);
-//	} else {
-//		pm->SetFormato(P4_X_Y_BINARY);
-//	}
-//	if ( pm->Write( QFileInfo(curPlanoFile).fileName().toStdString()) ) {// se conseguiu salvar arquivo com nome temporário.
-//		if ( ! image->isNull() ) delete image;
-//		image = new QImage(curPlanoFile);
-//		if (image->isNull()) {
-//			QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot load %1.").arg(curPlanoFile));
-//			return false;
-//		}
-//		curPlan = plano;
-//		direcao = axis;
-//		QApplication::setOverrideCursor(Qt::WaitCursor);
-//		imageLabel->setPixmap(QPixmap::fromImage(*image));
-//		QApplication::restoreOverrideCursor();
-//		return true;
-//	}
-//	return false;
-//}
+void DbmImageViewer::reloadFile() {
+	if ( pm3D ) {
+		delete pm3D;
+		pm3D = NULL;
+	}
+	pm3D = new TCImagem3D<bool>( fullFileName.toStdString() ); //cria matriz 3D só para pegar o valor da dimensão NZ.
+	if ( ! pm3D ) {
+		QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot load image."));
+		return;
+	}
+	nx = pm3D->NX();
+	ny = pm3D->NY();
+	nz = pm3D->NZ();
+	if(pm->NX()!=nx or pm->NY()!=ny){
+		delete pm;
+		pm = NULL;
+	}
+	if ( ! pm ) {
+		pm = new TCMatriz2D<bool>(pm3D->NX(), pm3D->NY());
+		pm->Path(pm3D->Path());
+		if ( ! pm ) {
+			QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot load image."));
+			return;
+		}
+	}
+	pm3D->LePlano(pm, curPlan, direcao);
+	if ( pm3D->GetFormato() == D1_X_Y_Z_ASCII ) {
+		pm->SetFormato(P1_X_Y_ASCII);
+	} else {
+		pm->SetFormato(P4_X_Y_BINARY);
+	}
+	if (! reloadImage(pm)) {
+		QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot load image."));
+	}
+}
+
 bool DbmImageViewer::ChangePlan( unsigned int plano, E_eixo axis ) {
 	if ( ! pm ) {
 		pm = new TCMatriz2D<bool>(pm3D->NX(), pm3D->NY());
@@ -131,9 +136,7 @@ bool DbmImageViewer::ChangePlan( unsigned int plano, E_eixo axis ) {
 	} else {
 		pm->SetFormato(P4_X_Y_BINARY);
 	}
-	if ( ! image->isNull() )
-		delete image;
-	if ( ! BaseImageViewer::loadImage(pm) ) {
+	if ( ! BaseImageViewer::reloadImage(pm) ) {
 		QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot load image."));
 		return false;
 	}
@@ -191,7 +194,6 @@ bool DbmImageViewer::saveAs() {
 	if ( pm3D->Write( fileName.toStdString() ) ) {
 		if ( isNew && (fileName != fullFileName) ) {
 			QFile::remove(fullFileName);
-			QFile::remove(curPlanoFile);
 		}
 		isNew = false;
 		loadFile(fileName);

@@ -40,7 +40,7 @@ bool Ploter::loadFile(const QString & _fileName) {
 		ifstream fin (fullFileName.toStdString().c_str(), ios::in);
 		int cont = 0, tam  = 512;
 		if (fin.good() && fin.is_open()) {
-			if ( fileExt == "cor" or fileExt == "COR" )	{
+			if ( fileExt.toLower() == "cor" )	{
 				QwtPlotCurve *curve = new QwtPlotCurve( fileName );
 				double x[tam], y[tam];
 				while ( (fin >> x[cont] >> y[cont]) && (cont < tam) ) {
@@ -53,7 +53,7 @@ bool Ploter::loadFile(const QString & _fileName) {
 				setTitle ("Auto Correlation");
 				setAxisTitle ( QwtPlot::yLeft , "C(u)" );
 				setAxisTitle ( QwtPlot::xBottom , "Displacement" );
-			} else if ( fileExt == "dtp" or fileExt == "DTP" or fileExt == "dts" or fileExt == "DTS" or fileExt == "dtg" or fileExt == "DTG") {
+			} else if ( fileExt.toLower() == "dtp" or fileExt.toLower() == "dts" or fileExt.toLower() == "dtg") {
 				QwtPlotCurve *curve = new QwtPlotCurve( fileName );
 				double x[tam], y[tam];
 				while ( (! fin.fail()) && ( ! fin.eof()) && (cont < tam) ) {
@@ -73,10 +73,10 @@ bool Ploter::loadFile(const QString & _fileName) {
 				curve->setPen(QPen(colors[0], 2));
 				curve->setSamples(x , y, cont-1);
 				curve->attach(this);
-				if ( fileExt == "dts" or fileExt == "DTS") {
+				if ( fileExt.toLower() == "dts" ) {
 					setTitle ("Solids Size Distribution");
 					setAxisTitle ( QwtPlot::yLeft, "Area of solids (%)" );
-				} else if ( fileExt == "dtg" or fileExt == "DTG") {\
+				} else if ( fileExt.toLower() == "dtg" ) {
 					setTitle ("Throat Size Distribution");
 					setAxisTitle ( QwtPlot::yLeft, "Porosity (%)" );
 				} else {
@@ -84,7 +84,7 @@ bool Ploter::loadFile(const QString & _fileName) {
 					setAxisTitle ( QwtPlot::yLeft, "Porosity (%)" );
 				}
 				setAxisTitle ( QwtPlot::xBottom, "Radius (pixel)" );
-			} else if ( fileExt == "rpc" or fileExt == "RPC" ) {
+			} else if ( fileExt.toLower() == "rpc" ) {
 				QwtPlotCurve *curveOil = new QwtPlotCurve(tr("Oil-%1").arg(fileName));
 				QwtPlotCurve *curveWater = new QwtPlotCurve(tr("Water-%1").arg(fileName));
 				double saturacao[tam], water[tam], oil[tam];
@@ -98,11 +98,11 @@ bool Ploter::loadFile(const QString & _fileName) {
 				sym->setStyle(QwtSymbol::XCross);
 
 				curveWater->setSymbol(sym);
-				curveWater->setPen(QPen(colors[patchCurves.size()], 2));
+				curveWater->setPen(QPen(colors[pathCurves.size()], 2));
 				curveWater->setSamples(saturacao, water, cont);
 
 				curveOil->setSymbol(sym);
-				curveOil->setPen(QPen(colors[15 - patchCurves.size()], 2));
+				curveOil->setPen(QPen(colors[15 - pathCurves.size()], 2));
 				curveOil->setSamples(saturacao, oil, cont);
 
 				curveWater->attach(this);
@@ -118,7 +118,7 @@ bool Ploter::loadFile(const QString & _fileName) {
 			}
 			replot();
 			fin.close();
-			patchCurves.append(_fileName);	// lista de curvas plotadas
+			pathCurves.append(_fileName);	// lista de curvas plotadas
 			return true;
 		} else {
 			fin.close();
@@ -129,6 +129,74 @@ bool Ploter::loadFile(const QString & _fileName) {
 	}
 }
 
+void Ploter::reloadFile() {
+	string aux;
+	QStringList curves = pathCurves; //copia lista de arquivos que representam curvas
+	pathCurves.clear(); // apaga a lista de arquivos
+	detachItems(); //remove todas as curvas
+	int cont;
+	int tam = 512;
+	foreach (QString file, curves) { //para cada arquivo plota a curva
+		ifstream fin (file.toStdString().c_str(), ios::in);
+		cont = 0;
+		if (fin.good() && fin.is_open()) {
+			if ( fileExt.toLower() == "cor" )	{
+				QwtPlotCurve *curve = new QwtPlotCurve( fileName );
+				double x[tam], y[tam];
+				while ( (fin >> x[cont] >> y[cont]) && (cont < tam) ) {
+					++cont;
+				}
+				curve->setPen(QPen(colors[pathCurves.size()], 2));
+				curve->setSamples(x , y, cont);
+				curve->attach(this);
+			} else if ( fileExt.toLower() == "dtp" or fileExt.toLower() == "dts" or fileExt.toLower() == "dtg") {
+				QwtPlotCurve *curve = new QwtPlotCurve( fileName );
+				double x[tam], y[tam];
+				while ( (! fin.fail()) && ( ! fin.eof()) && (cont < tam) ) {
+					fin >> aux;
+					if (aux.at(0) == '#') {
+						getline(fin, aux, '\n');
+					} else {
+						x[cont] = atof(aux.c_str());
+						fin >> y[cont];
+						cont++;
+					}
+				}
+				curve->setPen(QPen(colors[pathCurves.size()], 2));
+				curve->setSamples(x , y, cont-1);
+				curve->attach(this);
+			} else if ( fileExt.toLower() == "rpc" ) {
+				QwtPlotCurve *curveOil = new QwtPlotCurve(tr("Oil-%1").arg(fileName));
+				QwtPlotCurve *curveWater = new QwtPlotCurve(tr("Water-%1").arg(fileName));
+				double saturacao[tam], water[tam], oil[tam];
+				while ( (fin >> saturacao[cont] >> water[cont] >> oil[cont]) && (cont < tam) ) {
+					cont++;
+				}
+				QwtSymbol *sym = new QwtSymbol();
+				sym->setPen(QPen(QColor(Qt::black)));
+				sym->setSize(QSize(5,5));
+				sym->setStyle(QwtSymbol::XCross);
+
+				curveWater->setSymbol(sym);
+				curveWater->setPen(QPen(colors[pathCurves.size()], 2));
+				curveWater->setSamples(saturacao, water, cont);
+
+				curveOil->setSymbol(sym);
+				curveOil->setPen(QPen(colors[15 - pathCurves.size()], 2));
+				curveOil->setSamples(saturacao, oil, cont);
+
+				curveWater->attach(this);
+				curveOil->attach(this);
+			}
+			replot();
+			fin.close();
+			pathCurves.append(file);	// lista de curvas plotadas
+		} else {
+			fin.close();
+		}
+	}
+}
+
 bool Ploter::addCurves(const QStringList & _filesName) {
 	if ( ! _filesName.isEmpty() ) {
 		QString fileName;
@@ -136,13 +204,13 @@ bool Ploter::addCurves(const QStringList & _filesName) {
 		string aux;
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		for (int i = 0; i < _filesName.size(); ++i) {
-			if ( patchCurves.size() >= 16 ) { // estou limitando para 15 o número de curvas para atender o array de cores.
+			if ( pathCurves.size() >= 16 ) { // estou limitando para 15 o número de curvas para atender o array de cores.
 				QApplication::restoreOverrideCursor();
 				QMessageBox::information(parent, tr("LVP"), tr("Limit number of curves reached!"));
 				return false;
 			}
 			fileName = _filesName.at(i);
-			if ( ! patchCurves.contains( fileName ) ) { // a curva ainda não foi plotada.
+			if ( ! pathCurves.contains( fileName ) ) { // a curva ainda não foi plotada.
 				ext = fileName.mid(fileName.lastIndexOf(".")+1); // pega extenção do arquivo
 				ifstream fin (fileName.toStdString().c_str(), ios::in);
 				int cont = 0, tam  = 512;
@@ -155,7 +223,7 @@ bool Ploter::addCurves(const QStringList & _filesName) {
 							//cerr << x[cont] << " " << y[cont] << endl;
 							cont++;
 						}
-						curve->setPen(QPen(colors[patchCurves.size()], 2));
+						curve->setPen(QPen(colors[pathCurves.size()], 2));
 						curve->setSamples(x , y, cont);
 						curve->attach(this);
 					} else if ( fileExt == "dtp" or fileExt == "DTP" or fileExt == "dts" or fileExt == "DTS") {
@@ -176,7 +244,7 @@ bool Ploter::addCurves(const QStringList & _filesName) {
 							//cerr << x[cont] << " " << y[cont] << endl;
 							cont++;
 						}*/
-						curve->setPen(QPen(colors[patchCurves.size()], 2));
+						curve->setPen(QPen(colors[pathCurves.size()], 2));
 						curve->setSamples(x, y, cont-1);
 						curve->attach(this);
 					} else if ( ext == "rpc" or ext == "RPC" ) {
@@ -193,11 +261,11 @@ bool Ploter::addCurves(const QStringList & _filesName) {
 						sym->setStyle(QwtSymbol::XCross);
 
 						curveWater->setSymbol(sym);
-						curveWater->setPen(QPen(colors[patchCurves.size()], 2));
+						curveWater->setPen(QPen(colors[pathCurves.size()], 2));
 						curveWater->setSamples(saturacao, water, cont);
 
 						curveOil->setSymbol(sym);
-						curveOil->setPen(QPen(colors[15 - patchCurves.size()], 2));
+						curveOil->setPen(QPen(colors[15 - pathCurves.size()], 2));
 						curveOil->setSamples(saturacao, oil, cont);
 
 						curveWater->attach(this);
@@ -205,7 +273,7 @@ bool Ploter::addCurves(const QStringList & _filesName) {
 					}
 					replot();
 					fin.close();
-					patchCurves.append(fileName);	// lista de curvas plotadas
+					pathCurves.append(fileName);	// lista de curvas plotadas
 
 				} else {
 					fin.close();
@@ -249,7 +317,7 @@ void Ploter::accumulated() {
 						cont++;
 					}
 				}
-				curveAccumulated->setPen(QPen(colors[patchCurves.size()], 2));
+				curveAccumulated->setPen(QPen(colors[pathCurves.size()], 2));
 				curveAccumulated->setSamples(x, y, cont-1);
 				curveAccumulated->attach(this);
 			}

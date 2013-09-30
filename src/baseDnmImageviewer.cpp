@@ -11,7 +11,6 @@ void BaseDnmImageViewer::closeEvent(QCloseEvent *event) {
 		if (isNew) {
 			QFile::remove(fullFileName);
 		}
-		QFile::remove(curPlanoFile);
 		event->accept();
 	} else {
 		event->ignore();

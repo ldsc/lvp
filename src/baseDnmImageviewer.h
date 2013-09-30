@@ -20,15 +20,14 @@ class BaseDnmImageViewer : public BaseImageViewer
 		int curPlan;
 		int nz;
 
-	protected:
-		QString curPlanoFile;
-
 		//Métodos
 	public:
 		virtual bool loadFile(const QString &fileName) = 0;
+		virtual void reloadFile() = 0;
 		virtual bool save() = 0;
 		virtual bool saveAs() = 0;
-		inline QString currentPlanoFile() { return curPlanoFile; }
+		virtual TCMatriz2D<bool> * getPMBool() = 0;
+		virtual TCMatriz2D<int> * getPMInt() = 0;
 
 	protected:
 		void closeEvent(QCloseEvent *event);

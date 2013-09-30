@@ -29,8 +29,12 @@ class DgmImageViewer : public BaseDnmImageViewer
 		//Métodos
 	public:
 		virtual bool loadFile(const QString &fileName);
+		virtual void reloadFile();
 		virtual bool save();
 		virtual bool saveAs();
+		inline virtual TCMatriz2D<bool> * getPMBool() { return NULL; }
+		inline virtual TCMatriz2D<int> * getPMInt() { return pm; }
+
 		bool ChangePlan( unsigned int plano, E_eixo axis );
 
 };

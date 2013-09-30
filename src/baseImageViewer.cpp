@@ -21,7 +21,12 @@ bool BaseImageViewer::loadImage(TCMatriz2D<bool> *&_pm) {
 	if ( _pm ) {
 		int nx = _pm->NX();
 		int ny = _pm->NY();
-		image = new QImage(nx, ny, QImage::Format_Mono); //QImage::Format_MonoLSB
+		if (image == NULL)
+			image = new QImage(nx, ny, QImage::Format_Mono); //QImage::Format_MonoLSB
+		else if (image->width()!=nx or image->height()!=ny) {
+			delete image;
+			image = new QImage(nx, ny, QImage::Format_Mono); //QImage::Format_MonoLSB
+		}
 		if (image->isNull()) {
 			QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot create image"));
 			return false;
@@ -29,10 +34,13 @@ bool BaseImageViewer::loadImage(TCMatriz2D<bool> *&_pm) {
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		for (int i=0; i<nx; i++){
 			for (int j=0; j<ny; j++){
-				image->setPixel(i, j, _pm->data2D[i][j]);
+				if (_pm->data2D[i][j] == 0)
+					image->setPixel(i, j, 1);
+				else
+					image->setPixel(i, j, 0);
 			}
 		}
-		image->invertPixels();
+		//image->invertPixels();
 		imageLabel->setPixmap(QPixmap::fromImage(*image));
 		QApplication::restoreOverrideCursor();
 		static int seqNumberLoadImage = 1;
@@ -52,18 +60,31 @@ bool BaseImageViewer::loadImage(TCMatriz2D<int> *&_pm) {
 	if ( _pm ) {
 		int nx = _pm->NX();
 		int ny = _pm->NY();
-		image = new QImage(nx, ny, QImage::Format_Indexed8); //QImage::Format_MonoLSB
+		int numCores = _pm->NumCores();
+		int mcor = 256/numCores;
+		int cor;
+		if (image == NULL)
+			image = new QImage(nx, ny, QImage::Format_Indexed8); //QImage::Format_MonoLSB
+		else if (image->width()!=nx or image->height()!=ny or image->format()!=QImage::Format_Indexed8) {
+			delete image;
+			image = new QImage(nx, ny, QImage::Format_Indexed8); //QImage::Format_MonoLSB
+		}
 		if (image->isNull()) {
 			QMessageBox::information(parent, tr("LVP"), tr("Error! - Cannot create image"));
 			return false;
 		}
 		QApplication::setOverrideCursor(Qt::WaitCursor);
-		for (int i=0; i<nx; i++){
-			for (int j=0; j<ny; j++){
+		//Cria tabela de cores
+		for (int x=0; x<=numCores; ++x){
+			cor = x*mcor;
+			image->setColor(x,qRgb(cor,cor,cor));
+		}
+		//associa pixel da imagem a tabela de cores
+		for (int i=0; i<nx; ++i){
+			for (int j=0; j<ny; ++j){
 				image->setPixel(i, j, _pm->data2D[i][j]);
 			}
 		}
-		image->invertPixels();
 		imageLabel->setPixmap(QPixmap::fromImage(*image));
 		QApplication::restoreOverrideCursor();
 		static int seqNumberLoadImage = 1;
@@ -77,6 +98,68 @@ bool BaseImageViewer::loadImage(TCMatriz2D<int> *&_pm) {
 	} else {
 		return false;
 	}
+}
+
+bool BaseImageViewer::reloadImage(TCMatriz2D<bool> *&_pm) {
+	if ( _pm ) {
+		int nx = _pm->NX();
+		int ny = _pm->NY();
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		if (image == NULL)
+			image = new QImage(nx, ny, QImage::Format_Mono); //QImage::Format_MonoLSB
+		else
+			if (image->width()!=nx or image->height()!=ny) {
+				delete image;
+				image = new QImage(nx, ny, QImage::Format_Mono); //QImage::Format_MonoLSB
+			}
+		for (int i=0; i<nx; i++){
+			for (int j=0; j<ny; j++){
+				if (_pm->data2D[i][j] == 0)
+					image->setPixel(i, j, 1);
+				else
+					image->setPixel(i, j, 0);
+			}
+		}
+		//image->invertPixels();
+		imageLabel->setPixmap(QPixmap::fromImage(*image));
+		QApplication::restoreOverrideCursor();
+		return true;
+	}
+	return false;
+}
+
+bool BaseImageViewer::reloadImage(TCMatriz2D<int> *&_pm) {
+	if ( _pm ) {
+		int nx = _pm->NX();
+		int ny = _pm->NY();
+		int numCores = _pm->NumCores();
+		int mcor = 256/numCores;
+		int cor;
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		if (image == NULL) {
+			image = new QImage(nx, ny, QImage::Format_Indexed8); //QImage::Format_MonoLSB
+		} else {
+			if (image->width()!=nx or image->height()!=ny or image->format()!=QImage::Format_Indexed8) {
+				delete image;
+				image = new QImage(nx, ny, QImage::Format_Indexed8); //QImage::Format_MonoLSB
+			}
+		}
+		//Cria tabela de cores
+		for (int x=0; x<=numCores; ++x){
+			cor = x*mcor;
+			image->setColor(x,qRgb(cor,cor,cor));
+		}
+		//associa pixel da imagem a tabela de cores
+		for (int i=0; i<nx; ++i){
+			for (int j=0; j<ny; ++j){
+				image->setPixel(i, j, _pm->data2D[i][j]);
+			}
+		}
+		imageLabel->setPixmap(QPixmap::fromImage(*image));
+		QApplication::restoreOverrideCursor();
+		return true;
+	}
+	return false;
 }
 
 void BaseImageViewer::zoomIn()
