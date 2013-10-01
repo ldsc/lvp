@@ -3,7 +3,6 @@
 #include <set>
 #include <cstdlib> // Utilizada em Correlation
 #include "lvp.h"
-//#include "qdebugstream.h"
 //Bibliotecas LIB_LDSC
 #include <ConEqu/CConfiguracoesEquilibrio2D.h>
 #include <ConEqu/CConfiguracoesEquilibrio3D.h>
@@ -167,21 +166,17 @@ Lvp::Lvp() {
 	dockWidgetListaTextEditor->setVisible( false );
 
 	//Dock de mensagens
-	textEditMessages = new QTextEdit(dockWidgetMessages);
-	textEditMessages->setContentsMargins(0, 0, 0, 0);
+	textEditMessages = new QPlainTextEdit(dockWidgetMessages);
+	//textEditMessages->setContentsMargins(0, 0, 0, 0);
 	dockWidgetMessages->setWidget(textEditMessages);
-	dockWidgetMessages->setVisible( false );
+	dockWidgetMessages->setVisible( true );
 
 	//tentativa de redirecionar cout e cerr para QTextEdit
-	//process = new QProcess( this );
-	//process->setProcessChannelMode(QProcess::MergedChannels);
-	//process->start("yum update");
-	//connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(readStdOutput()));
-	//connect(process, SIGNAL(readyReadStandardError()), this, SLOT(readStdError()));
-	//connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(readError()));
+	qout = new QDebugStream(std::cout, textEditMessages);
+	qerr = new QDebugStream(std::cerr, textEditMessages);
 
-	//QDebugStream qout(std::cout, textEditMessages);
-	//QDebugStream qerr(std::cerr, textEditMessages);
+	std::cout << "Teste" << endl;
+	std::cerr << "Testes" << endl;
 
 	//Objeto para salvar as preferências do usuário
 	settings = new QSettings("LENEP", "LVP");
@@ -798,6 +793,7 @@ void Lvp::open( ) {
 	progress.setValue(numFiles);
 }
 void Lvp::open(string _file, bool novo) {
+	std::cout << "Open" << endl;
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QString fileName;  // nome do arquivo atual
 	fileName = fileName.fromStdString(_file);
@@ -3360,11 +3356,14 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 
 void Lvp::dtpgD345_3D(){
 	int indice, fundo;
-	bool ok1, ok2, ok3;
+	bool ok1, ok2, ok3, ok4;
+	CAberturaDilatacao3D *filtro = NULL;
 	CDistribuicao3D *distP = NULL;
 	CDistribuicao3D *distG = NULL;
+	TCMatriz3D<bool> * pms = NULL;
+	TCMatriz3D<bool> * pml = NULL;
 	DbmImageViewer* child = activeDbmImageViewer();
-	if ( child != 0 ){
+	if ( child != NULL ){
 		if ( child->pm3D ) {
 			QMessageBox msgBox(this);
 			msgBox.setWindowTitle(tr("LVP - 3D pores and throats size distribution"));
@@ -3383,60 +3382,96 @@ void Lvp::dtpgD345_3D(){
 			} else {
 				return;
 			}
-			CAberturaDilatacao3D filtro = CAberturaDilatacao3D(child->pm3D, indice, fundo );
+			filtro = new CAberturaDilatacao3D(child->pm3D, indice, fundo );
 			int raioMaximo = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the maximum radius of the structuring element:"), 50, 1, 99, 1, &ok1);
 			int fatorReducao = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the reduction factor of the structuring element radius:"), 1, 1, raioMaximo, 1, &ok2);
 			int incrementoRaio = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the increment value for the structuring element radius:"), 1, 1, raioMaximo, 1, &ok3);
-			if (ok1 and ok2 and ok3) {
+			int raioDilatacao = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the radius for the dilatation:"), 1, 1, 10, 1, &ok4);
+			if (ok1 and ok2 and ok3 and ok4) {
 				QApplication::setOverrideCursor(Qt::WaitCursor);
 
-				filtro.RaioMaximoElementoEstruturante(raioMaximo);
-				filtro.FatorReducaoRaioElemEst(fatorReducao);
-				filtro.IncrementoRaioElementoEstruturante(incrementoRaio);
+				filtro->RaioMaximoElementoEstruturante(raioMaximo);
+				filtro->FatorReducaoRaioElemEst(fatorReducao);
+				filtro->IncrementoRaioElementoEstruturante(incrementoRaio);
+				filtro->RaioEEDilatacao(raioDilatacao);
 
-				filtro.Go(SETE);
-
-				distP = new CDistribuicao3D ( filtro.GetMatrizSitios() );
-				distG = new CDistribuicao3D ( filtro.GetMatrizLigacoes() );
-				if ( ! distP || ! distG ) {
-					cerr << "Não foi possível alocar CDistribuicao3D em Lvp::dtpgD345_3D()" << endl;
-					QApplication::restoreOverrideCursor();
-					if(distP) delete distP;
-					if(distG) delete distG;
-					return;
-				}
-				ok1 = distP->Go( CBaseDistribuicao::dtp, CDistribuicao3D::d345, indice, fundo);
-				ok2 = distG->Go( CBaseDistribuicao::dtg, CDistribuicao3D::d345, indice, fundo);
-
-				if ( ok1 and ok2 ) {
-					static int seqNumberDTPG = 0;
-					seqNumberDTPG++;
-					QString filepath = tr(".distribution%1").arg(QString::number(seqNumberDTPG));
-					filepath = validateFileName(filepath);
-					ok1 = distP->Write(filepath.toStdString());
-					ok2 = distG->Write(filepath.toStdString());
-					if ( ok1 and ok2 ) {
-						open( (filepath + ".dtp").toStdString() );
-						open( (filepath + ".dtg").toStdString() );
-					} else {
-						QMessageBox::information(this, tr("LVP"), tr("Erro! - Can not save the distribution file!"));
-					}
-				} else {
-					QApplication::restoreOverrideCursor();
-					QMessageBox::information(this, tr("LVP"), tr("Erro! - Distribution3D class returned false!"));
-				}
-				QApplication::restoreOverrideCursor();
-				delete distP;
-				delete distG;
+				filtro->Go(NOVE);
+				cerr << "Finalizou segmentação..." << endl;
+				distP = new CDistribuicao3D ( filtro->GetMatrizSitios() );
+				distG = new CDistribuicao3D ( filtro->GetMatrizLigacoes() );
+				cerr << "Criou objetos distribuições" << endl;
 			}
 		} else {
 			QMessageBox::information(this, tr("LVP"), tr("Error trying to create 3D image!"));
 			return;
 		}
 	} else {
-		QMessageBox::information(this, tr("LVP"), tr("Error: Image viewer not active!"));
+		DgmImageViewer* childg = activeDgmImageViewer();
+		if ( childg != NULL ) {
+			if (childg->pm3D != NULL) {
+				if (childg->pm3D->NumCores() == 3) { // tem que ser uma imagem com 0 (fundo), 1 (sítio) e 2 (ligação)
+					int nx = childg->pm3D->NX();
+					int ny = childg->pm3D->NY();
+					int nz = childg->pm3D->NZ();
+					int i,j,k;
+					pms = new TCMatriz3D<bool>(nx,ny,nz);
+					pml = new TCMatriz3D<bool>(nx,ny,nz);
+					for ( i=0; i<nx; ++i ) {
+						for ( j=0; j<ny; ++j ) {
+							for ( k=0; k<nz; ++k ) {
+								if (childg->pm3D->data3D[i][j][k]==1) {
+									pms->data3D[i][j][k] = 1;
+								} else if (childg->pm3D->data3D[i][j][k]==2) {
+									pml->data3D[i][j][k] = 1;
+								}
+							}
+						}
+					}
+					distP = new CDistribuicao3D ( pms );
+					distG = new CDistribuicao3D ( pml );
+				}
+			}
+		}else {
+			QMessageBox::information(this, tr("LVP"), tr("Error: Image viewer not active!"));
+			return;
+		}
+	}
+	if ( ! distP || ! distG ) {
+		cerr << "Não foi possível alocar CDistribuicao3D em Lvp::dtpgD345_3D()" << endl;
+		QApplication::restoreOverrideCursor();
+		if(filtro) delete filtro;
+		if(distP) delete distP;
+		if(distG) delete distG;
+		if( pms ) delete pms;
+		if( pml ) delete pml;
 		return;
 	}
+	ok1 = distP->Go( CBaseDistribuicao::dtp, CDistribuicao3D::d345, indice, fundo );
+	ok2 = distG->Go( CBaseDistribuicao::dtg, CDistribuicao3D::d345, indice, fundo );
+
+	if ( ok1 and ok2 ) {
+		static int seqNumberDTPG = 0;
+		seqNumberDTPG++;
+		QString filepath = tr(".distribution%1").arg(QString::number(seqNumberDTPG));
+		filepath = validateFileName(filepath);
+		ok1 = distP->Write(filepath.toStdString());
+		ok2 = distG->Write(filepath.toStdString());
+		if ( ok1 and ok2 ) {
+			open( (filepath + ".dtp").toStdString() );
+			open( (filepath + ".dtg").toStdString() );
+		} else {
+			QMessageBox::information(this, tr("LVP"), tr("Erro! - Can not save the distribution file!"));
+		}
+	} else {
+		QApplication::restoreOverrideCursor();
+		QMessageBox::information(this, tr("LVP"), tr("Erro! - Distribution3D class returned false!"));
+	}
+	if(filtro) delete filtro;
+	if(distP) delete distP;
+	if(distG) delete distG;
+	if( pms ) delete pms;
+	if( pml ) delete pml;
+	QApplication::restoreOverrideCursor();
 }
 
 void Lvp::porosity() {

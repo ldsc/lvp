@@ -28,6 +28,7 @@
 #include "hexEditor.h"
 #include "optionsdialog.h"
 #include "poresThroats.h"
+#include "qdebugstream.h"
 #include <Correlacao/CCorrelacao3D.h>
 #include <Distribuicao/CBaseDistribuicao.h>
 
@@ -86,6 +87,8 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 			if (dialogES)						delete dialogES;
 			if (dialogImport)				delete dialogImport;
 			if (dialogPoresThroats) delete dialogPoresThroats;
+			if (qout)								delete qout;
+			if (qerr)								delete qerr;
 		}
 	// Enums
 	private:
@@ -129,7 +132,10 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		QPushButton *pushButtonAverage;
 		QPushButton *pushButtonSource;
 		QPushButton *pushButtonAccumulated;
-		QTextEdit		*textEditMessages;
+		//redirect cout and cerr
+		QPlainTextEdit *textEditMessages;
+		QDebugStream *qout;
+		QDebugStream *qerr;
 
 		//QVBoxLayout *verticalLayout;
 		QGridLayout *gridLayout;
@@ -339,8 +345,6 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		//verifica se existe arquivo com o nome informado. Caso exista retorna o nome de um arquivo inexistente.
 		string validateFileName( const string _strname );
 		QString validateFileName( const QString _name);
-
-		//QProcess * process;
 
 		//From HexEditor
 //		QLabel *lbAddress, *lbAddressName;
