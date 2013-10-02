@@ -52,7 +52,7 @@ HEADERS +=  lvp.h \
             qHexEdit/xbytearray.h \
             qHexEdit/commands.h \
             crop3D.h \
-            #qdebugstream.h \
+            qdebugstream.h \
             poresThroats.h
 
 
@@ -92,7 +92,8 @@ LIBS +=  -L../../qwt/lib \
          -L../../libldsc/src \
          -lqwt \
          -lldsc \
-         -lgomp
+         -lgomp \
+         -lGLU
 
 TARGET = lvp
 

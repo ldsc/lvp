@@ -38,6 +38,8 @@ GLWidget::GLWidget(TCMatriz3D<bool> * _pm3D, QString _fileName, int _viewtype, Q
 	setAutoFillBackground(false);
 	setMinimumSize(200, 200);
 	setWindowTitle(tr("3D Visualization [%1]").arg( QFileInfo(fullFileName).fileName() ) );
+
+	quadratic = gluNewQuadric(); //utilizado para desenhar esferas pela glu
 }
 
 GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QWidget *parent)
@@ -79,12 +81,15 @@ GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QW
 	setAutoFillBackground(false);
 	setMinimumSize(200, 200);
 	setWindowTitle(tr("3D Visualization [%1]").arg( QFileInfo(fullFileName).fileName() ) );
+
+	quadratic = gluNewQuadric(); //utilizado para desenhar esferas pela glu
 }
 
 GLWidget::~GLWidget() {
 	//delete pm3D;
 	makeCurrent();
 	glDeleteLists(object, 1);
+	gluDeleteQuadric(quadratic);
 }
 
 void GLWidget::setXRotation(int angle) {
@@ -296,6 +301,7 @@ GLuint GLWidget::makeObject() {
 	double meionxw = w*(meionx-1);
 	double meionyw = w*(meiony-1);
 	double meionzw = w*(meionz-1);
+	double w512 = w*512.0;
 
 	glPointSize(pointsize);
 
@@ -337,37 +343,55 @@ GLuint GLWidget::makeObject() {
 	// eixo x
 	glColor3f(0.0, 1.0, 0.0); // cor verde para o eixo x
 	glBegin(GL_LINES);
-	glVertex3d(-512.0*w, 0.0, 0.0);
+	glVertex3d(-w512, 0.0, 0.0);
 	glVertex3d(_meionxw, 0.0, 0.0);
-	glVertex3d( 512.0*w, 0.0, 0.0);
+	glVertex3d( w512, 0.0, 0.0);
 	glVertex3d( meionxw, 0.0, 0.0);
 	glEnd();
 	// eixo y
 	glColor3f(0.0, 0.0, 1.0); // cor azul para o eixo y
 	glBegin(GL_LINES);
-	glVertex3d( 0.0,-512.0*w, 0.0);
+	glVertex3d( 0.0,-w512, 0.0);
 	glVertex3d( 0.0,_meionyw, 0.0);
-	glVertex3d( 0.0, 512.0*w, 0.0);
+	glVertex3d( 0.0, w512, 0.0);
 	glVertex3d( 0.0, meionyw, 0.0);
 	glEnd();
 	// eixo z
 	glColor3f(1.0, 0.0, 0.0); // cor vermelha para o eixo z
 	glBegin(GL_LINES);
-	glVertex3d( 0.0, 0.0,-512.0*w);
+	glVertex3d( 0.0, 0.0,-w512);
 	glVertex3d( 0.0, 0.0,_meionzw);
-	glVertex3d( 0.0, 0.0, 512.0*w);
+	glVertex3d( 0.0, 0.0, w512);
 	glVertex3d( 0.0, 0.0, meionzw);
 	glEnd();
 
-	if(pm3D != NULL) //matriz bool
+	if(pm3D != NULL) {//matriz bool
+		//goto drawByRPSL;
 		goto drawByPm3D; // Desenha meio poroso binário (poro preto e fundo transparente)
-	else if(pm3Di != NULL) { //matriz int
+	} else if(pm3Di != NULL) { //matriz int
 		if( tonsList.size() == 3 && tonsList.contains(0) ) { // existem 3 tons na imagem e um deles é 0 (fundo).
 			goto drawByPm3Di; //Desenha sítios e ligações (sítio preto, ligação amarela e fundo transparente)
 		} else {
 			goto drawByPm3DiGray; //Desenha meio poroso em tons de cinza.
 		}
+	} else {
+		goto drawByRPSL;
 	}
+
+drawByRPSL: {
+	gluQuadricNormals(quadratic, GLU_SMOOTH);
+	gluQuadricTexture(quadratic, GL_TRUE);
+
+	glPushMatrix();
+	glTranslatef(0.0, 0.0, 0.0);
+	glRotatef(0.0, 0.0, 0.0, 0.0);
+	gluSphere( quadratic, 200.0f, 100, 100);
+	glPopMatrix();
+
+	//glEnd();
+	glEndList();
+	return list;
+}
 
 drawByPm3D: { //Desenhando meio poroso binário (preto e transparente)
 	glBegin(GL_POINTS); //GL_POINTS
@@ -431,7 +455,7 @@ drawByPm3Di: { //Desenhando o meio poroso (solido tranparente + poro preto + gar
 					}
 				}
 			}
-		} else { //viewtype==MPV
+		} else {
 			for (int j = 0; j < ny; ++j){
 				for (int i = 0; i < nx; ++i){
 					if (pm3Di->data3D[planX][i][j] == pore){

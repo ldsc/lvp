@@ -19,14 +19,16 @@ class QDebugStream : public std::basic_streambuf<char>
 		~QDebugStream() {
 			// output anything that is left
 			if (!m_string.empty())
-				log_window->appendPlainText(m_string.c_str());
+				//log_window->appendPlainText(m_string.c_str());
+				log_window->appendPlainText(QString::fromUtf8(m_string.c_str()));
 			m_stream.rdbuf(m_old_buf);
 		}
 
 	protected:
 		virtual int_type overflow(int_type v) {
 			if (v == '\n') {
-				log_window->appendPlainText(m_string.c_str());
+				//log_window->appendPlainText(m_string.c_str());
+				log_window->appendPlainText(QString::fromUtf8(m_string.c_str()));
 				m_string.erase(m_string.begin(), m_string.end());
 			} else {
 				m_string += v;
@@ -43,7 +45,8 @@ class QDebugStream : public std::basic_streambuf<char>
 				pos = m_string.find('\n');
 				if (pos != std::string::npos) {
 					std::string tmp(m_string.begin(), m_string.begin() + pos);
-					log_window->appendPlainText(tmp.c_str());
+					//log_window->appendPlainText(tmp.c_str());
+					log_window->appendPlainText(QString::fromUtf8(tmp.c_str()));
 					m_string.erase(m_string.begin(), m_string.begin() + pos + 1);
 				}
 			}

@@ -167,16 +167,12 @@ Lvp::Lvp() {
 
 	//Dock de mensagens
 	textEditMessages = new QPlainTextEdit(dockWidgetMessages);
-	//textEditMessages->setContentsMargins(0, 0, 0, 0);
 	dockWidgetMessages->setWidget(textEditMessages);
-	dockWidgetMessages->setVisible( true );
 
-	//tentativa de redirecionar cout e cerr para QTextEdit
-	qout = new QDebugStream(std::cout, textEditMessages);
-	qerr = new QDebugStream(std::cerr, textEditMessages);
 
-	std::cout << "Teste" << endl;
-	std::cerr << "Testes" << endl;
+	//Redirecionando cout e cerr para QTextEdit
+	//qout = new QDebugStream(std::cout, textEditMessages);
+	//qerr = new QDebugStream(std::cerr, textEditMessages);
 
 	//Objeto para salvar as preferências do usuário
 	settings = new QSettings("LENEP", "LVP");
@@ -793,7 +789,6 @@ void Lvp::open( ) {
 	progress.setValue(numFiles);
 }
 void Lvp::open(string _file, bool novo) {
-	std::cout << "Open" << endl;
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QString fileName;  // nome do arquivo atual
 	fileName = fileName.fromStdString(_file);
@@ -932,11 +927,11 @@ void Lvp::openMPV( ) {
 		QMdiSubWindow *existing = findGLWidget(mdiChild->getFullFileName());
 		if (existing) {
 			GLWidget * child = qobject_cast<GLWidget *>(existing->widget());
-			child->setViewType(GLWidget::MPV);
+			child->setViewType(GLWidget::RPSL);
 			mdiArea->setActiveSubWindow(existing);
 		} else {
 			GLWidget *child = createGLWidget(mdiChild);
-			child->setViewType(GLWidget::MPV);
+			child->setViewType(GLWidget::RPSL);
 			child->show();
 			statusBar()->showMessage(tr("File loaded"), 2000);
 		}
@@ -944,20 +939,53 @@ void Lvp::openMPV( ) {
 		QMdiSubWindow *existing = findGLWidget(mdiChild->getFullFileName());
 		if (existing) {
 			GLWidget * child = qobject_cast<GLWidget *>(existing->widget());
-			child->setViewType(GLWidget::MPV);
+			child->setViewType(GLWidget::RPSL);
 			mdiArea->setActiveSubWindow(existing);
 		} else {
 			GLWidget *child = createGLWidget(mdiChild);
-			child->setViewType(GLWidget::MPV);
+			child->setViewType(GLWidget::RPSL);
 			child->show();
 			statusBar()->showMessage(tr("File loaded"), 2000);
 		}
 	} else if (GLWidget *mdiChild = activeGLWidget()){
-		mdiChild->setViewType(GLWidget::MPV);
+		mdiChild->setViewType(GLWidget::RPSL);
 	}
 	updateMenus();
 	updateDockLista();
 }
+
+
+//void Lvp::openMPV( ) {
+//	if (DbmImageViewer *mdiChild = activeDbmImageViewer()) {
+//		QMdiSubWindow *existing = findGLWidget(mdiChild->getFullFileName());
+//		if (existing) {
+//			GLWidget * child = qobject_cast<GLWidget *>(existing->widget());
+//			child->setViewType(GLWidget::MPV);
+//			mdiArea->setActiveSubWindow(existing);
+//		} else {
+//			GLWidget *child = createGLWidget(mdiChild);
+//			child->setViewType(GLWidget::MPV);
+//			child->show();
+//			statusBar()->showMessage(tr("File loaded"), 2000);
+//		}
+//	} else if (DgmImageViewer *mdiChild = activeDgmImageViewer()) {
+//		QMdiSubWindow *existing = findGLWidget(mdiChild->getFullFileName());
+//		if (existing) {
+//			GLWidget * child = qobject_cast<GLWidget *>(existing->widget());
+//			child->setViewType(GLWidget::MPV);
+//			mdiArea->setActiveSubWindow(existing);
+//		} else {
+//			GLWidget *child = createGLWidget(mdiChild);
+//			child->setViewType(GLWidget::MPV);
+//			child->show();
+//			statusBar()->showMessage(tr("File loaded"), 2000);
+//		}
+//	} else if (GLWidget *mdiChild = activeGLWidget()){
+//		mdiChild->setViewType(GLWidget::MPV);
+//	}
+//	updateMenus();
+//	updateDockLista();
+//}
 
 void Lvp::openEditor(){
 	QMdiSubWindow *existing = 0;
@@ -2456,9 +2484,12 @@ void Lvp::exSegmentationPoresThroats(){
 		filtro.Go(model);
 		filtro.Write(filepath.toStdString());
 		open( filepath.toStdString() );
-		filepath = dialogPoresThroats->child->getFilePath();
-		filepath+= dialogPoresThroats->child->getFileNameNoExt() + "_objectsList.txt";
-		filtro.SalvarListaObjetos(filepath.toStdString());
+		if (filtro.GerarDetalhesObjetos()) {
+			filepath = dialogPoresThroats->child->getFilePath();
+			filepath+= dialogPoresThroats->child->getFileNameNoExt() + "_objectsList.txt";
+			filtro.SalvarListaObjetos(filepath.toStdString());
+			open( filepath.toStdString() );
+		}
 	}
 
 	QApplication::restoreOverrideCursor();
@@ -3963,6 +3994,7 @@ void Lvp::writeSettings() { //Grava a posição e tamanho atuais da aplicação
 	settings->setValue("pos", pos());
 	settings->setValue("size", size());
 	settings->setValue("maximized", isMaximized());
+	settings->setValue("messagesVisible", dockWidgetMessages->isVisible());
 	settings->setValue("lastOpenPath", lastOpenPath);
 }
 
@@ -3976,7 +4008,9 @@ void Lvp::readSettings() { //Carrega a última posição e tamanho usadas para a
 	bool maximized = settings->value("maximized", bool(false)).toBool();
 	if ( maximized ) showMaximized ();
 
-	lastOpenPath = settings->value("lastOpenPath", QString()).toString();
+	dockWidgetMessages->setVisible( settings->value("messagesVisible", bool(false)).toBool() );
+
+	lastOpenPath = settings->value("lastOpenPath", QString(qApp->applicationDirPath())).toString();
 
 	QString locale = settings->value("language", QString("English")).toString();
 	appTranslator.load("lvp_" + locale, qmPath);
