@@ -25,6 +25,7 @@ GLWidget::GLWidget(TCMatriz3D<bool> * _pm3D, QString _fileName, int _viewtype, Q
 	else
 		pm3D = _pm3D;
 	pm3Di = NULL;
+	matrizObjetos.clear();
 	nx = pm3D->NX();
 	ny = pm3D->NY();
 	nz = pm3D->NZ();
@@ -58,6 +59,7 @@ GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QW
 	else
 		pm3Di = _pm3D;
 	pm3D = NULL;
+	matrizObjetos.clear();
 	nx = pm3Di->NX();
 	ny = pm3Di->NY();
 	nz = pm3Di->NZ();
@@ -81,6 +83,66 @@ GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QW
 	setAutoFillBackground(false);
 	setMinimumSize(200, 200);
 	setWindowTitle(tr("3D Visualization [%1]").arg( QFileInfo(fullFileName).fileName() ) );
+
+	quadratic = gluNewQuadric(); //utilizado para desenhar esferas pela glu
+}
+
+GLWidget::GLWidget(QString _fileName, int _viewtype, QWidget *parent)
+	: QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
+	viewtype = _viewtype;
+	distpoints = 0.001;
+	pointsize = 1.0;
+	object = 0;
+	xRot = 0;
+	yRot = 0;
+	zRot = 0;
+	fullFileName = _fileName;
+	pm3D = NULL;
+	pm3Di = NULL;
+
+	QFile data(fullFileName);
+	data.open(QFile::ReadOnly | QFile::Text);
+	QTextStream text(data.readAll());
+	data.close();
+
+
+	char c;
+	QString s;
+	int numObjs;
+	int obj, x, y, z, raio, tipo, nVoxeis, nObjsCon, lstObjsCon;
+	map<int,CObjetoImagem>::iterator it;
+
+	text >> c >> numObjs >> nx >> ny >> nz;
+	std::cerr << "numObjs: " << numObjs  << " nx: " << nx << " ny: " << ny << " nz: " << nz << std::endl;
+	s = text.readLine(); // lê o restante da linha;
+	s = text.readLine(); // lê a linha seguinte;
+
+	matrizObjetos.clear();
+	for (int i = 0; i < numObjs; ++i) {
+		text >> obj >> x >> y >> z >> raio >> tipo >> nVoxeis >> nObjsCon;
+		std::cerr << "Obj: " << obj << " x: " << x << " y: " << y << " z: " << z << " Raio: " << raio << " Tipo: " << tipo << " NVoxeis: " << nVoxeis << " NObjsCon: " << nObjsCon << std::endl;
+		matrizObjetos[obj] = CObjetoImagem( (ETipoObjetoImagem)tipo, nVoxeis);
+		it = matrizObjetos.find(obj);
+		it->second.pontoCentral.x = x;
+		it->second.pontoCentral.y = y;
+		it->second.pontoCentral.z = z;
+		it->second.pontoCentral.df = raio; //aqui df armazena o raio e não a distância ao fundo, logo, não pode obter raio através do método Raio().
+		for (int j = 0; j < nObjsCon; ++j) {
+			text >> lstObjsCon;
+			it->second.Conectar( lstObjsCon );
+		}
+	}
+
+	planX = 0;
+	planY = 0;
+	planZ = 0;
+	pore = 1;
+	tonsList << 0 << 1;
+	grayTon = 1; // não utilizado em imagens binárias
+	trolltechPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
+	setAutoFillBackground(false);
+	setMinimumSize(200, 200);
+	setWindowTitle(tr("Pore Network Visualization [%1]").arg( QFileInfo(fullFileName).fileName() ) );
 
 	quadratic = gluNewQuadric(); //utilizado para desenhar esferas pela glu
 }
@@ -366,7 +428,6 @@ GLuint GLWidget::makeObject() {
 	glEnd();
 
 	if(pm3D != NULL) {//matriz bool
-		//goto drawByRPSL;
 		goto drawByPm3D; // Desenha meio poroso binário (poro preto e fundo transparente)
 	} else if(pm3Di != NULL) { //matriz int
 		if( tonsList.size() == 3 && tonsList.contains(0) ) { // existem 3 tons na imagem e um deles é 0 (fundo).
@@ -375,20 +436,49 @@ GLuint GLWidget::makeObject() {
 			goto drawByPm3DiGray; //Desenha meio poroso em tons de cinza.
 		}
 	} else {
+		viewtype = RPSL; //forçando
 		goto drawByRPSL;
 	}
 
 drawByRPSL: {
+	int numObjs;
+	int x, y, z, raio, tipo;//, nVoxeis, nObjsCon;
+	map<int,CObjetoImagem>::iterator it;
+
 	gluQuadricNormals(quadratic, GLU_SMOOTH);
 	gluQuadricTexture(quadratic, GL_TRUE);
 
-	glPushMatrix();
-	glTranslatef(0.0, 0.0, 0.0);
-	glRotatef(0.0, 0.0, 0.0, 0.0);
-	gluSphere( quadratic, 200.0f, 100, 100);
-	glPopMatrix();
+	//loop para ler os objetos
+	numObjs = matrizObjetos.size();
+	for (int i = 1; i <= numObjs; ++i) {
+		it = matrizObjetos.find(i);
+		x = it->second.pontoCentral.x;
+		y = it->second.pontoCentral.y;
+		z = it->second.pontoCentral.z;
+		raio = it->second.pontoCentral.df;
+		tipo = (int) it->second.Tipo();
+		//tipo = (int) matrizObjetos[i].Tipo();
+		//nVoxeis = it->second.NumObjs();
+		//nObjsCon = it->second.SConexao().size();
+		//std::cerr << "Obj: " << i << " x: " << x << " y: " << y << " z: " << z << " Raio: " << raio << " Tipo: " << tipo << " NVoxeis: " << nVoxeis << " NObjsCon: " << nObjsCon << std::endl;
 
-	//glEnd();
+		glPushMatrix(); // salva as transformações atuais na pilha
+		glTranslatef( w*(x-meionx) , w*(y-meiony) , w*(z-meionz) );
+		if (tipo == 2) { // Sítio
+			glColor3f(0.0, 0.0, 0.0); // cor preta
+			gluSphere( quadratic, w*raio, 10, 10);
+		} else { // Ligação
+			glColor3f(1.0, 1.0, 0.0);
+			gluCylinder(quadratic, w*raio, w*raio, w*10.0 , 10, 10);
+		}
+		glPopMatrix(); // restaura as transformações anteriores
+
+	}
+	//glPushMatrix(); // salva as transformações atuais na pilha
+	//glTranslatef(_meionxw, _meionyw, _meionzw); //posiciona no canto
+	//glTranslatef( w*x , w*y , w*z );
+	//glPopMatrix(); // restaura as transformações anteriores
+
 	glEndList();
 	return list;
 }

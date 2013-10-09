@@ -31,5 +31,6 @@
         <file>images/splashScream.png</file>
         <file>images/import.png</file>
         <file>images/7661_64x64.png</file>
+        <file>images/poreNetwork.png</file>
     </qresource>
 </RCC>

@@ -248,6 +248,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void opening3D();
 		void open3DVisualization();
 		void openMPV( );
+		void openPNV( );
 		void openEditor();
 		void options(); // abre diálogo de opções para o editor hexadecimal
 		void optionsAccepted(); // grava e lê as opções do editor hexadecimal
@@ -277,6 +278,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void zoomOut();
 		GLWidget * createGLWidget(DbmImageViewer *_mdiChild);
 		GLWidget * createGLWidget(DgmImageViewer *_mdiChild);
+		GLWidget * createGLWidget(TextEditor *_mdiChild);
 		PbmImageViewer * createPbmImageViewer();
 		PgmImageViewer * createPgmImageViewer();
 		DbmImageViewer * createDbmImageViewer();

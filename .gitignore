@@ -33,6 +33,8 @@ cvs/
 *.tag
 *.raw
 *.RAW
+*.rsl
+*.RSL
 bin/*.txt
 bin/*.TXT
 CMakeFiles

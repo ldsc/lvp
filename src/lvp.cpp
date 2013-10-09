@@ -313,6 +313,7 @@ void Lvp::createActions() {
 	connect( actionExit,                    SIGNAL( triggered() ), 	qApp,			SLOT( closeAllWindows()						) );
 	connect( action3DVisualization,         SIGNAL( triggered() ),  this,			SLOT( open3DVisualization()       ) );
 	connect( actionMPV,                     SIGNAL( triggered() ),  this,			SLOT( openMPV()                   ) );
+	connect( actionPNV,                     SIGNAL( triggered() ),  this,			SLOT( openPNV()                   ) );
 	connect( actionRotate,                  SIGNAL( triggered() ),  this,			SLOT( rotate()										) );
 	connect( actionRelativePermeability,    SIGNAL( triggered() ),  this,			SLOT( relativePermeability()      ) );
 	connect( actionIntrinsicPermeability,   SIGNAL( triggered() ),  this,			SLOT( intrinsicPermeability()     ) );
@@ -500,6 +501,7 @@ void Lvp::updateMenus() {
 	actionInverter->setEnabled(hasGLWidget && activeGLWidget()->getPM3D()!=NULL);
 	actionLowPass->setEnabled(hasImageViewer);
 	actionMPV->setEnabled( hasImageViewer3D );
+	actionPNV->setEnabled( hasTextEditor && activeTextEditor()->getFileExt().toLower()=="rsl" );
 	actionNext->setEnabled(mdiArea->subWindowList().size() > 1);
 	actionNormalSize->setEnabled(!actionFitToWindow->isChecked() && ( hasImageViewer || hasImageViewer3D ));
 	actionOpening->setVisible(hasPbmImageViewer);
@@ -772,7 +774,7 @@ void Lvp::updateDockLista() {
 
 void Lvp::open( ) {
 	// lista com o nome dos arquivos que serão abertos
-	QStringList files = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Accepted Files (*.pgm *.pbm *.dbm *.dgm *.cor *.dtp *.dts *.dtg *.rpc *.txt);;Image Files (*.pgm *.pbm *.dbm);;Binary Images (*.pbm);;3D Binary Images (*.dbm);;Grey Scale Images (*.pgm);;3DGrey Scale Images (*.dgm);;Relative Permeability Curves (*.rpc);;Correlation Files (*.cor);;Distribution Files (*.dtp *.dts *.dtg);;Text Files (*.txt)"));
+	QStringList files = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Accepted Files (*.pgm *.pbm *.dbm *.dgm *.cor *.dtp *.dts *.dtg *.rpc *.txt *.rsl);;Image Files (*.pgm *.pbm *.dbm);;Binary Images (*.pbm);;3D Binary Images (*.dbm);;Grey Scale Images (*.pgm);;3DGrey Scale Images (*.dgm);;Relative Permeability Curves (*.rpc);;Correlation Files (*.cor);;Distribution Files (*.dtp *.dts *.dtg);;Network of Sites and Links (*.rsl);;Text Files (*.txt)"));
 	int numFiles = files.size(); //número de arquivos que serão abertos
 	
 	QProgressDialog progress("Opening files...", "&Cancel", 0, numFiles, this);
@@ -824,7 +826,7 @@ void Lvp::open(string _file, bool novo) {
 			}
 		} else if (ext == "raw") {
 			import(fileName);
-		} else if (ext == "txt") {
+		} else if (ext == "txt" || ext == "rsl") {
 			TextEditor *childText= NULL;
 			existing = findTextEditor(fileName);
 			if ( existing ) {
@@ -927,15 +929,35 @@ void Lvp::openMPV( ) {
 		QMdiSubWindow *existing = findGLWidget(mdiChild->getFullFileName());
 		if (existing) {
 			GLWidget * child = qobject_cast<GLWidget *>(existing->widget());
-			child->setViewType(GLWidget::RPSL);
+			child->setViewType(GLWidget::MPV);
 			mdiArea->setActiveSubWindow(existing);
 		} else {
 			GLWidget *child = createGLWidget(mdiChild);
-			child->setViewType(GLWidget::RPSL);
+			child->setViewType(GLWidget::MPV);
 			child->show();
 			statusBar()->showMessage(tr("File loaded"), 2000);
 		}
 	} else if (DgmImageViewer *mdiChild = activeDgmImageViewer()) {
+		QMdiSubWindow *existing = findGLWidget(mdiChild->getFullFileName());
+		if (existing) {
+			GLWidget * child = qobject_cast<GLWidget *>(existing->widget());
+			child->setViewType(GLWidget::MPV);
+			mdiArea->setActiveSubWindow(existing);
+		} else {
+			GLWidget *child = createGLWidget(mdiChild);
+			child->setViewType(GLWidget::MPV);
+			child->show();
+			statusBar()->showMessage(tr("File loaded"), 2000);
+		}
+	} else if (GLWidget *mdiChild = activeGLWidget()){
+		mdiChild->setViewType(GLWidget::MPV);
+	}
+	updateMenus();
+	updateDockLista();
+}
+
+void Lvp::openPNV( ) {
+	if (TextEditor *mdiChild = activeTextEditor()) {
 		QMdiSubWindow *existing = findGLWidget(mdiChild->getFullFileName());
 		if (existing) {
 			GLWidget * child = qobject_cast<GLWidget *>(existing->widget());
@@ -947,13 +969,10 @@ void Lvp::openMPV( ) {
 			child->show();
 			statusBar()->showMessage(tr("File loaded"), 2000);
 		}
-	} else if (GLWidget *mdiChild = activeGLWidget()){
-		mdiChild->setViewType(GLWidget::RPSL);
 	}
 	updateMenus();
 	updateDockLista();
 }
-
 
 //void Lvp::openMPV( ) {
 //	if (DbmImageViewer *mdiChild = activeDbmImageViewer()) {
@@ -1145,6 +1164,16 @@ GLWidget * Lvp::createGLWidget(DbmImageViewer *_mdiChild) {
 GLWidget * Lvp::createGLWidget(DgmImageViewer *_mdiChild) {
 	GLWidget *childim = NULL;
 	childim = new GLWidget(_mdiChild->pm3D, _mdiChild->getFullFileName(), GLWidget::MPV, this);
+	if ( childim ) {
+		mdiArea->addSubWindow(childim);
+		return childim;
+	}
+	return NULL;
+}
+
+GLWidget * Lvp::createGLWidget(TextEditor *_mdiChild) {
+	GLWidget *childim = NULL;
+	childim = new GLWidget(_mdiChild->getFullFileName(), GLWidget::MPV, this);
 	if ( childim ) {
 		mdiArea->addSubWindow(childim);
 		return childim;
@@ -2486,7 +2515,7 @@ void Lvp::exSegmentationPoresThroats(){
 		open( filepath.toStdString() );
 		if (filtro.GerarDetalhesObjetos()) {
 			filepath = dialogPoresThroats->child->getFilePath();
-			filepath+= dialogPoresThroats->child->getFileNameNoExt() + "_objectsList.txt";
+			filepath+= dialogPoresThroats->child->getFileNameNoExt() + ".rsl";
 			filtro.SalvarListaObjetos(filepath.toStdString());
 			open( filepath.toStdString() );
 		}

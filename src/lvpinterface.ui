@@ -112,6 +112,7 @@
     <addaction name="actionSource"/>
     <addaction name="action3DVisualization"/>
     <addaction name="actionMPV"/>
+    <addaction name="actionPNV"/>
     <addaction name="actionInverter"/>
     <addaction name="separator"/>
     <addaction name="menuMulti_Plan_View"/>
@@ -319,6 +320,7 @@
    </attribute>
    <addaction name="action3DVisualization"/>
    <addaction name="actionMPV"/>
+   <addaction name="actionPNV"/>
    <addaction name="actionInverter"/>
    <addaction name="actionSource"/>
    <addaction name="separator"/>
@@ -726,7 +728,7 @@ p, li { white-space: pre-wrap; }
    <property name="minimumSize">
     <size>
      <width>58</width>
-     <height>1</height>
+     <height>35</height>
     </size>
    </property>
    <property name="font">
@@ -1518,10 +1520,10 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/images/mpv.png</normaloff>:/images/mpv.png</iconset>
    </property>
    <property name="text">
-    <string>Multiplanar Viewing</string>
+    <string>Multiplanar Viewer</string>
    </property>
    <property name="toolTip">
-    <string>Multiplanar Viewing</string>
+    <string>Multiplanar Viewer</string>
    </property>
   </action>
   <action name="actionImport">
@@ -1593,6 +1595,18 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>IRA</string>
+   </property>
+  </action>
+  <action name="actionPNV">
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/poreNetwork.png</normaloff>:/images/poreNetwork.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pore Network Viewer</string>
+   </property>
+   <property name="toolTip">
+    <string>Pore Network Viewer</string>
    </property>
   </action>
   <zorder>dockWidgetVisualisation3D</zorder>

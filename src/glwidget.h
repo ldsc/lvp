@@ -10,6 +10,7 @@
 #include <QStringList>
 #include <QVariant>
 #include <Matriz/TCMatriz3D.h>
+#include <Segmentacao/CObjetoImagem.h>
 #include "GL/glu.h"
 
 QT_BEGIN_NAMESPACE
@@ -35,6 +36,7 @@ class GLWidget : public QGLWidget
 		//GLWidget(QString _fileName, QWidget *parent = 0);
 		GLWidget(TCMatriz3D<int> *_pm3D, QString _fileName, int _viewtype=MPV, QWidget *parent = 0);
 		GLWidget(TCMatriz3D<bool> *_pm3D, QString _fileName, int _viewtype=MPV, QWidget *parent = 0);
+		GLWidget(QString _fileName, int _viewtype=RPSL, QWidget *parent = 0);
 		~GLWidget();
 
 		QSize sizeHint() const;
@@ -92,6 +94,8 @@ class GLWidget : public QGLWidget
 		//GLfloat angle, fAspect;
 		TCMatriz3D<int> * pm3Di;
 		TCMatriz3D<bool> * pm3D;
+		map<int,CObjetoImagem> matrizObjetos; ///< Matriz de objetos do tipo CObjetoImagem
+
 		int pore;
 		int planX;
 		int planY;
