@@ -7,7 +7,7 @@
 #endif
 
 GLWidget::GLWidget(TCMatriz3D<bool> * _pm3D, QString _fileName, int _viewtype, QWidget *parent)
-	//: QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer), parent) { //QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
+//: QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer), parent) { //QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
 	: QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
 	viewtype=_viewtype;
 	distpoints = 0.001;
@@ -44,7 +44,7 @@ GLWidget::GLWidget(TCMatriz3D<bool> * _pm3D, QString _fileName, int _viewtype, Q
 }
 
 GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QWidget *parent)
-	//: QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer), parent) {
+//: QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer), parent) {
 	: QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
 	viewtype = _viewtype;
 	distpoints = 0.001;
@@ -113,14 +113,14 @@ GLWidget::GLWidget(QString _fileName, int _viewtype, QWidget *parent)
 	map<int,CObjetoImagem>::iterator it;
 
 	text >> c >> numObjs >> nx >> ny >> nz;
-	std::cerr << "numObjs: " << numObjs  << " nx: " << nx << " ny: " << ny << " nz: " << nz << std::endl;
+	//std::cerr << "numObjs: " << numObjs  << " nx: " << nx << " ny: " << ny << " nz: " << nz << std::endl;
 	s = text.readLine(); // lê o restante da linha;
 	s = text.readLine(); // lê a linha seguinte;
 
 	matrizObjetos.clear();
 	for (int i = 0; i < numObjs; ++i) {
 		text >> obj >> x >> y >> z >> raio >> tipo >> nVoxeis >> nObjsCon;
-		std::cerr << "Obj: " << obj << " x: " << x << " y: " << y << " z: " << z << " Raio: " << raio << " Tipo: " << tipo << " NVoxeis: " << nVoxeis << " NObjsCon: " << nObjsCon << std::endl;
+		//std::cerr << "Obj: " << obj << " x: " << x << " y: " << y << " z: " << z << " Raio: " << raio << " Tipo: " << tipo << " NVoxeis: " << nVoxeis << " NObjsCon: " << nObjsCon << std::endl;
 		matrizObjetos[obj] = CObjetoImagem( (ETipoObjetoImagem)tipo, nVoxeis);
 		it = matrizObjetos.find(obj);
 		it->second.pontoCentral.x = x;
@@ -441,91 +441,133 @@ GLuint GLWidget::makeObject() {
 	}
 
 drawByRPSL: {
-	int numObjs;
-	int x, y, z, raio, tipo;//, nVoxeis, nObjsCon;
-	map<int,CObjetoImagem>::iterator it;
+		int numObjs;
+		int x, y, z, raio, tipo, tamLigacao;//, nVoxeis, nObjsCon;
+		int x1, y1, z1, x2, y2, z2;
+		double xx, yy, zz, angle;
+		map<int,CObjetoImagem>::iterator it;
+		map<int,CObjetoImagem>::iterator it1;
+		map<int,CObjetoImagem>::iterator it2;
+		set<int>::iterator its;
 
-	gluQuadricNormals(quadratic, GLU_SMOOTH);
-	gluQuadricTexture(quadratic, GL_TRUE);
+		gluQuadricNormals(quadratic, GLU_SMOOTH);
+		gluQuadricTexture(quadratic, GL_TRUE);
 
-	//loop para ler os objetos
-	numObjs = matrizObjetos.size();
-	for (int i = 1; i <= numObjs; ++i) {
-		it = matrizObjetos.find(i);
-		x = it->second.pontoCentral.x;
-		y = it->second.pontoCentral.y;
-		z = it->second.pontoCentral.z;
-		raio = it->second.pontoCentral.df;
-		tipo = (int) it->second.Tipo();
-		//tipo = (int) matrizObjetos[i].Tipo();
-		//nVoxeis = it->second.NumObjs();
-		//nObjsCon = it->second.SConexao().size();
-		//std::cerr << "Obj: " << i << " x: " << x << " y: " << y << " z: " << z << " Raio: " << raio << " Tipo: " << tipo << " NVoxeis: " << nVoxeis << " NObjsCon: " << nObjsCon << std::endl;
+		//loop para ler os objetos
+		numObjs = matrizObjetos.size();
+		for (int i = 1; i <= 5; ++i) {
+			it = matrizObjetos.find(i);
+			tipo = (int) it->second.Tipo();
+			raio = it->second.pontoCentral.df;
+			//nVoxeis = it->second.NumObjs();
+			//nObjsCon = it->second.SConexao().size();
+			//obtem propriedades do sítio
+			x = it->second.pontoCentral.x;
+			y = it->second.pontoCentral.y;
+			z = it->second.pontoCentral.z;
 
-		glPushMatrix(); // salva as transformações atuais na pilha
-		glTranslatef( w*(x-meionx) , w*(y-meiony) , w*(z-meionz) );
-		if (tipo == 2) { // Sítio
-			glColor3f(0.0, 0.0, 0.0); // cor preta
-			gluSphere( quadratic, w*raio, 10, 10);
-		} else { // Ligação
-			glColor3f(1.0, 1.0, 0.0);
-			gluCylinder(quadratic, w*raio, w*raio, w*10.0 , 10, 10);
+			glPushMatrix(); // salva as transformações atuais na pilha
+			if (tipo == 2) { // Sítio
+				//desenha o sítio
+				glColor3f(0.0, 0.0, 0.0); // cor preta
+				glTranslatef( w*(x-meionx) , w*(y-meiony) , w*(z-meionz) );
+				gluSphere( quadratic, w*raio, 10, 10);
+			} else { // Ligação
+				//buscas os sítios conectados a ligação
+				its = it->second.SConexao().begin();
+				it1 = matrizObjetos.find(*its);
+				x1 = it1->second.pontoCentral.x;
+				y1 = it1->second.pontoCentral.y;
+				z1 = it1->second.pontoCentral.z;
+				++its;
+				it2 = matrizObjetos.find(*its);
+				x2 = it2->second.pontoCentral.x;
+				y2 = it2->second.pontoCentral.y;
+				z2 = it2->second.pontoCentral.z;
+
+				//calcula a distância entre os sítios (centro de massa)
+				xx = pow((x2-x1),2);
+				yy = pow((y2-y1),2);
+				zz = pow((z2-z1),2);
+				tamLigacao = sqrt( xx + yy + zz );
+
+//				if (z1 < z2) {
+//					z = z1;
+//					y = y1;
+//					x = x1;
+//				} else {
+//					z = z2;
+//					y = y2;
+//					x = x2;
+//				}
+
+				//Executar operacoes.
+				glColor3f(1.0, 1.0, 0.0);
+				glTranslatef( w*(x-meionx) , w*(y-meiony) , w*(z-meionz) );
+
+				angle = calcAngle(y1,z1,y2,z2);
+				cerr << "y1: " << y1 << " z1: " << z1 << " y2: " << y2 << " z2: " << z2 << " angle yz: " << angle << endl;
+				//glRotatef(angle, 1.0, 0.0, 0.0);
+
+				angle = calcAngle(z1,x1,z2,x2);
+				cerr << "z1: " << z1 << " x1: " << x1 << " z2: " << z2 << " x2: " << x2 << " angle zx: " << angle << endl;
+				//glRotatef(angle, 0.0, 1.0, 0.0);
+
+				angle = calcAngle(x1,y1,x2,y2);
+				cerr << "x1: " << x1 << " y1: " << y1 << " x2: " << x2 << " y2: " << y2 << " angle xy: " << angle << endl;
+				//glRotatef(angle, 0.0, 0.0, 1.0);
+
+				gluCylinder(quadratic, w*raio, w*raio, w*tamLigacao , 10, 10);
+			}
+			glPopMatrix(); // restaura as transformações anteriores
 		}
-		glPopMatrix(); // restaura as transformações anteriores
-
+		glEndList();
+		return list;
 	}
-	//glPushMatrix(); // salva as transformações atuais na pilha
-	//glTranslatef(_meionxw, _meionyw, _meionzw); //posiciona no canto
-	//glTranslatef( w*x , w*y , w*z );
-	//glPopMatrix(); // restaura as transformações anteriores
-
-	glEndList();
-	return list;
-}
 
 drawByPm3D: { //Desenhando meio poroso binário (preto e transparente)
-	glBegin(GL_POINTS); //GL_POINTS
-	if (viewtype==VIEW3D){
-		glColor3f(0.0, 0.0, 0.0);
-		//#pragma omp parallel for collapse(3) schedule(dynamic,10)
-		for (int k = 0; k < nz; ++k){
-			for (int j = 0; j < ny; ++j){
-				for (int i = 0; i < nx; ++i){
-					if( pm3D->data3D[i][j][k] == pore ){
-						glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(k-meionz) );
+		glBegin(GL_POINTS); //GL_POINTS
+		if (viewtype==VIEW3D){
+			glColor3f(0.0, 0.0, 0.0);
+			//#pragma omp parallel for collapse(3) schedule(dynamic,10)
+			for (int k = 0; k < nz; ++k){
+				for (int j = 0; j < ny; ++j){
+					for (int i = 0; i < nx; ++i){
+						if( pm3D->data3D[i][j][k] == pore ){
+							glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(k-meionz) );
+						}
 					}
 				}
 			}
-		}
-	} else { //viewtype==MPV
-		//#pragma omp parallel for collapse(2) schedule(dynamic,10)
-		for (int j = 0; j < ny; ++j){
-			for (int i = 0; i < nx; ++i){
-				if (pm3D->data3D[planX][i][j] == pore){
-					glColor3f(0.0, 0.0, 0.0);
-				} else {
-					glColor3f(1.0, 1.0, 1.0);
+		} else { //viewtype==MPV
+			//#pragma omp parallel for collapse(2) schedule(dynamic,10)
+			for (int j = 0; j < ny; ++j){
+				for (int i = 0; i < nx; ++i){
+					if (pm3D->data3D[planX][i][j] == pore){
+						glColor3f(0.0, 0.0, 0.0);
+					} else {
+						glColor3f(1.0, 1.0, 1.0);
+					}
+					glVertex3d( w*(planX-meionx) , w*(i-meiony) , w*(j-meionz) );
+					if (pm3D->data3D[i][planY][j] == pore){
+						glColor3f(0.0, 0.0, 0.0);
+					} else {
+						glColor3f(1.0, 1.0, 1.0);
+					}
+					glVertex3d( w*(i-meionx) , w*(planY-meiony) , w*(j-meionz) );
+					if (pm3D->data3D[i][j][planZ] == pore){
+						glColor3f(0.0, 0.0, 0.0);
+					} else {
+						glColor3f(1.0, 1.0, 1.0);
+					}
+					glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(planZ-meionz) );
 				}
-				glVertex3d( w*(planX-meionx) , w*(i-meiony) , w*(j-meionz) );
-				if (pm3D->data3D[i][planY][j] == pore){
-					glColor3f(0.0, 0.0, 0.0);
-				} else {
-					glColor3f(1.0, 1.0, 1.0);
-				}
-				glVertex3d( w*(i-meionx) , w*(planY-meiony) , w*(j-meionz) );
-				if (pm3D->data3D[i][j][planZ] == pore){
-					glColor3f(0.0, 0.0, 0.0);
-				} else {
-					glColor3f(1.0, 1.0, 1.0);
-				}
-				glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(planZ-meionz) );
 			}
 		}
+		glEnd();
+		glEndList();
+		return list;
 	}
-	glEnd();
-	glEndList();
-	return list;
-}
 
 drawByPm3Di: { //Desenhando o meio poroso (solido tranparente + poro preto + garganta amarela)
 		pore = 1;
@@ -618,6 +660,31 @@ drawByPm3DiGray: { //Desenhando o meio poroso em tons de cinza
 		glEndList();
 		return list;
 	}
+}
+
+// Retorna o ângulo entre dois pontos.
+float GLWidget::calcAngle(float _x1, float _y1, float _x2, float _y2){
+	float tan_deg, tan_rad, ang_rad, ang_deg;
+	const double pi = 3.141592653589793;
+	float x1 = _x1;
+	float y1 = _y1;
+	float x2 = _x2;
+	float y2 = _y2;
+
+	//Diz que o tangente do angulo é a divisão
+	tan_deg= ((x2-x1)!=0) ? (y2-y1)/(x2-x1) : 0;
+	//Converte o tangente para radianos
+	//tan_rad=degtorad(tan_deg);
+	tan_rad = tan_deg * (pi / 180);
+	//Pega o angulo em radianos a partir do tangente
+	ang_rad=atan(tan_rad);
+	//Converte em graus
+	//ang_deg=radtodeg(ang_rad);
+	ang_deg = ang_rad * (180 / pi);
+	//Retorna o valor
+	return ang_deg;
+
+	//return atan(_y1/_x1)-atan(_y2/_x2);
 }
 
 void GLWidget::normalizeAngle(int *angle) {

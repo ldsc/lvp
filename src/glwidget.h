@@ -12,6 +12,7 @@
 #include <Matriz/TCMatriz3D.h>
 #include <Segmentacao/CObjetoImagem.h>
 #include "GL/glu.h"
+#include "math.h"
 
 QT_BEGIN_NAMESPACE
 class QPaintEvent;
@@ -80,6 +81,8 @@ class GLWidget : public QGLWidget
 
 		void normalizeAngle(int *angle);
 		void setupViewport(int width, int height);
+
+		float calcAngle(float _x1, float _y1, float _x2, float _y2);
 
 		GLuint object;
 		int xRot;
