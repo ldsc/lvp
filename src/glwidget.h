@@ -82,8 +82,6 @@ class GLWidget : public QGLWidget
 		void normalizeAngle(int *angle);
 		void setupViewport(int width, int height);
 
-		float calcAngle(float _x1, float _y1, float _x2, float _y2);
-
 		GLuint object;
 		int xRot;
 		int yRot;

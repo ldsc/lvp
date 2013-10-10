@@ -126,7 +126,7 @@ GLWidget::GLWidget(QString _fileName, int _viewtype, QWidget *parent)
 		it->second.pontoCentral.x = x;
 		it->second.pontoCentral.y = y;
 		it->second.pontoCentral.z = z;
-		it->second.pontoCentral.df = raio; //aqui df armazena o raio e não a distância ao fundo, logo, não pode obter raio através do método Raio().
+		it->second.pontoCentral.df = raio; // df armazena o raio e não a distância ao fundo, logo, não pode obter raio através do método Raio().
 		for (int j = 0; j < nObjsCon; ++j) {
 			text >> lstObjsCon;
 			it->second.Conectar( lstObjsCon );
@@ -444,7 +444,9 @@ drawByRPSL: {
 		int numObjs;
 		int x, y, z, raio, tipo, tamLigacao;//, nVoxeis, nObjsCon;
 		int x1, y1, z1, x2, y2, z2;
-		double xx, yy, zz, angle;
+		//double angle;
+		GLdouble vx, vy, vz, ax;
+		const float deg2rad = 180/M_PI;
 		map<int,CObjetoImagem>::iterator it;
 		map<int,CObjetoImagem>::iterator it1;
 		map<int,CObjetoImagem>::iterator it2;
@@ -455,7 +457,7 @@ drawByRPSL: {
 
 		//loop para ler os objetos
 		numObjs = matrizObjetos.size();
-		for (int i = 1; i <= 5; ++i) {
+		for (int i = 1; i <= numObjs; ++i) {
 			it = matrizObjetos.find(i);
 			tipo = (int) it->second.Tipo();
 			raio = it->second.pontoCentral.df;
@@ -466,12 +468,14 @@ drawByRPSL: {
 			y = it->second.pontoCentral.y;
 			z = it->second.pontoCentral.z;
 
-			glPushMatrix(); // salva as transformações atuais na pilha
+
 			if (tipo == 2) { // Sítio
+				glPushMatrix(); // salva as transformações atuais na pilha
 				//desenha o sítio
 				glColor3f(0.0, 0.0, 0.0); // cor preta
 				glTranslatef( w*(x-meionx) , w*(y-meiony) , w*(z-meionz) );
 				gluSphere( quadratic, w*raio, 10, 10);
+				glPopMatrix(); // restaura as transformações anteriores
 			} else { // Ligação
 				//buscas os sítios conectados a ligação
 				its = it->second.SConexao().begin();
@@ -479,47 +483,99 @@ drawByRPSL: {
 				x1 = it1->second.pontoCentral.x;
 				y1 = it1->second.pontoCentral.y;
 				z1 = it1->second.pontoCentral.z;
+				// P1 = *its;
 				++its;
 				it2 = matrizObjetos.find(*its);
 				x2 = it2->second.pontoCentral.x;
 				y2 = it2->second.pontoCentral.y;
 				z2 = it2->second.pontoCentral.z;
+				//int P2 = *its;
+
+				vx = x2 - x1;
+				vy = y2 - y1;
+				vz = z2 - z1;
 
 				//calcula a distância entre os sítios (centro de massa)
-				xx = pow((x2-x1),2);
-				yy = pow((y2-y1),2);
-				zz = pow((z2-z1),2);
-				tamLigacao = sqrt( xx + yy + zz );
+				tamLigacao = sqrt( vx*vx + vy*vy + vz*vz );
 
-//				if (z1 < z2) {
-//					z = z1;
-//					y = y1;
-//					x = x1;
-//				} else {
-//					z = z2;
-//					y = y2;
-//					x = x2;
-//				}
+				//handle the degenerate case of z1 == z2 with an approximation
+				if (vz > -0.000001 && vz < 0.000001){
+					if (vz >= 0.0){
+						vz = 0.000001;
+					}else{
+						vz = -0.000001;
+					}
+				}
+				if (vy > -0.000001 && vy < 0.000001){
+					if (vy >= 0.0){
+						vy = -0.000001;
+					}else{
+						vy = 0.000001;
+					}
+				}
+				if (vx > -0.000001 && vx < 0.000001){
+					if (vx >= 0.0){
+						vx = 0.000001;
+					}else{
+						vx = -0.000001;
+					}
+				}
 
-				//Executar operacoes.
+				ax = deg2rad*acos( vz/tamLigacao );
+
+				if( vz < 0.0 )
+					ax = -ax;
+
+				glPushMatrix();
 				glColor3f(1.0, 1.0, 0.0);
-				glTranslatef( w*(x-meionx) , w*(y-meiony) , w*(z-meionz) );
+				//angle = deg2rad*acos(vx/tamLigacao);
+				//glRotated(angle, 1.0, 0.0, 0.0);
+				//angle = deg2rad*acos(vy/tamLigacao);
+				//glRotated(angle, 0.0, 1.0, 0.0);
 
-				angle = calcAngle(y1,z1,y2,z2);
-				cerr << "y1: " << y1 << " z1: " << z1 << " y2: " << y2 << " z2: " << z2 << " angle yz: " << angle << endl;
-				//glRotatef(angle, 1.0, 0.0, 0.0);
-
-				angle = calcAngle(z1,x1,z2,x2);
-				cerr << "z1: " << z1 << " x1: " << x1 << " z2: " << z2 << " x2: " << x2 << " angle zx: " << angle << endl;
-				//glRotatef(angle, 0.0, 1.0, 0.0);
-
-				angle = calcAngle(x1,y1,x2,y2);
-				cerr << "x1: " << x1 << " y1: " << y1 << " x2: " << x2 << " y2: " << y2 << " angle xy: " << angle << endl;
-				//glRotatef(angle, 0.0, 0.0, 1.0);
-
+				//draw the cylinder body
+				//glTranslated( x1, y1, z1 );
+				glTranslatef( w*(x1-meionx) , w*(y1-meiony) , w*(z1-meionz) );
+				glRotated(ax, -vy, vx, 0.0);
+				gluQuadricOrientation(quadratic,GLU_OUTSIDE);
 				gluCylinder(quadratic, w*raio, w*raio, w*tamLigacao , 10, 10);
+
+				glPopMatrix();
+
+				/*
+				glColor3f(1.0, 1.0, 0.0);
+				glLineWidth (10);
+				glDisable(GL_LINE_SMOOTH);
+				glBegin(GL_LINES);
+				glVertex3d( w*(x1-meionx), w*(y1-meiony), w*(z1-meionz));
+				glVertex3d( w*(x2-meionx), w*(y2-meiony), w*(z2-meionz));
+				glEnd();
+*/
+				//				if (z1 < z2) {
+				//					z = z1;
+				//					y = y1;
+				//					x = x1;
+				//				} else {
+				//					z = z2;
+				//					y = y2;
+				//					x = x2;
+				//				}
+				//				//Executar operacoes.
+				//				glColor3f(1.0, 1.0, 0.0);
+				//				glTranslatef( w*(x-meionx) , w*(y-meiony) , w*(z-meionz) );
+				//				cerr << "Ponto:"<< P1 << "(" << x1 << "," << y1 << "," << z1 << ") "
+				//						 <<	"Ponto:"<< P2 << "(" << x2 << "," << y2 << "," << z2 << ")\n";
+				//				angle = deg2rad*acos((z2-z1)/tamLigacao);
+				//				cerr << " angle gama z: " << angle << endl;
+				//				glRotatef(angle, 0.0, 0.0, 1.0);
+				//				angle = deg2rad*acos((y2-y1)/tamLigacao);
+				//				cerr << " angle beta y: " << angle << endl;
+				//				glRotatef(angle, 0.0, 1.0, 0.0);
+				//				angle = deg2rad*acos((x2-x1)/tamLigacao);
+				//				cerr << " angle alfa x: " << angle << endl << endl;
+				//				glRotatef(90, 1.0, 0.0, 0.0);
+				//				gluCylinder(quadratic, w*raio, w*raio, w*tamLigacao , 10, 10);
 			}
-			glPopMatrix(); // restaura as transformações anteriores
 		}
 		glEndList();
 		return list;
@@ -660,31 +716,6 @@ drawByPm3DiGray: { //Desenhando o meio poroso em tons de cinza
 		glEndList();
 		return list;
 	}
-}
-
-// Retorna o ângulo entre dois pontos.
-float GLWidget::calcAngle(float _x1, float _y1, float _x2, float _y2){
-	float tan_deg, tan_rad, ang_rad, ang_deg;
-	const double pi = 3.141592653589793;
-	float x1 = _x1;
-	float y1 = _y1;
-	float x2 = _x2;
-	float y2 = _y2;
-
-	//Diz que o tangente do angulo é a divisão
-	tan_deg= ((x2-x1)!=0) ? (y2-y1)/(x2-x1) : 0;
-	//Converte o tangente para radianos
-	//tan_rad=degtorad(tan_deg);
-	tan_rad = tan_deg * (pi / 180);
-	//Pega o angulo em radianos a partir do tangente
-	ang_rad=atan(tan_rad);
-	//Converte em graus
-	//ang_deg=radtodeg(ang_rad);
-	ang_deg = ang_rad * (180 / pi);
-	//Retorna o valor
-	return ang_deg;
-
-	//return atan(_y1/_x1)-atan(_y2/_x2);
 }
 
 void GLWidget::normalizeAngle(int *angle) {
