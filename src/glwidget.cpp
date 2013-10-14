@@ -444,8 +444,7 @@ drawByRPSL: {
 		int numObjs;
 		int x, y, z, raio, tipo, tamLigacao;//, nVoxeis, nObjsCon;
 		int x1, y1, z1, x2, y2, z2;
-		//double angle;
-		GLdouble vx, vy, vz, ax;
+		GLdouble vx, vy, vz, angle;
 		const float deg2rad = 180/M_PI;
 		map<int,CObjetoImagem>::iterator it;
 		map<int,CObjetoImagem>::iterator it1;
@@ -479,18 +478,19 @@ drawByRPSL: {
 			} else { // Ligação
 				//buscas os sítios conectados a ligação
 				its = it->second.SConexao().begin();
+				//Primeiro sítio
 				it1 = matrizObjetos.find(*its);
 				x1 = it1->second.pontoCentral.x;
 				y1 = it1->second.pontoCentral.y;
 				z1 = it1->second.pontoCentral.z;
-				// P1 = *its;
+				//Segundo sítio
 				++its;
 				it2 = matrizObjetos.find(*its);
 				x2 = it2->second.pontoCentral.x;
 				y2 = it2->second.pontoCentral.y;
 				z2 = it2->second.pontoCentral.z;
-				//int P2 = *its;
 
+				//cálcula os vetores.
 				vx = x2 - x1;
 				vy = y2 - y1;
 				vz = z2 - z1;
@@ -521,60 +521,27 @@ drawByRPSL: {
 					}
 				}
 
-				ax = deg2rad*acos( vz/tamLigacao );
-
-				if( vz < 0.0 )
-					ax = -ax;
+				// calcula o ângulo
+				angle = deg2rad*acos( vz/tamLigacao );
+				//if( vz < 0.0 )
+				if( angle < 0.0 )
+					angle = -angle;
 
 				glPushMatrix();
+				//cor amarela.
 				glColor3f(1.0, 1.0, 0.0);
-				//angle = deg2rad*acos(vx/tamLigacao);
-				//glRotated(angle, 1.0, 0.0, 0.0);
-				//angle = deg2rad*acos(vy/tamLigacao);
-				//glRotated(angle, 0.0, 1.0, 0.0);
-
-				//draw the cylinder body
-				//glTranslated( x1, y1, z1 );
+				//gluQuadricOrientation(quadratic,GLU_OUTSIDE);
+				//posiciona no centro do primeiro sítio
 				glTranslatef( w*(x1-meionx) , w*(y1-meiony) , w*(z1-meionz) );
-				glRotated(ax, -vy, vx, 0.0);
-				gluQuadricOrientation(quadratic,GLU_OUTSIDE);
+				//rotaciona
+				glRotated(angle, -vy, vx, 0.0);
+				//cerr << "angle: " << angle << " vx: " << vx << " vy: " << vy << " vz: " << vz << endl << endl;
+				//dezenha o cilindro
 				gluCylinder(quadratic, w*raio, w*raio, w*tamLigacao , 10, 10);
-
 				glPopMatrix();
 
-				/*
-				glColor3f(1.0, 1.0, 0.0);
-				glLineWidth (10);
-				glDisable(GL_LINE_SMOOTH);
-				glBegin(GL_LINES);
-				glVertex3d( w*(x1-meionx), w*(y1-meiony), w*(z1-meionz));
-				glVertex3d( w*(x2-meionx), w*(y2-meiony), w*(z2-meionz));
-				glEnd();
-*/
-				//				if (z1 < z2) {
-				//					z = z1;
-				//					y = y1;
-				//					x = x1;
-				//				} else {
-				//					z = z2;
-				//					y = y2;
-				//					x = x2;
-				//				}
-				//				//Executar operacoes.
-				//				glColor3f(1.0, 1.0, 0.0);
-				//				glTranslatef( w*(x-meionx) , w*(y-meiony) , w*(z-meionz) );
-				//				cerr << "Ponto:"<< P1 << "(" << x1 << "," << y1 << "," << z1 << ") "
-				//						 <<	"Ponto:"<< P2 << "(" << x2 << "," << y2 << "," << z2 << ")\n";
-				//				angle = deg2rad*acos((z2-z1)/tamLigacao);
-				//				cerr << " angle gama z: " << angle << endl;
-				//				glRotatef(angle, 0.0, 0.0, 1.0);
-				//				angle = deg2rad*acos((y2-y1)/tamLigacao);
-				//				cerr << " angle beta y: " << angle << endl;
-				//				glRotatef(angle, 0.0, 1.0, 0.0);
-				//				angle = deg2rad*acos((x2-x1)/tamLigacao);
-				//				cerr << " angle alfa x: " << angle << endl << endl;
-				//				glRotatef(90, 1.0, 0.0, 0.0);
-				//				gluCylinder(quadratic, w*raio, w*raio, w*tamLigacao , 10, 10);
+				//cerr << "Ponto:"<< P1 << "(" << x1 << "," << y1 << "," << z1 << ") "
+				//	 <<	"Ponto:"<< P2 << "(" << x2 << "," << y2 << "," << z2 << ")\n";
 			}
 		}
 		glEndList();

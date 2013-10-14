@@ -55,6 +55,8 @@ Lvp::Lvp() {
 	setCentralWidget(mdiArea);
 
 	fileWatcher = new QFileSystemWatcher(this);
+	blockFileWatcherSignal = false; //modificado em save()
+	fixbugFileWatcherSignal = true; //evita executar duas vezes treatFileChanged()
 	
 	//Lista de imagens 2D
 	listWidget = new QListWidget(dockWidgetLista);
@@ -226,7 +228,7 @@ void Lvp::dropEvent(QDropEvent *event) {
 void Lvp::createActions() {
 	windowMapper = new QSignalMapper(this);
 	connect( windowMapper,									SIGNAL( mapped(QWidget *) ),										this, SLOT( setActiveSubWindow(QWidget *)) );
-	connect( fileWatcher,										SIGNAL( fileChanged(QString) ),									this, SLOT( fileChanged(QString) ) );
+	connect( fileWatcher,										SIGNAL( fileChanged(QString) ),									this, SLOT( treatFileChanged(QString) ) );
 	connect( listWidget,										SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
 	connect( listWidget3D,									SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
 	connect( listWidgetChart,								SIGNAL( itemDoubleClicked(QListWidgetItem *) ), this, SLOT( setActiveSubWindow(QListWidgetItem *)) );
@@ -340,7 +342,7 @@ void Lvp::closeActiveSubWindow() {
 	} else if (Ploter * child = qobject_cast<Ploter *>(widget)) {
 		fileWatcher->removePaths( child->pathCurves );
 	} else if (TextEditor * child = qobject_cast<TextEditor *>(widget)) {
-		if (child->getFileExt().toLower()=="txt") //só remove o path se a extensão for txt
+		if (child->getFileExt().toLower()=="txt" || child->getFileExt().toLower()=="rsl") //só remove o path se a extensão for txt ou rsl
 			fileWatcher->removePath( child->getFullFileName() );
 	}
 	mdiArea->closeActiveSubWindow();
@@ -359,57 +361,69 @@ void Lvp::closeAllSubWindows() {
 		} else if (Ploter * child = qobject_cast<Ploter *>(widget)) {
 			fileWatcher->removePaths( child->pathCurves );
 		} else if (TextEditor * child = qobject_cast<TextEditor *>(widget)) {
-			if (child->getFileExt().toLower()=="txt") //só remove o path se a extensão for txt
+			if (child->getFileExt().toLower()=="txt" || child->getFileExt().toLower()=="rsl") //só remove o path se a extensão for txt ou rsl
 				fileWatcher->removePath( child->getFullFileName() );
 		}
 	}
 	mdiArea->closeAllSubWindows();
 }
 
-void Lvp::fileChanged( QString _file ){
-	bool finded = false;
-	QWidget * widget;
-	QMdiSubWindow * subWindow;
-	QList<QMdiSubWindow *> list = mdiArea->subWindowList();
-	BaseDnmImageViewer * dnm = NULL;
-	BasePnmImageViewer * pnm = NULL;
-	Ploter * ploter = NULL;
-	TextEditor * text = NULL;
-	foreach(subWindow, list) {
-		widget = subWindow->widget();
-		if ( BaseDnmImageViewer *child = qobject_cast<BaseDnmImageViewer *>(widget) ) {
-			if ( _file == child->getFullFileName() ) {
-				dnm = child;
-				finded = true;
+void Lvp::treatFileChanged( QString _file ){
+	cerr << "treatFileChanged" << endl;
+	if (fixbugFileWatcherSignal) {
+		fixbugFileWatcherSignal = false;
+		cerr << "fixbugFileWatcherSignal = false" << endl;
+	} else {
+		if (blockFileWatcherSignal) {
+			blockFileWatcherSignal = false;
+			cerr << "blockFileWatcherSignal = false" << endl;
+		} else {
+			bool finded = false;
+			QWidget * widget;
+			QMdiSubWindow * subWindow;
+			QList<QMdiSubWindow *> list = mdiArea->subWindowList();
+			BaseDnmImageViewer * dnm = NULL;
+			BasePnmImageViewer * pnm = NULL;
+			Ploter * ploter = NULL;
+			TextEditor * text = NULL;
+			foreach(subWindow, list) {
+				widget = subWindow->widget();
+				if ( BaseDnmImageViewer *child = qobject_cast<BaseDnmImageViewer *>(widget) ) {
+					if ( _file == child->getFullFileName() ) {
+						dnm = child;
+						finded = true;
+					}
+				} else if (BasePnmImageViewer * child = qobject_cast<BasePnmImageViewer *>(widget)) {
+					if ( _file == child->getFullFileName() ) {
+						pnm = child;
+						finded = true;
+					}
+				} else if (Ploter * child = qobject_cast<Ploter *>(widget)) {
+					if ( child->pathCurves.contains(_file) ) {
+						ploter = child;
+						finded = true;
+					}
+				} else if (TextEditor * child = qobject_cast<TextEditor *>(widget)) {
+					if ( _file == child->getFullFileName() ) {
+						text = child;
+						finded = true;
+					}
+				}
 			}
-		} else if (BasePnmImageViewer * child = qobject_cast<BasePnmImageViewer *>(widget)) {
-			if ( _file == child->getFullFileName() ) {
-				pnm = child;
-				finded = true;
+			if (finded) {
+				QMessageBox::StandardButton ret = QMessageBox::question(this,tr(".:LVP - Atention!"), tr("The file %1 was modified. Do you want reload it?").arg(_file), QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
+				if (ret == QMessageBox::Ok) {
+					if (dnm)
+						dnm->reloadFile();
+					if (pnm)
+						pnm->reloadFile();
+					if (ploter)
+						ploter->reloadFile();
+					if (text)
+						text->reloadFile();
+				}
 			}
-		} else if (Ploter * child = qobject_cast<Ploter *>(widget)) {
-			if ( child->pathCurves.contains(_file) ) {
-				ploter = child;
-				finded = true;
-			}
-		} else if (TextEditor * child = qobject_cast<TextEditor *>(widget)) {
-			if ( _file == child->getFullFileName() ) {
-				text = child;
-				finded = true;
-			}
-		}
-	}
-	if (finded) {
-		QMessageBox::StandardButton ret = QMessageBox::question(this,tr(".:LVP - Atention!"), tr("The file %1 was modified. Do you want reload it?").arg(_file), QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
-		if (ret == QMessageBox::Ok) {
-			if (dnm)
-				dnm->reloadFile();
-			if (pnm)
-				pnm->reloadFile();
-			if (ploter)
-				ploter->reloadFile();
-			if (text)
-				text->reloadFile();
+			fixbugFileWatcherSignal = true;
 		}
 	}
 }
@@ -1235,6 +1249,7 @@ void Lvp::closeEvent(QCloseEvent *event) {
 }
 
 void Lvp::save() {
+	blockFileWatcherSignal = true;
 	if ( activeTextEditor() != 0 ) {
 		activeTextEditor()->save();
 	} else 	if ( activeHexEditor() != 0 ) {
