@@ -347,8 +347,6 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		//verifica se existe arquivo com o nome informado. Caso exista retorna o nome de um arquivo inexistente.
 		string validateFileName( const string _strname );
 		QString validateFileName( const QString _name);
-		bool blockFileWatcherSignal;
-		bool fixbugFileWatcherSignal;
 
 		//From HexEditor
 //		QLabel *lbAddress, *lbAddressName;
