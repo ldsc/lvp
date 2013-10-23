@@ -14,6 +14,7 @@ class QListWidgetItem;
 class QImage;
 class QSignalMapper;
 class QMainWindow;
+class QWhellEvent;
 
 /*! BaseImageViewer é a classe base para representar imagens.*/
 class BaseImageViewer : public QScrollArea
@@ -94,6 +95,7 @@ class BaseImageViewer : public QScrollArea
 		void adjustScrollBar(QScrollBar *scrollBar, double factor);
 		void mouseMoveEvent(QMouseEvent *event);
 		void mousePressEvent(QMouseEvent *event);
+		void wheelEvent(QWheelEvent *event);
 		void getFileNames(const QString & _fileName);
 		void scaleImage(double factor);
 		bool maybeSave();

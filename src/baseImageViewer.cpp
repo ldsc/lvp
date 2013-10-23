@@ -178,6 +178,15 @@ void BaseImageViewer::normalSize()
 	scaleFactor = 1.0;
 }
 
+void BaseImageViewer::wheelEvent(QWheelEvent *event) {
+	if (event->delta() > 0) {
+		if (scaleFactor < 9.0)
+			zoomIn();
+	} else if (scaleFactor > 0.1) {
+		zoomOut();
+	}
+}
+
 void BaseImageViewer::scaleImage(double factor)
 {
 	Q_ASSERT(imageLabel->pixmap());

@@ -274,9 +274,71 @@ void GLWidget::wheelEvent(QWheelEvent *event) {
 	QGLWidget::update();
 }
 
+
+//void GLWidget::paintGL() {
+//	makeCurrent(); // Faz este widget ser o atual contexto de composição OpenGL.
+//	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//	qglClearColor(trolltechPurple.dark()); // Especifica que a cor de fundo da janela.
+
+//	glEnable(GL_POINT_SMOOTH);
+//	glHint (GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
+//	glEnable(GL_NORMALIZE);
+
+//	GLfloat luzAmbiente[4]={0.2,0.2,0.2,1.0};
+//	GLfloat luzDifusa[4]={0.7,0.7,0.7,1.0};	   // "cor"
+//	GLfloat luzEspecular[4]={1.0, 1.0, 1.0, 1.0};// "brilho"
+//	GLfloat posicaoLuz[4]={0.0, 50.0, 50.0, 1.0};
+
+//	// Capacidade de brilho do material
+//	GLfloat especularidade[4]={1.0,1.0,1.0,1.0};
+//	GLint especMaterial = 60;
+
+//	// Habilita o modelo de colorização de Gouraud
+//	glShadeModel(GL_SMOOTH);
+
+//	// Define a refletância do material
+//	glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR, especularidade);
+//	// Define a concentração do brilho
+//	glMateriali(GL_FRONT_AND_BACK,GL_SHININESS,especMaterial);
+//	// Ativa o uso da luz ambiente
+//	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbiente);
+
+//	// Define os parâmetros da luz de número 0
+//	glLightfv(GL_LIGHT0, GL_AMBIENT, luzAmbiente);
+//	glLightfv(GL_LIGHT0, GL_DIFFUSE, luzDifusa );
+//	glLightfv(GL_LIGHT0, GL_SPECULAR, luzEspecular );
+//	glLightfv(GL_LIGHT0, GL_POSITION, posicaoLuz );
+
+//	// Habilita a definição da cor do material a partir da cor corrente
+//	glEnable(GL_COLOR_MATERIAL);
+//	//Habilita o uso de iluminação
+//	glEnable(GL_LIGHTING);
+//	// Habilita a luz de número 0
+//	glEnable(GL_LIGHT0);
+//	// Habilita o depth-buffering
+//	glEnable(GL_DEPTH_TEST);
+
+//	//glEnable(GL_POINT_SPRITE); //Calcular as coordenadas da textura de pontos com base na textura ambiente e definições de parâmetros ponto.
+
+//	//reshape
+//	setupViewport(width(), height());
+
+//	glLoadIdentity();
+//	glTranslated(0.0, 0.0, -10.0);
+//	glRotated(xRot / 16.0, 1.0, 0.0, 0.0);
+//	glRotated(yRot / 16.0, 0.0, 1.0, 0.0);
+//	glRotated(zRot / 16.0, 0.0, 0.0, 1.0);
+//	glCallList(object);
+
+//	//exibe instruções
+//	QPainter painter(this);
+//	painter.setRenderHint(QPainter::Antialiasing);
+//	drawInstructions(&painter);
+//	painter.end();
+//}
+
 //void GLWidget::paintEvent(QPaintEvent *event) {
 void GLWidget::paintGL() {
-	//event = event; // evitar warning
 	makeCurrent(); // Faz este widget ser o atual contexto de composição OpenGL.
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	qglClearColor(trolltechPurple.dark());
@@ -296,7 +358,6 @@ void GLWidget::paintGL() {
 	GLfloat luzAmbiente[4]    = { 1.0, 1.0, 1.0, 1.0}; // r, g, b, a
 	//GLfloat luzDifusa[4]	 = {1.0, 1.0, 1.0, 1.0}; // "cor"
 	//GLfloat luzEspecular[4]  = {1.0, 1.0, 1.0, 1.0}; // "brilho"
-	//GLfloat especularidade[4]= {1.0, 1.0, 1.0, 1.0};
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, luzAmbiente);
 	//glLightfv(GL_LIGHT0, GL_DIFFUSE, luzDifusa);
@@ -310,13 +371,13 @@ void GLWidget::paintGL() {
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especularidade);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbiente);	// Ativa o uso da luz ambiente
-	/*
-		glPushMatrix();
-		glEnable(GL_CULL_FACE);
-		glLightModeli(GL_AMBIENT_AND_DIFFUSE, GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB); // GL_AMBIENT
-		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-		glEnable(GL_MULTISAMPLE);
-		*/
+
+	//	glPushMatrix();
+	//	glEnable(GL_CULL_FACE);
+	//	glLightModeli(GL_AMBIENT_AND_DIFFUSE, GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB); // GL_AMBIENT
+	//	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	//	glEnable(GL_MULTISAMPLE);
+
 	//glEnable(GL_POINT_SPRITE); //Calcular as coordenadas da textura de pontos com base na textura ambiente e definições de parâmetros ponto.
 	//Caso contrário, coordenadas de textura são constantes entre pontos.
 	//
