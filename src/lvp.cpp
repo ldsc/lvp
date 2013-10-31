@@ -211,11 +211,9 @@ void Lvp::dropEvent(QDropEvent *event) {
 	const QMimeData *mimeData = event->mimeData();
 	if (mimeData->hasUrls()) {
 		QList<QUrl> urlList = mimeData->urls();
-		QString text;
-		//for (int i = 0; i < urlList.size() && i < 10; ++i) {
-		text = urlList.at(0).path();
-		open(text.toStdString(), false);
-		//}
+		for (int i = 0; i < urlList.size(); ++i) {
+			open(urlList.at(i).path().toStdString(), false);
+		}
 	} else {
 		QMessageBox::information(this, tr("LVP"), tr("Invalid file type!"));
 	}
@@ -332,8 +330,14 @@ void Lvp::createActions() {
 }
 
 void Lvp::closeActiveSubWindow() {
-	QWidget * widget = mdiArea->activeSubWindow()->widget();
+	QMdiSubWindow * subwindow = mdiArea->activeSubWindow();
+	QWidget * widget = subwindow->widget();
 	if ( BaseDnmImageViewer *child = qobject_cast<BaseDnmImageViewer *>(widget) ) {
+		if (QMdiSubWindow * subwindowtemp = findGLWidget(child->getFullFileName())) {
+			mdiArea->setActiveSubWindow(subwindowtemp);
+			mdiArea->closeActiveSubWindow();
+			mdiArea->setActiveSubWindow(subwindow);
+		}
 		fileWatcher->removePath( child->getFullFileName() );
 	} else if (BasePnmImageViewer * child = qobject_cast<BasePnmImageViewer *>(widget)) {
 		fileWatcher->removePath( child->getFullFileName() );
