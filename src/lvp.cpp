@@ -346,6 +346,11 @@ void Lvp::closeActiveSubWindow() {
 	} else if (TextEditor * child = qobject_cast<TextEditor *>(widget)) {
 		if (child->getFileExt().toLower()=="txt" || child->getFileExt().toLower()=="rsl") //só remove o path se a extensão for txt ou rsl
 			fileWatcher->removePath( child->getFullFileName() );
+		if (QMdiSubWindow * subwindowtemp = findGLWidget(child->getFullFileName())) {
+			mdiArea->setActiveSubWindow(subwindowtemp);
+			mdiArea->closeActiveSubWindow();
+			mdiArea->setActiveSubWindow(subwindow);
+		}
 	}
 	mdiArea->closeActiveSubWindow();
 }
@@ -2478,7 +2483,9 @@ void Lvp::exSegmentationPoresThroats(){
 		}
 	} else {
 		EModelo model;
-		if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 10" ) {
+		if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 11" ) {
+			model = ONZE;
+		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 10" ) {
 			model = DEZ;
 		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 9" ) {
 			model = NOVE;

@@ -274,6 +274,11 @@
      <widget class="QComboBox" name="comboBoxModel">
       <item>
        <property name="text">
+        <string>Openning Dilatation Model 11</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>Openning Dilatation Model 10</string>
        </property>
       </item>
