@@ -92,9 +92,13 @@ LIBS +=  -L../../qwt/lib \
          -L../../libldsc/src \
          -lqwt \
          -lldsc \
-         -lgomp \
-         -lGLU
-
+         -lgomp
+unix {
+    LIBS +=  -lglu
+}
+win32 {
+    LIBS +=  -lglu32
+}
 TARGET = lvp
 
 OTHER_FILES += \

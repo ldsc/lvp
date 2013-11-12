@@ -2482,7 +2482,7 @@ void Lvp::exSegmentationPoresThroats(){
 			open( filepath.toStdString() );
 		}
 	} else {
-		EModelo model;
+		EModelo model = ONZE;;
 		if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 11" ) {
 			model = ONZE;
 		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 10" ) {
@@ -3406,7 +3406,8 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 }
 
 void Lvp::dtpgD345_3D(){
-	int indice, fundo;
+	int indice=1;
+	int fundo=0;
 	bool ok1, ok2, ok3, ok4;
 	CAberturaDilatacao3D *filtro = NULL;
 	CDistribuicao3D *distP = NULL;
