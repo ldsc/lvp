@@ -3438,7 +3438,7 @@ void Lvp::dtpgD345_3D(){
 			int raioMaximo = QInputDialog::getInt(this, tr(":. Segmentation"), tr("Enter the maximum radius of the structuring element:"), 50, 1, 99, 1, &ok1);
 			int fatorReducao = QInputDialog::getInt(this, tr(":. Segmentation"), tr("Enter the reduction factor of the structuring element radius:"), 1, 1, raioMaximo, 1, &ok2);
 			int incrementoRaio = QInputDialog::getInt(this, tr(":. Segmentation"), tr("Enter the increment value for the structuring element radius:"), 1, 1, raioMaximo, 1, &ok3);
-			int raioDilatacao = QInputDialog::getInteger(this, tr(":. Segmentation"), tr("Enter the radius for the dilatation:"), 1, 1, 10, 1, &ok4);
+			int raioDilatacao = QInputDialog::getInt(this, tr(":. Segmentation"), tr("Enter the radius for the dilatation:"), 1, 1, 10, 1, &ok4);
 			if (ok1 and ok2 and ok3 and ok4) {
 				QApplication::setOverrideCursor(Qt::WaitCursor);
 

@@ -51,4 +51,7 @@ ui_*.h
 qrc_*.cpp
 tmp/
 *.pro.user.*
+*.Debug
+*.Release
+*.dll
 
