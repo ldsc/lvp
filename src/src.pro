@@ -94,11 +94,12 @@ LIBS +=  -L../../qwt/lib \
          -lldsc \
          -lgomp
 unix {
-    LIBS +=  -lglu
+    LIBS +=  -lGLU
 }
 win32 {
     LIBS +=  -lglu32
 }
+
 TARGET = lvp
 
 OTHER_FILES += \
