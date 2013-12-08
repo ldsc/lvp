@@ -78,6 +78,8 @@ DESTDIR =   ../bin
 
 RESOURCES = application.qrc
 
+RC_FILE = dialogo.rc
+
 MOC_DIR =   ./tmp
 
 OBJECTS_DIR =  ./tmp
