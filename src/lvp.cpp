@@ -212,7 +212,8 @@ void Lvp::dropEvent(QDropEvent *event) {
 	if (mimeData->hasUrls()) {
 		QList<QUrl> urlList = mimeData->urls();
 		for (int i = 0; i < urlList.size(); ++i) {
-			open(urlList.at(i).path().toStdString(), false);
+			//open(urlList.at(i).path().toStdString(), false);
+			open(urlList.at(i).toLocalFile().toStdString(), false);
 		}
 	} else {
 		QMessageBox::information(this, tr("LVP"), tr("Invalid file type!"));
