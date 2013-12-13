@@ -41,6 +41,7 @@ GLWidget::GLWidget(TCMatriz3D<bool> * _pm3D, QString _fileName, int _viewtype, Q
 	setWindowTitle(tr("3D Visualization [%1]").arg( QFileInfo(fullFileName).fileName() ) );
 
 	quadratic = gluNewQuadric(); //utilizado para desenhar esferas pela glu
+	createDialog(parent);
 }
 
 GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QWidget *parent)
@@ -68,16 +69,16 @@ GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QW
 	planZ = nz/2;
 	grayTon = ( pm3Di->NumCores() !=0 ) ? ((float)1.0 / pm3Di->NumCores()) : 1.0; //divisor da escala de tons de cinza (1/numCores)
 	tonsList << 0; //força pra que a lista tenha o valor de fundo;
-	qstrTonsList << "0";
 	for (int k = 0; k < nz; k++)
 		for (int j = 0; j < ny; j++)
 			for (int i = 0; i < nx; i++)
 				if ( ! tonsList.contains( pm3Di->data3D[i][j][k] ) ) {
 					tonsList << pm3Di->data3D[i][j][k];
-					QVariant var(pm3Di->data3D[i][j][k]);
-					qstrTonsList << var.toString();
 				}
 	qSort(tonsList.begin(), tonsList.end()); // Ordena a lista
+	foreach (QVariant var, tonsList) {
+		qstrTonsList << var.toString();
+	}
 	pore = 0; //qualquer valor != 0 representa poro.
 	trolltechPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0); //cor do fundo
 	setAutoFillBackground(false);
@@ -85,6 +86,8 @@ GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QW
 	setWindowTitle(tr("3D Visualization [%1]").arg( QFileInfo(fullFileName).fileName() ) );
 
 	quadratic = gluNewQuadric(); //utilizado para desenhar esferas pela glu
+
+	createDialog(parent);
 }
 
 GLWidget::GLWidget(QString _fileName, int _viewtype, QWidget *parent)
@@ -104,7 +107,6 @@ GLWidget::GLWidget(QString _fileName, int _viewtype, QWidget *parent)
 	data.open(QFile::ReadOnly | QFile::Text);
 	QTextStream text(data.readAll());
 	data.close();
-
 
 	char c;
 	QString s;
@@ -145,6 +147,7 @@ GLWidget::GLWidget(QString _fileName, int _viewtype, QWidget *parent)
 	setWindowTitle(tr("Pore Network Visualization [%1]").arg( QFileInfo(fullFileName).fileName() ) );
 
 	quadratic = gluNewQuadric(); //utilizado para desenhar esferas pela glu
+	createDialog(parent);
 }
 
 GLWidget::~GLWidget() {
@@ -152,7 +155,33 @@ GLWidget::~GLWidget() {
 	makeCurrent();
 	glDeleteLists(object, 1);
 	gluDeleteQuadric(quadratic);
+	if (dialog)
+		delete dialog;
 }
+
+void GLWidget::createDialog(QWidget *parent){
+	dialog = new DialogGrayTons(qstrTonsList, parent);
+	connect(dialog->listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateGrayTons()));
+	connect(dialog->checkBox, SIGNAL(clicked()), this, SLOT(updateGrayTons()));
+	connect(dialog->pushButton, SIGNAL(clicked()), this, SLOT(updateGrayTons()));
+}
+
+void GLWidget::updateGrayTons() {
+	for (int r=0; r<dialog->listWidget->count(); ++r) {
+		QListWidgetItem *item = dialog->listWidget->item(r);
+		if ( (item->checkState()==Qt::Checked) and (!tonsList.contains(item->text().toInt())) ) {
+			tonsList.append(item->text().toInt());
+			cerr << "append" << endl;
+		} else if ( (item->checkState()==Qt::Unchecked) and (tonsList.contains(item->text().toInt())) ) {
+			tonsList.removeOne(item->text().toInt());
+			cerr << "removeOne" << endl;
+		}
+	}
+	cerr << "aqui" << endl;
+	object = makeObject();
+	QGLWidget::update();
+}
+
 
 void GLWidget::setXRotation(int angle) {
 	normalizeAngle(&angle);
@@ -174,7 +203,7 @@ void GLWidget::setZRotation(int angle) {
 
 void GLWidget::invertPore( ) {
 	if (tonsList.size() == 2) {
-		pore == tonsList[0] ? pore = tonsList[1] : pore = tonsList[0];
+		pore = (pore == tonsList[0]) ? tonsList[1] : tonsList[0];
 		object = makeObject();
 		QGLWidget::update();
 	}
@@ -488,10 +517,10 @@ GLuint GLWidget::makeObject() {
 	glVertex3d( 0.0, 0.0, meionzw);
 	glEnd();
 
-	if(pm3D != NULL) {//matriz bool
+	if (pm3D != NULL) {//matriz bool
 		goto drawByPm3D; // Desenha meio poroso binário (poro preto e fundo transparente)
 	} else if(pm3Di != NULL) { //matriz int
-		if( tonsList.size() == 3 && tonsList.contains(0) ) { // existem 3 tons na imagem e um deles é 0 (fundo).
+		if( tonsList.size() == 3 && tonsList.contains(0) && tonsList.contains(1) && tonsList.contains(2) ) { // existem 3 tons na imagem e um deles é 0 (fundo).
 			goto drawByPm3Di; //Desenha sítios e ligações (sítio preto, ligação amarela e fundo transparente)
 		} else {
 			goto drawByPm3DiGray; //Desenha meio poroso em tons de cinza.
@@ -527,8 +556,6 @@ drawByRPSL: {
 			x = it->second.pontoCentral.x;
 			y = it->second.pontoCentral.y;
 			z = it->second.pontoCentral.z;
-
-
 			if (tipo == 2) { // Sítio
 				glPushMatrix(); // salva as transformações atuais na pilha
 				//desenha o sítio
@@ -714,7 +741,7 @@ drawByPm3DiGray: { //Desenhando o meio poroso em tons de cinza
 			for (int k = 0; k < nz; ++k){
 				for (int j = 0; j < ny; ++j){
 					for (int i = 0; i < nx; ++i){
-						if( pm3Di->data3D[i][j][k] != 0 ){ // neste caso pore representa o fundo (0) o qual ficará transparente.
+						if( pm3Di->data3D[i][j][k] != 0 and tonsList.contains(pm3Di->data3D[i][j][k]) ){ // neste caso pore representa o fundo (0) o qual ficará transparente.
 							ton = 1.0 - (grayTon * pm3Di->data3D[i][j][k]);
 							glColor3f(ton, ton, ton);
 							glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(k-meionz) );
@@ -726,17 +753,23 @@ drawByPm3DiGray: { //Desenhando o meio poroso em tons de cinza
 			for (int j = 0; j < ny; ++j){
 				for (int i = 0; i < nx; ++i){
 					// Eixo x
-					ton = 1.0 - (grayTon * pm3Di->data3D[planX][i][j]);
-					glColor3f(ton, ton, ton);
-					glVertex3d( w*(planX-meionx) , w*(i-meiony) , w*(j-meionz) );
+					if( tonsList.contains(pm3Di->data3D[planX][i][j]) ){
+						ton = 1.0 - (grayTon * pm3Di->data3D[planX][i][j]);
+						glColor3f(ton, ton, ton);
+						glVertex3d( w*(planX-meionx) , w*(i-meiony) , w*(j-meionz) );
+					}
 					// Eixo y
-					ton = 1.0 - (grayTon * pm3Di->data3D[i][planY][j]);
-					glColor3f(ton, ton, ton);
-					glVertex3d( w*(i-meionx) , w*(planY-meiony) , w*(j-meionz) );
+					if( tonsList.contains(pm3Di->data3D[i][planY][j]) ){
+						ton = 1.0 - (grayTon * pm3Di->data3D[i][planY][j]);
+						glColor3f(ton, ton, ton);
+						glVertex3d( w*(i-meionx) , w*(planY-meiony) , w*(j-meionz) );
+					}
 					// Eixo z
-					ton = 1.0 - (grayTon * pm3Di->data3D[i][j][planZ]);
-					glColor3f(ton, ton, ton);
-					glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(planZ-meionz) );
+					if( tonsList.contains(pm3Di->data3D[i][j][planZ]) ){
+						ton = 1.0 - (grayTon * pm3Di->data3D[i][j][planZ]);
+						glColor3f(ton, ton, ton);
+						glVertex3d( w*(i-meionx) , w*(j-meiony) , w*(planZ-meionz) );
+					}
 				}
 			}
 		}

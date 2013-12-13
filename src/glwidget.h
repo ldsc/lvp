@@ -14,6 +14,8 @@
 #include "GL/glu.h"
 #include "math.h"
 
+#include "dialogGrayTons.h"
+
 QT_BEGIN_NAMESPACE
 class QPaintEvent;
 class QWidget;
@@ -47,6 +49,7 @@ class GLWidget : public QGLWidget
 		QString getFullFileName() const { return fullFileName; }
 		QList<int> tonsList;
 		QStringList qstrTonsList;
+		DialogGrayTons * dialog;
 
 	public slots:
 		void setXRotation(int angle);
@@ -58,6 +61,7 @@ class GLWidget : public QGLWidget
 		void setPore(int _pore);
 		void setViewType(int _viewtype);
 		void invertPore( );
+		void updateGrayTons();
 		int getPlanX( );
 		int getPlanY( );
 		int getPlanZ( );
@@ -81,6 +85,7 @@ class GLWidget : public QGLWidget
 
 		void normalizeAngle(int *angle);
 		void setupViewport(int width, int height);
+		void createDialog(QWidget *parent=0);
 
 		GLuint object;
 		int xRot;

@@ -26,7 +26,8 @@ SOURCES +=  lvp.cpp \
             qHexEdit/xbytearray.cpp \
             qHexEdit/commands.cpp \
             crop3D.cpp \
-            poresThroats.cpp
+            poresThroats.cpp \
+            dialogGrayTons.cpp
 
 HEADERS +=  lvp.h \
             confEq.h \
@@ -53,7 +54,8 @@ HEADERS +=  lvp.h \
             qHexEdit/commands.h \
             crop3D.h \
             qdebugstream.h \
-            poresThroats.h
+            poresThroats.h \
+            dialogGrayTons.h
 
 
 FORMS +=    lvpinterface.ui \
@@ -63,7 +65,8 @@ FORMS +=    lvpinterface.ui \
             dialogReconstructionES.ui \
             optionsdialog.ui \
             dialogCrop3D.ui \
-            dialogPoresThroats.ui
+            dialogPoresThroats.ui \
+            dialogGrayTons.ui
             #searchdialog.ui
 
 TEMPLATE =  app

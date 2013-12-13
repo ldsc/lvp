@@ -482,7 +482,7 @@ void Lvp::updateMenus() {
 	actionIRA3D->setEnabled(hasDbmImageViewer);
 	actionInversion->setEnabled(hasPbmImageViewer);
 	actionInversion3D->setEnabled(hasDbmImageViewer);
-	actionInverter->setEnabled(hasGLWidget && activeGLWidget()->getPM3D()!=NULL);
+	actionInverter->setEnabled(hasGLWidget && (activeGLWidget()->getPM3D()!=NULL or activeGLWidget()->getPM3Di()!=NULL) );
 	actionLowPass->setEnabled(hasImageViewer);
 	actionMPV->setEnabled( hasImageViewer3D );
 	actionPNV->setEnabled( hasTextEditor && activeTextEditor()->getFileExt().toLower()=="rsl" );
@@ -2166,14 +2166,18 @@ void Lvp::invertPoro() {
 	GLWidget * glwidget = NULL;
 	glwidget = activeGLWidget();
 	if ( glwidget ) {
-		if ( glwidget->tonsList.size() == 2 ) {
+		if ( glwidget->getPM3D()!=NULL ) {
 			glwidget->invertPore();
-		} else {
+		} else if ( glwidget->getPM3Di()!=NULL ) {
+			//glwidget->dialog
+			glwidget->dialog->show();
+			/*
 			bool ok;
 			int current = glwidget->tonsList.indexOf( glwidget->getPore() );
 			QString poreValue = QInputDialog::getItem(this, tr(":. 3D Visualization"), tr("Select a value:"), glwidget->qstrTonsList, current, false, &ok);
 			if ( ok && ! poreValue.isEmpty() )
 				glwidget->setPore( poreValue.toInt() );
+			*/
 		}
 	}
 }
