@@ -52,6 +52,7 @@ Lvp::Lvp() {
 	mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	mdiArea->setViewMode( QMdiArea::TabbedView );
+	mdiArea->setTabsClosable(true);
 	setCentralWidget(mdiArea);
 
 	fileWatcher = new QFileSystemWatcher(this);
