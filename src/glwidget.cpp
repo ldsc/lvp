@@ -292,7 +292,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void GLWidget::wheelEvent(QWheelEvent *event) {
-	if (event->delta() > 0 && nx*pointsize*2 < 1400) {
+	if (event->delta() > 0 && nx*pointsize*2 < 3000) {
 		pointsize  *= 1.2f;
 		distpoints *= 1.2f;
 	} else if ( nx*pointsize > 50) {
