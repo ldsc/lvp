@@ -483,7 +483,7 @@ void Lvp::updateMenus() {
 	actionIRA3D->setEnabled(hasDbmImageViewer);
 	actionInversion->setEnabled(hasPbmImageViewer);
 	actionInversion3D->setEnabled(hasDbmImageViewer);
-	actionInverter->setEnabled(hasGLWidget && (activeGLWidget()->getPM3D()!=NULL or activeGLWidget()->getPM3Di()!=NULL) );
+	actionInverter->setEnabled(hasGLWidget && ( (activeGLWidget()->getPM3D() != NULL) || (activeGLWidget()->getPM3Di() != NULL)) );
 	actionLowPass->setEnabled(hasImageViewer);
 	actionMPV->setEnabled( hasImageViewer3D );
 	actionPNV->setEnabled( hasTextEditor && activeTextEditor()->getFileExt().toLower()=="rsl" );
@@ -509,7 +509,7 @@ void Lvp::updateMenus() {
 	menuDTP->setEnabled(hasImageViewer || hasImageViewer3D);
 	menuDTS->setEnabled(hasImageViewer || hasImageViewer3D);
 	menuMorphology->setEnabled(hasPbmImageViewer || hasDbmImageViewer);
-	menuMulti_Plan_View->setEnabled(hasGLWidget);
+	menuMulti_Plan_View->setEnabled(hasGLWidget && activeGLWidget()->Viewtype()==GLWidget::MPV);
 	menuSpatial->setEnabled(hasImageViewer);
 	menuSkeleton->setEnabled(hasImageViewer);
 	menu3DFilters->setEnabled(hasDbmImageViewer);
@@ -528,8 +528,8 @@ void Lvp::updateMenus() {
 	actionCrop3D->setEnabled(hasImageViewer3D);
 	if ( hasGLWidget ) {
 		GLWidget * childImage = activeGLWidget();
-		if (childImage->tonsList.size()==3)
-			actionInverter->setEnabled(false);
+		//if (childImage->tonsList.size()==3)
+			//actionInverter->setEnabled(false);
 		if(childImage->getViewType()==GLWidget::MPV){ //se o tipo de visualização for multiplanar
 			spinBox_x->setEnabled(true);
 			spinBox_y->setEnabled(true);

@@ -171,13 +171,10 @@ void GLWidget::updateGrayTons() {
 		QListWidgetItem *item = dialog->listWidget->item(r);
 		if ( (item->checkState()==Qt::Checked) and (!tonsList.contains(item->text().toInt())) ) {
 			tonsList.append(item->text().toInt());
-			cerr << "append" << endl;
 		} else if ( (item->checkState()==Qt::Unchecked) and (tonsList.contains(item->text().toInt())) ) {
 			tonsList.removeOne(item->text().toInt());
-			cerr << "removeOne" << endl;
 		}
 	}
-	cerr << "aqui" << endl;
 	object = makeObject();
 	QGLWidget::update();
 }

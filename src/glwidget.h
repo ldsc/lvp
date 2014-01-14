@@ -43,9 +43,10 @@ class GLWidget : public QGLWidget
 		~GLWidget();
 
 		QSize sizeHint() const;
-		int xRotation() const { return xRot; }
-		int yRotation() const { return yRot; }
-		int zRotation() const { return zRot; }
+		inline int xRotation() const { return xRot; }
+		inline int yRotation() const { return yRot; }
+		inline int zRotation() const { return zRot; }
+		inline int Viewtype() const { return viewtype; }
 		QString getFullFileName() const { return fullFileName; }
 		QList<int> tonsList;
 		QStringList qstrTonsList;
