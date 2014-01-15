@@ -517,11 +517,11 @@ GLuint GLWidget::makeObject() {
 	if (pm3D != NULL) {//matriz bool
 		goto drawByPm3D; // Desenha meio poroso binário (poro preto e fundo transparente)
 	} else if(pm3Di != NULL) { //matriz int
-		if( tonsList.size() == 3 && tonsList.contains(0) && tonsList.contains(1) && tonsList.contains(2) ) { // existem 3 tons na imagem e um deles é 0 (fundo).
-			goto drawByPm3Di; //Desenha sítios e ligações (sítio preto, ligação amarela e fundo transparente)
-		} else {
+		//if( tonsList.size() == 3 && tonsList.contains(0) && tonsList.contains(1) && tonsList.contains(2) ) { // existem 3 tons na imagem e um deles é 0 (fundo).
+		//	goto drawByPm3Di; //Desenha sítios e ligações (sítio preto, ligação amarela e fundo transparente)
+		//} else {
 			goto drawByPm3DiGray; //Desenha meio poroso em tons de cinza.
-		}
+		//}
 	} else {
 		viewtype = RPSL; //forçando
 		goto drawByRPSL;
