@@ -676,7 +676,7 @@ drawByPm3D: { //Desenhando meio poroso binário (preto e transparente)
 		glEndList();
 		return list;
 	}
-
+/*
 drawByPm3Di: { //Desenhando o meio poroso (solido tranparente + poro preto + garganta amarela)
 		pore = 1;
 		int throat = 2;
@@ -729,7 +729,7 @@ drawByPm3Di: { //Desenhando o meio poroso (solido tranparente + poro preto + gar
 		glEndList();
 		return list;
 	}
-
+*/
 drawByPm3DiGray: { //Desenhando o meio poroso em tons de cinza
 		float ton;
 		glBegin(GL_POINTS); //GL_POINTS

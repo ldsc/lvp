@@ -6,7 +6,9 @@ TextEditor::TextEditor( QMainWindow * _parent ) : QTextEdit(_parent) {
 	parent = _parent;
 	setAttribute(Qt::WA_DeleteOnClose);
 	setBackgroundRole(QPalette::Base);
-	setFontFamily("Monospace");
+	//setFontFamily("Monospace");
+	//setFontFamily("Source Code Pro");
+	setFontFamily("Courier");
 	setFontPointSize(12);
 	item = NULL;
 	isNew = false;
