@@ -31,8 +31,8 @@
 #include "optionsdialog.h"
 #include "poresThroats.h"
 #include "qdebugstream.h"
-#include <Correlacao/CCorrelacao3D.h>
-#include <Distribuicao/CBaseDistribuicao.h>
+#include <Caracterizacao/Correlacao/CCorrelacao3D.h>
+#include <Caracterizacao/Distribuicao/CBaseDistribuicao.h>
 
 QT_BEGIN_NAMESPACE
 class QMdiSubWindow;
@@ -217,7 +217,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void dtpD5711_3D();
 		void dtpEuclidian();
 		void dtpEuclidian3D();
-		void dtpgD345_3D();
+		void dtpgD345_3D(); ///<Calcula a distribuição de tamanho de poros e gargantas de imagens 3D, utilizando métrica D345.
 		void updateActionSave();
 		void erosion();
 		void erosion3D();

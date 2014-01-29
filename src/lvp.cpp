@@ -6,10 +6,10 @@
 //Bibliotecas LIB_LDSC
 #include <ConEqu/CConfiguracoesEquilibrio2D.h>
 #include <ConEqu/CConfiguracoesEquilibrio3D.h>
-#include <Correlacao/CCorrelacaoFFT.h>
-#include <Correlacao/CCorrelacaoEspacial.h>
-#include <Distribuicao/CDistribuicao.h>
-#include <Distribuicao/CDistribuicao3D.h>
+#include <Caracterizacao/Correlacao/CCorrelacaoFFT.h>
+#include <Caracterizacao/Correlacao/CCorrelacaoEspacial.h>
+#include <Caracterizacao/Distribuicao/CDistribuicao.h>
+#include <Caracterizacao/Distribuicao/CDistribuicao3D.h>
 #include <Filtro/FEspacial/TCFEPassaAlta.h>
 #include <Filtro/FEspacial/TCFEPassaBaixa.h>
 #include <Filtro/FEspacial/FEMorfologiaMatematica/TCFEMorfologiaMatematica.h>
@@ -3453,7 +3453,7 @@ void Lvp::dtpgD345_3D(){
 				filtro->IncrementoRaioElementoEstruturante(incrementoRaio);
 				filtro->RaioEEDilatacao(raioDilatacao);
 
-				filtro->Go(NOVE);
+				filtro->Go(ONZE);
 				cerr << "Finalizou segmentação..." << endl;
 				distP = new CDistribuicao3D ( filtro->GetMatrizSitios() );
 				distG = new CDistribuicao3D ( filtro->GetMatrizLigacoes() );
