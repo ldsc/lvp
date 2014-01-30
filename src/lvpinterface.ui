@@ -201,7 +201,7 @@
       <bool>true</bool>
      </property>
      <property name="title">
-      <string>Solid Size Distribution</string>
+      <string>Distribution of Solids Size</string>
      </property>
      <addaction name="actionDTSd34"/>
      <addaction name="actionDTSd34_3D"/>
@@ -215,7 +215,7 @@
     </widget>
     <widget class="QMenu" name="menuDTP">
      <property name="title">
-      <string>Pores Size Distribution</string>
+      <string>Distribution of Pores Size </string>
      </property>
      <addaction name="actionDTPd34"/>
      <addaction name="actionDTPd34_3D"/>
@@ -227,14 +227,20 @@
      <addaction name="actionDTPspatial"/>
      <addaction name="actionDTPspatial3D"/>
     </widget>
-    <addaction name="actionConfEq"/>
-    <addaction name="actionPorosity"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
     <addaction name="menuCorrelation"/>
+    <addaction name="separator"/>
     <addaction name="menuDTS"/>
     <addaction name="menuDTP"/>
     <addaction name="actionDTPGd345_3D"/>
+    <addaction name="separator"/>
+    <addaction name="actionConfEq"/>
+    <addaction name="separator"/>
     <addaction name="actionIntrinsicPermeability"/>
     <addaction name="actionRelativePermeability"/>
+    <addaction name="separator"/>
+    <addaction name="actionPorosity"/>
    </widget>
    <widget class="QMenu" name="menuLanguage">
     <property name="title">
@@ -1096,7 +1102,7 @@ p, li { white-space: pre-wrap; }
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Equilibrium Configuration</string>
+    <string>Equilibrium Configurations</string>
    </property>
   </action>
   <action name="actionPorosity">
@@ -1578,7 +1584,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionDTPGd345_3D">
    <property name="text">
-    <string>Pores/Throats Size Distribution</string>
+    <string>Distribution of Pores/Throats Size</string>
    </property>
   </action>
   <action name="actionIRA">
