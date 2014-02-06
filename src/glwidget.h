@@ -10,7 +10,7 @@
 #include <QStringList>
 #include <QVariant>
 #include <Matriz/TCMatriz3D.h>
-#include <Segmentacao/CObjetoImagem.h>
+#include <Representacao/CObjetoImagem.h>
 #include "GL/glu.h"
 #include "math.h"
 
