@@ -31,8 +31,8 @@
 #include "optionsdialog.h"
 #include "poresThroats.h"
 #include "qdebugstream.h"
-#include <Caracterizacao/Correlacao/CCorrelacao3D.h>
-#include <Caracterizacao/Distribuicao/CBaseDistribuicao.h>
+#include <AnaliseImagem/Caracterizacao/Correlacao/CCorrelacao3D.h>
+#include <AnaliseImagem/Caracterizacao/Distribuicao/CBaseDistribuicao.h>
 
 QT_BEGIN_NAMESPACE
 class QMdiSubWindow;

@@ -14,8 +14,8 @@
 #include <QStatusBar>
 #include <QFileDialog>
 #include <QPushButton>
-#include <Matriz/TCMatriz2D.h>
-#include <Matriz/TCImagem3D.h>
+#include <AnaliseImagem/Matriz/TCMatriz2D.h>
+#include <AnaliseImagem/Matriz/TCImagem3D.h>
 #include <QPushButton>
 
 class QLabel;

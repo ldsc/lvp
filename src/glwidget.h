@@ -9,8 +9,8 @@
 #include <QList>
 #include <QStringList>
 #include <QVariant>
-#include <Matriz/TCMatriz3D.h>
-#include <Representacao/CObjetoImagem.h>
+#include <AnaliseImagem/Matriz/TCMatriz3D.h>
+#include <AnaliseImagem/Caracterizacao/CObjetoImagem.h>
 #include "GL/glu.h"
 #include "math.h"
 
