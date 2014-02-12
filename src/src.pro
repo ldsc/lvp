@@ -111,4 +111,5 @@ OTHER_FILES += \
     ../Doxyfile
 
 QMAKE_CXXFLAGS += -fopenmp
+QMAKE_CXXFLAGS += -std=c++11
 QMAKE_LFLAGS += -fopenmp
