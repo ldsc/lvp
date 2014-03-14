@@ -26,6 +26,7 @@
 #include "pgmImageviewer.h"
 #include "glwidget.h"
 #include "ploter.h"
+#include "properties.h"
 #include "textEditor.h"
 #include "hexEditor.h"
 #include "optionsdialog.h"
@@ -159,6 +160,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		OptionsDialog * dialogHexEditor;
 		Reconstruction   * dialogGT;
 		ReconstructionES * dialogES;
+		Properties * dialogProperties;
 		Import * dialogImport;
 		Crop3D * dialogCrop;
 		ConfEq * dialog;
@@ -229,6 +231,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void exConfEq();
 		void exConfEq3D();
 		void exImport();
+		void exProperties();
 		void exCrop3DImage();
 		void exReconstructionGT();
 		void exReconstructionES();
@@ -239,6 +242,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void idf();
 		void ira();
 		void intrinsicPermeability();
+		void intrinsicPermeabilityByNetwork();
 		void import();
 		void inversion();
 		void inversion3D();
@@ -257,6 +261,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void segmentationPoresThroats(); // segmentação de poros e gargantas
 		void porosity();
 		void print();
+		void properties();
 		void reconstructionES();
 		void reconstructionGT();
 		void relativePermeability();

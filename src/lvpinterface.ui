@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>785</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -57,6 +57,8 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
+    <addaction name="actionProperties"/>
+    <addaction name="separator"/>
     <addaction name="actionCopy"/>
     <addaction name="actionRotate"/>
     <addaction name="separator"/>
@@ -237,6 +239,7 @@
     <addaction name="separator"/>
     <addaction name="actionConfEq"/>
     <addaction name="separator"/>
+    <addaction name="actionIntrinsicPermeabilityByNetwork"/>
     <addaction name="actionIntrinsicPermeability"/>
     <addaction name="actionRelativePermeability"/>
     <addaction name="separator"/>
@@ -274,6 +277,9 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="fileToolBar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="windowTitle">
     <string>File Tool Bar</string>
    </property>
@@ -311,6 +317,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionProperties"/>
    <addaction name="actionCopy"/>
    <addaction name="actionRotate"/>
   </widget>
@@ -733,8 +740,8 @@ p, li { white-space: pre-wrap; }
   <widget class="QDockWidget" name="dockWidgetMessages">
    <property name="minimumSize">
     <size>
-     <width>58</width>
-     <height>35</height>
+     <width>82</width>
+     <height>40</height>
     </size>
    </property>
    <property name="font">
@@ -754,6 +761,9 @@ p, li { white-space: pre-wrap; }
    <widget class="QWidget" name="dockWidgetContentsMessages"/>
   </widget>
   <action name="actionOpen">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="application.qrc">
      <normaloff>:/images/open.png</normaloff>:/images/open.png</iconset>
@@ -1244,7 +1254,7 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/images/rotate.png</normaloff>:/images/rotate.png</iconset>
    </property>
    <property name="text">
-    <string>Rotate</string>
+    <string>&amp;Rotate</string>
    </property>
    <property name="statusTip">
     <string>Rotate</string>
@@ -1255,7 +1265,7 @@ p, li { white-space: pre-wrap; }
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Intrinsic Permeability</string>
+    <string>Intrinsic Permeability (Graph)</string>
    </property>
   </action>
   <action name="actionV1">
@@ -1571,7 +1581,7 @@ p, li { white-space: pre-wrap; }
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Options</string>
+    <string>&amp;Options</string>
    </property>
   </action>
   <action name="actionCrop3D">
@@ -1613,6 +1623,26 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="toolTip">
     <string>Pore Network Viewer</string>
+   </property>
+  </action>
+  <action name="actionProperties">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="application.qrc">
+     <normaloff>:/images/6533_128x128.png</normaloff>:/images/6533_128x128.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Properties</string>
+   </property>
+  </action>
+  <action name="actionIntrinsicPermeabilityByNetwork">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Intrinsic Permeability (Network)</string>
    </property>
   </action>
   <zorder>dockWidgetVisualisation3D</zorder>

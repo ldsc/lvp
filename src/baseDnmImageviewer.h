@@ -19,6 +19,7 @@ class BaseDnmImageViewer : public BaseImageViewer
 		E_eixo direcao;
 		int curPlan;
 		int nz;
+		bool isModified;
 
 		//Métodos
 	public:
@@ -28,9 +29,18 @@ class BaseDnmImageViewer : public BaseImageViewer
 		virtual bool saveAs() = 0;
 		virtual TCMatriz2D<bool> * getPMBool() = 0;
 		virtual TCMatriz2D<int> * getPMInt() = 0;
+		virtual TCImagem3D<bool> * getPI3DBool() = 0;
+		virtual TCImagem3D<int> * getPI3DInt() = 0;
 
 	protected:
 		void closeEvent(QCloseEvent *event);
+		void updateTitle();
+
+	public slots:
+		void documentWasModified();
+
+	signals:
+		void dataChanged();
 };
 
 #endif

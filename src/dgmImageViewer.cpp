@@ -102,14 +102,21 @@ bool DgmImageViewer::ChangePlan( unsigned int plano, E_eixo axis ) {
 }
 
 bool DgmImageViewer::save() {
+	bool flag = false;
 	if (isNew) {
-		return saveAs();
+		flag = saveAs();
 	} else if ( ! pm3D ) {
 		pm3D = new TCImagem3D<int>(fullFileName.toStdString());
-		if ( pm3D )
-			return pm3D->Write(curFile.toStdString());
 	}
-	return false;
+	if ( pm3D ) {
+		pm3D->Path("");
+		flag = pm3D->Write(fullFileName.toStdString());
+	}
+	if (flag) {
+		isModified = false;
+		updateTitle();
+	}
+	return flag;
 }
 
 bool DgmImageViewer::saveAs() {

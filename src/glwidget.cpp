@@ -536,7 +536,7 @@ drawByRPSL: {
 		map<int,CObjetoImagem>::iterator it;
 		map<int,CObjetoImagem>::iterator it1;
 		map<int,CObjetoImagem>::iterator it2;
-		set<int>::iterator its;
+		map<int,double>::iterator its;
 
 		gluQuadricNormals(quadratic, GLU_SMOOTH);
 		gluQuadricTexture(quadratic, GL_TRUE);
@@ -564,13 +564,13 @@ drawByRPSL: {
 				//buscas os sítios conectados a ligação
 				its = it->second.SConexao().begin();
 				//Primeiro sítio
-				it1 = matrizObjetos.find(*its);
+				it1 = matrizObjetos.find(its->first);
 				x1 = it1->second.pontoCentral.x;
 				y1 = it1->second.pontoCentral.y;
 				z1 = it1->second.pontoCentral.z;
 				//Segundo sítio
 				++its;
-				it2 = matrizObjetos.find(*its);
+				it2 = matrizObjetos.find(its->first);
 				x2 = it2->second.pontoCentral.x;
 				y2 = it2->second.pontoCentral.y;
 				z2 = it2->second.pontoCentral.z;
