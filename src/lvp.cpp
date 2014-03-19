@@ -2435,7 +2435,7 @@ void Lvp::intrinsicPermeabilityByNetwork() {
 				}
 				if (ok) {
 					QApplication::setOverrideCursor(Qt::WaitCursor);
-					double permeabilidade = objPerIn->Go(child3D->pm3D,50,3,0,1,EModelo::ONZE);
+					double permeabilidade = objPerIn->Go(child3D->pm3D,23,2,1,1,EModelo::ONZE,1,0);
 					QApplication::restoreOverrideCursor();
 					QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));
 				}
