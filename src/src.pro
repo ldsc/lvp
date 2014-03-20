@@ -115,8 +115,7 @@ OTHER_FILES += \
 
 QMAKE_CXXFLAGS += -fopenmp
 QMAKE_CXXFLAGS += -std=c++11
-debug {
-  QMAKE_CXXFLAGS += -ggdb
-}
+#debug {}
+QMAKE_CXXFLAGS_DEBUG += -ggdb
 #release {}
 QMAKE_LFLAGS += -fopenmp
