@@ -26,7 +26,7 @@ public:
 	virtual bool save();
 	virtual bool saveAs();
 	inline virtual TCMatriz2D<bool> * getPMBool() { return pm; }
-	inline virtual TCMatriz2D<int> * getPMInt() { return NULL; }
+	inline virtual TCMatriz2D<int> * getPMInt() { return nullptr; }
 
 
 };

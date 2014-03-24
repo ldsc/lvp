@@ -1,14 +1,14 @@
 #include "dgmImageViewer.h"
 
 DgmImageViewer::DgmImageViewer(QMainWindow * _parent)
-	: BaseDnmImageViewer( _parent ), pm(NULL), pm3D(NULL) {
+	: BaseDnmImageViewer( _parent ), pm(nullptr), pm3D(nullptr) {
 }
 
 bool DgmImageViewer::loadFile(const QString &fileName) {
 	if (!fileName.isEmpty()) {
 		if ( pm3D ) {
 			delete pm3D;
-			pm3D = NULL;
+			pm3D = nullptr;
 		}
 		pm3D = new TCImagem3D<int>( fileName.toStdString() ); //cria matriz 3D só para pegar o valor da dimensão NZ.
 		if ( ! pm3D )
@@ -44,7 +44,7 @@ bool DgmImageViewer::loadFile(const QString &fileName) {
 void DgmImageViewer::reloadFile() {
 	if ( pm3D ) {
 		delete pm3D;
-		pm3D = NULL;
+		pm3D = nullptr;
 	}
 	pm3D = new TCImagem3D<int>( fullFileName.toStdString() ); //cria matriz 3D só para pegar o valor da dimensão NZ.
 	if ( ! pm3D ) {
@@ -56,7 +56,7 @@ void DgmImageViewer::reloadFile() {
 	nz = pm3D->NZ();
 	if(pm->NX()!=nx or pm->NY()!=ny){
 		delete pm;
-		pm = NULL;
+		pm = nullptr;
 	}
 	if ( ! pm ) {
 		pm = new TCMatriz2D<int>(pm3D->NX(), pm3D->NY());

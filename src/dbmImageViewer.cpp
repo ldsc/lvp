@@ -1,14 +1,14 @@
 #include "dbmImageViewer.h"
 
 DbmImageViewer::DbmImageViewer(QMainWindow * _parent)
-	: BaseDnmImageViewer( _parent ), pm(NULL), pm3D(NULL) {
+	: BaseDnmImageViewer( _parent ), pm(nullptr), pm3D(nullptr) {
 }
 
 //bool DbmImageViewer::loadFile(const QString &fileName) {
 //	if (!fileName.isEmpty()) {
 //		if ( pm3D ) {
 //			delete pm3D;
-//			pm3D = NULL;
+//			pm3D = nullptr;
 //		}
 //		pm3D = new TCImagem3D<bool>( fileName.toStdString() ); //cria matriz 3D só para pegar o valor da dimensão NZ.
 //		if ( ! pm3D )
@@ -56,7 +56,7 @@ bool DbmImageViewer::loadFile(const QString &fileName) {
 	if (!fileName.isEmpty()) {
 		if ( pm3D ) {
 			delete pm3D;
-			pm3D = NULL;
+			pm3D = nullptr;
 		}
 		pm3D = new TCImagem3D<bool>( fileName.toStdString() ); //cria matriz 3D só para pegar o valor da dimensão NZ.
 		if ( ! pm3D )
@@ -90,7 +90,7 @@ bool DbmImageViewer::loadFile(const QString &fileName) {
 void DbmImageViewer::reloadFile() {
 	if ( pm3D ) {
 		delete pm3D;
-		pm3D = NULL;
+		pm3D = nullptr;
 	}
 	pm3D = new TCImagem3D<bool>( fullFileName.toStdString() ); //cria matriz 3D só para pegar o valor da dimensão NZ.
 	if ( ! pm3D ) {
@@ -102,7 +102,7 @@ void DbmImageViewer::reloadFile() {
 	nz = pm3D->NZ();
 	if(pm->NX()!=nx or pm->NY()!=ny){
 		delete pm;
-		pm = NULL;
+		pm = nullptr;
 	}
 	if ( ! pm ) {
 		pm = new TCMatriz2D<bool>(pm3D->NX(), pm3D->NY());

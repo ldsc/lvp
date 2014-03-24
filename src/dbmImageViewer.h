@@ -29,9 +29,9 @@ class DbmImageViewer : public BaseDnmImageViewer
 		virtual bool save();
 		virtual bool saveAs();
 		inline virtual TCMatriz2D<bool> * getPMBool() { return pm; }
-		inline virtual TCMatriz2D<int> * getPMInt() { return NULL; }
+		inline virtual TCMatriz2D<int> * getPMInt() { return nullptr; }
 		inline virtual TCImagem3D<bool> * getPI3DBool() { return pm3D; }
-		inline virtual TCImagem3D<int> * getPI3DInt(){ return NULL; }
+		inline virtual TCImagem3D<int> * getPI3DInt(){ return nullptr; }
 
 		bool ChangePlan( unsigned int plano, E_eixo axis );
 

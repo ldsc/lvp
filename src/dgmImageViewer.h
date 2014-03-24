@@ -32,9 +32,9 @@ class DgmImageViewer : public BaseDnmImageViewer
 		virtual void reloadFile();
 		virtual bool save();
 		virtual bool saveAs();
-		inline virtual TCMatriz2D<bool> * getPMBool() { return NULL; }
+		inline virtual TCMatriz2D<bool> * getPMBool() { return nullptr; }
 		inline virtual TCMatriz2D<int> * getPMInt() { return pm; }
-		inline virtual TCImagem3D<bool> * getPI3DBool() { return NULL; }
+		inline virtual TCImagem3D<bool> * getPI3DBool() { return nullptr; }
 		inline virtual TCImagem3D<int> * getPI3DInt(){ return pm3D; }
 
 

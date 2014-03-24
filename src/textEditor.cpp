@@ -10,7 +10,7 @@ TextEditor::TextEditor( QMainWindow * _parent ) : QTextEdit(_parent) {
 	//setFontFamily("Source Code Pro");
 	setFontFamily("Courier");
 	setFontPointSize(12);
-	item = NULL;
+	item = nullptr;
 	isNew = false;
 	connect( this->document(), SIGNAL(contentsChanged()), this, SLOT(documentWasModified()));
 	connect( this, SIGNAL( destroyed() ), parent, SLOT( updateDockLista() ) );

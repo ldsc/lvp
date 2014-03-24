@@ -1,6 +1,6 @@
 #include "pgmImageviewer.h"
 
-PgmImageViewer::PgmImageViewer(QMainWindow * _parent) : BasePnmImageViewer( _parent ), pm(NULL) {
+PgmImageViewer::PgmImageViewer(QMainWindow * _parent) : BasePnmImageViewer( _parent ), pm(nullptr) {
 	//setAttribute(Qt::WA_DeleteOnClose);
 	//setBackgroundRole(QPalette::Shadow);
 }
@@ -22,7 +22,7 @@ bool PgmImageViewer::loadFile(const QString &fileName) {
 void PgmImageViewer::reloadFile() {
 	if (pm) {
 		delete pm;
-		pm = NULL;
+		pm = nullptr;
 	}
 	pm = new TCMatriz2D<int>( fullFileName.toStdString() );
 	if ( ! reloadImage(pm) ){

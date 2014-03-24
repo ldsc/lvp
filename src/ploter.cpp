@@ -9,8 +9,8 @@ Ploter::Ploter( QMainWindow * _parent ) : QwtPlot(_parent) {
 	setBackgroundRole(QPalette::Base);
 	isNew = false;
 	isAccumulated = false;
-	curveAccumulated = NULL;
-	item = NULL;
+	curveAccumulated = nullptr;
+	item = nullptr;
 
 	legend = new QwtLegend(this);
 	insertLegend ( legend, QwtPlot::BottomLegend );
@@ -18,7 +18,7 @@ Ploter::Ploter( QMainWindow * _parent ) : QwtPlot(_parent) {
 
 	colors << Qt::blue 	   << Qt::red 	   << Qt::cyan     << Qt::yellow     << Qt::magenta     << Qt::lightGray << Qt::gray  << Qt::green;
 	colors << Qt::darkBlue << Qt::darkRed << Qt::darkCyan << Qt::darkYellow << Qt::darkMagenta << Qt::darkGray  << Qt::black << Qt::darkGreen;
-	//myplot = NULL;
+	//myplot = nullptr;
 	/*
 	 zoomer = new QwtPlotZoomer(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::DragSelection | QwtPicker::CornerToCorner, QwtPicker::AlwaysOff, this->canvas(), true);
 	 zoomer->setRubberBandPen(QColor(Qt::red));

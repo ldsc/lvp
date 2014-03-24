@@ -1,6 +1,6 @@
 #include "baseImageViewer.h"
 
-BaseImageViewer::BaseImageViewer( QMainWindow * _parent ): /*pm(NULL), pm3D(NULL),*/ item(NULL), image(NULL), parent(_parent) {
+BaseImageViewer::BaseImageViewer( QMainWindow * _parent ): /*pm(nullptr), pm3D(nullptr),*/ item(nullptr), image(nullptr), parent(_parent) {
 	setAttribute(Qt::WA_DeleteOnClose);
 	setBackgroundRole(QPalette::Shadow);
 	imageLabel = new QLabel;
@@ -21,7 +21,7 @@ bool BaseImageViewer::loadImage(TCMatriz2D<bool> *&_pm) {
 	if ( _pm ) {
 		int nx = _pm->NX();
 		int ny = _pm->NY();
-		if (image == NULL)
+		if (image == nullptr)
 			image = new QImage(nx, ny, QImage::Format_Mono); //QImage::Format_MonoLSB
 		else if (image->width()!=nx or image->height()!=ny) {
 			delete image;
@@ -63,7 +63,7 @@ bool BaseImageViewer::loadImage(TCMatriz2D<int> *&_pm) {
 		int numCores = _pm->NumCores();
 		int mcor = 256/numCores;
 		int cor;
-		if (image == NULL)
+		if (image == nullptr)
 			image = new QImage(nx, ny, QImage::Format_Indexed8); //QImage::Format_MonoLSB
 		else if (image->width()!=nx or image->height()!=ny or image->format()!=QImage::Format_Indexed8) {
 			delete image;
@@ -105,7 +105,7 @@ bool BaseImageViewer::reloadImage(TCMatriz2D<bool> *&_pm) {
 		int nx = _pm->NX();
 		int ny = _pm->NY();
 		QApplication::setOverrideCursor(Qt::WaitCursor);
-		if (image == NULL)
+		if (image == nullptr)
 			image = new QImage(nx, ny, QImage::Format_Mono); //QImage::Format_MonoLSB
 		else
 			if (image->width()!=nx or image->height()!=ny) {
@@ -136,7 +136,7 @@ bool BaseImageViewer::reloadImage(TCMatriz2D<int> *&_pm) {
 		int mcor = 256/numCores;
 		int cor;
 		QApplication::setOverrideCursor(Qt::WaitCursor);
-		if (image == NULL) {
+		if (image == nullptr) {
 			image = new QImage(nx, ny, QImage::Format_Indexed8); //QImage::Format_MonoLSB
 		} else {
 			if (image->width()!=nx or image->height()!=ny or image->format()!=QImage::Format_Indexed8) {

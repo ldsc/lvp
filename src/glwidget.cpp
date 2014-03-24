@@ -24,7 +24,7 @@ GLWidget::GLWidget(TCMatriz3D<bool> * _pm3D, QString _fileName, int _viewtype, Q
 		pm3D = new TCMatriz3D<bool>(fullFileName.toStdString());
 	else
 		pm3D = _pm3D;
-	pm3Di = NULL;
+	pm3Di = nullptr;
 	matrizObjetos.clear();
 	nx = pm3D->NX();
 	ny = pm3D->NY();
@@ -59,7 +59,7 @@ GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QW
 		pm3Di = new TCMatriz3D<int>(fullFileName.toStdString());
 	else
 		pm3Di = _pm3D;
-	pm3D = NULL;
+	pm3D = nullptr;
 	matrizObjetos.clear();
 	nx = pm3Di->NX();
 	ny = pm3Di->NY();
@@ -100,8 +100,8 @@ GLWidget::GLWidget(QString _fileName, int _viewtype, QWidget *parent)
 	yRot = 0;
 	zRot = 0;
 	fullFileName = _fileName;
-	pm3D = NULL;
-	pm3Di = NULL;
+	pm3D = nullptr;
+	pm3Di = nullptr;
 
 	QFile data(fullFileName);
 	data.open(QFile::ReadOnly | QFile::Text);
@@ -514,9 +514,9 @@ GLuint GLWidget::makeObject() {
 	glVertex3d( 0.0, 0.0, meionzw);
 	glEnd();
 
-	if (pm3D != NULL) {//matriz bool
+	if (pm3D != nullptr) {//matriz bool
 		goto drawByPm3D; // Desenha meio poroso binário (poro preto e fundo transparente)
-	} else if(pm3Di != NULL) { //matriz int
+	} else if(pm3Di != nullptr) { //matriz int
 		//if( tonsList.size() == 3 && tonsList.contains(0) && tonsList.contains(1) && tonsList.contains(2) ) { // existem 3 tons na imagem e um deles é 0 (fundo).
 		//	goto drawByPm3Di; //Desenha sítios e ligações (sítio preto, ligação amarela e fundo transparente)
 		//} else {

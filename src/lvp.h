@@ -126,48 +126,48 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		QString lastOpenPath;
 
 	private:
-		QMdiArea *mdiArea;
-		QListWidget *listWidget;
-		QListWidget *listWidget3D;
-		QListWidget *listWidgetChart;
-		QListWidget *listWidgetEditor;
-		QPushButton *pushButtonAddCurve;
-		QPushButton *pushButtonAverage;
-		QPushButton *pushButtonSource;
-		QPushButton *pushButtonAccumulated;
+		QMdiArea *mdiArea = nullptr;
+		QListWidget *listWidget = nullptr;
+		QListWidget *listWidget3D = nullptr;
+		QListWidget *listWidgetChart = nullptr;
+		QListWidget *listWidgetEditor = nullptr;
+		QPushButton *pushButtonAddCurve = nullptr;
+		QPushButton *pushButtonAverage = nullptr;
+		QPushButton *pushButtonSource = nullptr;
+		QPushButton *pushButtonAccumulated = nullptr;
 		//redirect cout and cerr
-		QPlainTextEdit *textEditMessages;
-		QDebugStream *qout;
-		QDebugStream *qerr;
+		QPlainTextEdit *textEditMessages = nullptr;
+		QDebugStream *qout = nullptr;
+		QDebugStream *qerr = nullptr;
 
 		//QVBoxLayout *verticalLayout;
-		QGridLayout *gridLayout;
-		QGridLayout *gridLayoutChart;
-		QLabel *labelPlano3D;
-		QSpinBox *spinBoxPlano3D;
-		QSlider *horizontalSliderPlano3D;
+		QGridLayout *gridLayout = nullptr;
+		QGridLayout *gridLayoutChart = nullptr;
+		QLabel *labelPlano3D = nullptr;
+		QSpinBox *spinBoxPlano3D = nullptr;
+		QSlider *horizontalSliderPlano3D = nullptr;
 
-		QGroupBox *groupBox;
-		QRadioButton *radioButtonX;
-		QRadioButton *radioButtonY;
-		QRadioButton *radioButtonZ;
-		QLabel *labelAxis;
+		QGroupBox *groupBox = nullptr;
+		QRadioButton *radioButtonX = nullptr;
+		QRadioButton *radioButtonY = nullptr;
+		QRadioButton *radioButtonZ = nullptr;
+		QLabel *labelAxis = nullptr;
 
-		QSignalMapper *windowMapper;
-		QFileSystemWatcher *fileWatcher; ///< The QFileSystemWatcher class provides an interface for monitoring files and directories for modifications
+		QSignalMapper *windowMapper = nullptr;
+		QFileSystemWatcher *fileWatcher = nullptr; ///< The QFileSystemWatcher class provides an interface for monitoring files and directories for modifications
 
-		PoresThroats * dialogPoresThroats;
-		OptionsDialog * dialogHexEditor;
-		Reconstruction   * dialogGT;
-		ReconstructionES * dialogES;
-		Properties * dialogProperties;
-		Import * dialogImport;
-		Crop3D * dialogCrop;
-		ConfEq * dialog;
+		PoresThroats * dialogPoresThroats = nullptr;
+		OptionsDialog * dialogHexEditor = nullptr;
+		Reconstruction   * dialogGT = nullptr;
+		ReconstructionES * dialogES = nullptr;
+		Properties * dialogProperties = nullptr;
+		Import * dialogImport = nullptr;
+		Crop3D * dialogCrop = nullptr;
+		ConfEq * dialog = nullptr;
 
 		QTranslator appTranslator;
 		QString qmPath;
-		QSettings * settings;
+		QSettings * settings = nullptr;
 
 #ifndef QT_NO_PRINTER
 		QPrinter printer;

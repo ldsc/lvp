@@ -25,7 +25,7 @@ public:
 	virtual void reloadFile();
 	virtual bool save();
 	virtual bool saveAs();
-	inline virtual TCMatriz2D<bool> * getPMBool() { return NULL; }
+	inline virtual TCMatriz2D<bool> * getPMBool() { return nullptr; }
 	inline virtual TCMatriz2D<int> * getPMInt() { return pm; }
 
 
