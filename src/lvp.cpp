@@ -32,11 +32,11 @@
 #include <AnaliseImagem/Filtro/FEspacial/FEMorfologiaMatematica/TCFEMorfologiaMatematica3D.h>
 #include <AnaliseImagem/Filtro/FEspacial/FEConectividade/TCFEConectividade3D.h>
 //#include <AnaliseImagem/Filtro/FEspacial3D/FEInversao3D/CFEInversao3D.h>
-#include <AnaliseImagem/Matriz/TCMatriz2D.h>
-#include <AnaliseImagem/Matriz/TCMatriz3D.h>
-#include <AnaliseImagem/Matriz/TCImagem3D.h>
-#include <AnaliseImagem/Simulacao/Permeabilidade/CPermeabilidadeRelativa.h>
-#include <AnaliseImagem/Simulacao/Permeabilidade/CPermeabilidadeIntrinseca.h>
+#include <MetNum/Matriz/TCMatriz2D.h>
+#include <MetNum/Matriz/TCMatriz3D.h>
+#include <MetNum/Matriz/TCImagem3D.h>
+#include <AnaliseImagem/Simulacao/Permeabilidade/CSimPermeabilidadeRelativa.h>
+#include <AnaliseImagem/Simulacao/Permeabilidade/CSimPermeabilidadeIntrinseca.h>
 #include <AnaliseImagem/Simulacao/Permeabilidade/CPermeabilidadeIntrinsecaByRede.h>
 #include <AnaliseImagem/Reconstrucao/CReconstrucaoBueno.h>
 #include <AnaliseImagem/Reconstrucao/CReconstrucaoEsferas.h>
@@ -1277,13 +1277,13 @@ void Lvp::properties() {
 		}
 		TCImagem3D<bool> * i3DB = mdiChild->getPI3DBool();
 		if (i3DB) {
-			dialogProperties->doubleSpinBoxSizePixel->setValue(i3DB->SizePixel());
+			dialogProperties->doubleSpinBoxSizePixel->setValue(i3DB->DimensaoPixel());
 			dialogProperties->spinBoxAmplificationFactor->setValue(i3DB->FatorAmplificacao());
 			dialogProperties->spinBoxNumPixelsEdge->setValue(i3DB->NumeroPixelsBorda());
 		} else {
 			TCImagem3D<int> * i3DI = mdiChild->getPI3DInt();
 			if (i3DI) {
-				dialogProperties->doubleSpinBoxSizePixel->setValue(i3DI->SizePixel());
+				dialogProperties->doubleSpinBoxSizePixel->setValue(i3DI->DimensaoPixel());
 				dialogProperties->spinBoxAmplificationFactor->setValue(i3DI->FatorAmplificacao());
 				dialogProperties->spinBoxNumPixelsEdge->setValue(i3DI->NumeroPixelsBorda());
 			}
@@ -1301,22 +1301,22 @@ void Lvp::exProperties() {
 	if ( mdiChild ) {
 		TCImagem3D<bool> * i3DB = mdiChild->getPI3DBool();
 		if (i3DB) {
-			if ( i3DB->SizePixel() != dialogProperties->doubleSpinBoxSizePixel->value() ||
+			if ( i3DB->DimensaoPixel() != dialogProperties->doubleSpinBoxSizePixel->value() ||
 					 i3DB->FatorAmplificacao() != (unsigned int) dialogProperties->spinBoxAmplificationFactor->value() ||
 					 i3DB->NumeroPixelsBorda() != (unsigned int) dialogProperties->spinBoxNumPixelsEdge->value() )
 			{ mdiChild->documentWasModified(); }
-			i3DB->SizePixel( dialogProperties->doubleSpinBoxSizePixel->value() );
+			i3DB->DimensaoPixel( dialogProperties->doubleSpinBoxSizePixel->value() );
 			i3DB->FatorAmplificacao( dialogProperties->spinBoxAmplificationFactor->value() );
 			i3DB->NumeroPixelsBorda( dialogProperties->spinBoxNumPixelsEdge->value() );
 		} else {
 			TCImagem3D<int> * i3DI = mdiChild->getPI3DInt();
 			if (i3DI) {
-				if ( i3DI->SizePixel() != dialogProperties->doubleSpinBoxSizePixel->value() ||
+				if ( i3DI->DimensaoPixel() != dialogProperties->doubleSpinBoxSizePixel->value() ||
 						 i3DI->FatorAmplificacao() != (unsigned int) dialogProperties->spinBoxAmplificationFactor->value() ||
 						 i3DI->NumeroPixelsBorda() != (unsigned int) dialogProperties->spinBoxNumPixelsEdge->value() )
 				{ mdiChild->documentWasModified(); }
 
-				i3DI->SizePixel( dialogProperties->doubleSpinBoxSizePixel->value() );
+				i3DI->DimensaoPixel( dialogProperties->doubleSpinBoxSizePixel->value() );
 				i3DI->FatorAmplificacao( dialogProperties->spinBoxAmplificationFactor->value() );
 				i3DI->NumeroPixelsBorda( dialogProperties->spinBoxNumPixelsEdge->value() );
 			}
@@ -2322,10 +2322,10 @@ void Lvp::exReconstructionGT() {
 		if (mdiChild->getFileExt() == "cor") {
 			CReconstrucaoBueno * ptrRec = new CReconstrucaoBueno(mdiChild->getFullFileName().toStdString(), af, np, sp, nx, ny, nz, gt);
 			if ( ptrRec->Go( ) ) {
-				open( ptrRec->getFileName() );
+				open( ptrRec->getNomeArquivo() );
 			} else {
 				QApplication::restoreOverrideCursor();
-				QMessageBox::information(this, tr("LVP"), tr("Erro! - To create 3D Image File: \"%1\"").arg( QString::fromStdString( ptrRec->getFileName() ) ) );
+				QMessageBox::information(this, tr("LVP"), tr("Erro! - To create 3D Image File: \"%1\"").arg( QString::fromStdString( ptrRec->getNomeArquivo() ) ) );
 			}
 			delete ptrRec;
 		}
@@ -2397,7 +2397,7 @@ void Lvp::exReconstructionES() {
 	dialogES = nullptr;
 	if ( ptrRec ) {
 		if (ptrRec->Go( filepath.toStdString() ) ){
-			open( ptrRec->getFileName() );
+			open( ptrRec->getNomeArquivo() );
 		} else {
 			QMessageBox::information( this, tr("LVP"), tr("Erro! - To create 3D Reconstruction") );
 		}
@@ -2462,23 +2462,25 @@ void Lvp::intrinsicPermeability() {
 		// A matriz precisa ser do tipo int para funcionar com o grafo.
 		TCImagem3D<int> * pm3D = new TCImagem3D<int>( child3D->getFullFileName().toStdString() );
 		if ( pm3D ) {
-			CPermeabilidadeIntrinseca * objPerIn = nullptr;
-			objPerIn = new CPermeabilidadeIntrinseca();
+			CSimPermeabilidadeIntrinseca * objPerIn = nullptr;
+			objPerIn = new CSimPermeabilidadeIntrinseca();
+			unsigned short int modelo = 3;
 			if ( objPerIn ) {
 				bool ok;
 				objPerIn->limiteIteracoes = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the limit iterations number:"), 100000, 1000, 10000000, 1, &ok);
 				if (ok) {
 					QStringList itens = ( QStringList() << tr("1.0e-10") << tr("1.0e-09") << tr("1.0e-08") << tr("1.0e-07") << tr("1.0e-06") << tr("1.0e-05") << tr("1.0e-04") << tr("1.0e-03") << tr("1.0e-02") << tr("1.0e-01") );
 					QString item = QInputDialog::getItem(this, tr("Intrinsic Permeability"), tr("Enter the limit error number:"), itens, 4, false, &ok);
-					if (ok)
+					if (ok) {
 						objPerIn->limiteErro = item.toDouble(&ok);
-					cerr << "limiteErro: " << objPerIn->limiteErro << endl;
-					//objPerIn->limiteErro = QInputDialog::getDouble(this, tr("Intrinsic Permeability"), tr("Enter the limit error number:"), 0.01, 0.000001, 10.010000, 6, &ok);
+						cerr << "limiteErro: " << objPerIn->limiteErro << endl;
+						modelo = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the Graph model:"), 4, 1, 5, 1, &ok);
+					}
 				}
 				if (ok) {
 					QApplication::setOverrideCursor(Qt::WaitCursor);
 					//double permeabilidade = objPerIn->Go ( child3D->pm3D );
-					double permeabilidade = objPerIn->Go ( pm3D );
+					double permeabilidade = objPerIn->Go ( pm3D, 0.7, modelo );
 					QApplication::restoreOverrideCursor();
 					QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));
 				}
@@ -2498,8 +2500,8 @@ void Lvp::relativePermeability() {
 		QString qstr = tr("%1%2.rpc").arg( child3D->getFilePath( ), child3D->getFileNameNoExt() );
 		ofstream fout( qstr.toStdString().c_str() );
 		
-		CPermeabilidadeRelativa * objPerRel = nullptr;
-		objPerRel = new CPermeabilidadeRelativa( fout );
+		CSimPermeabilidadeRelativa * objPerRel = nullptr;
+		objPerRel = new CSimPermeabilidadeRelativa( fout );
 		if ( objPerRel ) {
 			bool ok;
 			//int limiteIteracoes = QInputDialog::getInt(this, tr("Relative Permeability"), tr("Enter the limit iterations number:"), 10000, 1000, 10000000, 1, &ok);

@@ -9,7 +9,7 @@
 #include <QList>
 #include <QStringList>
 #include <QVariant>
-#include <AnaliseImagem/Matriz/TCMatriz3D.h>
+#include <MetNum/Matriz/TCMatriz3D.h>
 #include <AnaliseImagem/Segmentacao/PorosGargantas/CObjetoImagem.h>
 #include "GL/glu.h"
 #include "math.h"
