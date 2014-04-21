@@ -2419,19 +2419,23 @@ void Lvp::intrinsicPermeabilityByNetwork() {
 		if ( child3D->pm3D ) {
 			CPermeabilidadeIntrinsecaByRede * objPerIn = nullptr;
 			objPerIn = new CPermeabilidadeIntrinsecaByRede();
+			int limiteIteracoes = 100000;
+			double limiteErro = 1.0e-06;
 			if ( objPerIn ) {
 				bool ok;
-				objPerIn->limiteIteracoes = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the limit iterations number:"), 100000, 1000, 10000000, 1, &ok);
+				limiteIteracoes = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the limit iterations number:"), 100000, 1000, 10000000, 1, &ok);
 				if (ok) {
 					QStringList itens = ( QStringList() << tr("1.0e-10") << tr("1.0e-09") << tr("1.0e-08") << tr("1.0e-07") << tr("1.0e-06") << tr("1.0e-05") << tr("1.0e-04") << tr("1.0e-03") << tr("1.0e-02") << tr("1.0e-01") );
 					QString item = QInputDialog::getItem(this, tr("Intrinsic Permeability"), tr("Enter the limit error number:"), itens, 4, false, &ok);
 					if (ok) {
-						objPerIn->limiteErro = item.toDouble(&ok);
+						limiteErro = item.toDouble(&ok);
 						nx = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the network size:"), 100, 50, 1000, 10, &ok);
 					}
 				}
 				if (ok) {
 					QApplication::setOverrideCursor(Qt::WaitCursor);
+					objPerIn->CriarObjetos(nx,nx,nx);
+					objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes);
 					double permeabilidade = objPerIn->Go(child3D->pm3D,nx,nx,nx,nx/2,2,1,1,EModelo::ONZE,1,0);
 					QApplication::restoreOverrideCursor();
 					QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));
@@ -2465,22 +2469,25 @@ void Lvp::intrinsicPermeability() {
 			CSimPermeabilidadeIntrinseca * objPerIn = nullptr;
 			objPerIn = new CSimPermeabilidadeIntrinseca();
 			unsigned short int modelo = 3;
+			int limiteIteracoes = 100000;
+			double limiteErro = 1.0e-06;
 			if ( objPerIn ) {
 				bool ok;
-				objPerIn->limiteIteracoes = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the limit iterations number:"), 100000, 1000, 10000000, 1, &ok);
+				limiteIteracoes = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the limit iterations number:"), 100000, 1000, 10000000, 1, &ok);
 				if (ok) {
 					QStringList itens = ( QStringList() << tr("1.0e-10") << tr("1.0e-09") << tr("1.0e-08") << tr("1.0e-07") << tr("1.0e-06") << tr("1.0e-05") << tr("1.0e-04") << tr("1.0e-03") << tr("1.0e-02") << tr("1.0e-01") );
 					QString item = QInputDialog::getItem(this, tr("Intrinsic Permeability"), tr("Enter the limit error number:"), itens, 4, false, &ok);
 					if (ok) {
-						objPerIn->limiteErro = item.toDouble(&ok);
-						cerr << "limiteErro: " << objPerIn->limiteErro << endl;
+						limiteErro = item.toDouble(&ok);
+						cerr << "limiteErro: " << limiteErro << endl;
 						modelo = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the Graph model:"), 4, 1, 5, 1, &ok);
 					}
 				}
 				if (ok) {
 					QApplication::setOverrideCursor(Qt::WaitCursor);
-					//double permeabilidade = objPerIn->Go ( child3D->pm3D );
-					double permeabilidade = objPerIn->Go ( pm3D, 0.7, modelo );
+					objPerIn->CriarObjetos( );
+					objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes);
+					double permeabilidade = objPerIn->Go ( pm3D, modelo );
 					QApplication::restoreOverrideCursor();
 					QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));
 				}
