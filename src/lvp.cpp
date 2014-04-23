@@ -537,7 +537,7 @@ void Lvp::updateMenus() {
 	if ( hasGLWidget ) {
 		GLWidget * childImage = activeGLWidget();
 		//if (childImage->tonsList.size()==3)
-			//actionInverter->setEnabled(false);
+		//actionInverter->setEnabled(false);
 		if(childImage->getViewType()==GLWidget::MPV){ //se o tipo de visualização for multiplanar
 			spinBox_x->setEnabled(true);
 			spinBox_y->setEnabled(true);
@@ -2433,12 +2433,35 @@ void Lvp::intrinsicPermeabilityByNetwork() {
 					}
 				}
 				if (ok) {
+					QMessageBox msgBox(this);
+					msgBox.setWindowTitle(tr("LVP - Intrinsic Permeability"));
+					msgBox.setText(tr("Save Percolation Network?"));
+					QPushButton *cancel = msgBox.addButton(QMessageBox::Cancel);
+					QPushButton *yes = msgBox.addButton(tr("&Yes"), QMessageBox::ActionRole);
+					QPushButton *no = msgBox.addButton(tr("&No"), QMessageBox::ActionRole);
+					msgBox.setDefaultButton(no);
+					msgBox.exec();
+
+					if (msgBox.clickedButton() == yes) {
+						objPerIn->SalvarRede((child3D->getFullFileName() + ".rsl").toStdString());
+					} else if (msgBox.clickedButton() == cancel) {
+						return;
+					}
 					QApplication::setOverrideCursor(Qt::WaitCursor);
 					objPerIn->CriarObjetos(nx,nx,nx);
 					objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes);
 					double permeabilidade = objPerIn->Go(child3D->pm3D,nx,nx,nx,nx/2,2,1,1,EModelo::ONZE,1,0);
+					if (msgBox.clickedButton() == yes) {
+						open((child3D->getFullFileName() + ".rsl").toStdString(),false);
+						// salva saídas em disco
+						ofstream fout ( (child3D->getFullFileName() + ".permeabilidadeByRede.txt").toStdString() );
+						fout << *objPerIn;
+						fout << "\n\nPermeabilidade = " << permeabilidade << endl;
+						fout.close();
+					}
 					QApplication::restoreOverrideCursor();
 					QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));
+
 				}
 			}
 		} else {
