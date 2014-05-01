@@ -2429,7 +2429,7 @@ void Lvp::intrinsicPermeabilityByNetwork() {
 					QString item = QInputDialog::getItem(this, tr("Intrinsic Permeability"), tr("Enter the limit error number:"), itens, 4, false, &ok);
 					if (ok) {
 						limiteErro = item.toDouble(&ok);
-						nx = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the network size:"), 100, 50, 1000, 10, &ok);
+						nx = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the network size:"), 50, 50, 1000, 10, &ok);
 					}
 				}
 				if (ok) {
@@ -2503,7 +2503,7 @@ void Lvp::intrinsicPermeability() {
 					if (ok) {
 						limiteErro = item.toDouble(&ok);
 						cerr << "limiteErro: " << limiteErro << endl;
-						modelo = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the Graph model:"), 4, 1, 5, 1, &ok);
+						modelo = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the Graph model:"), 3, 1, 5, 1, &ok);
 					}
 				}
 				if (ok) {
