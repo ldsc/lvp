@@ -1,0 +1,4 @@
+git pull - atualizar
+git push - enviar
+git status - estado
+git add - adicionar coisas novas

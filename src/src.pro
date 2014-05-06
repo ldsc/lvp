@@ -94,13 +94,17 @@ TRANSLATIONS = lvp_en.ts \
                lvp_pt.ts
 
 INCLUDEPATH += ../../qwt/include \
-               ../../libldsc/src/
+               ../../libldsc/src/ \
+                /usr/include/qwt/ \
+		../../libldsc/src/
 
 LIBS +=  -L../../qwt/lib \
+         -L/usr/include/qwt \
          -L../../libldsc/src \
          -lqwt \
          -lldsc \
-         -lgomp
+         -lgomp 
+
 unix {
     LIBS +=  -lGLU
 }
