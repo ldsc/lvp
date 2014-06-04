@@ -2450,7 +2450,7 @@ void Lvp::intrinsicPermeabilityByNetwork() {
 					QApplication::setOverrideCursor(Qt::WaitCursor);
 					objPerIn->CriarObjetos(nx,nx,nx);
 					objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes);
-					double permeabilidade = objPerIn->Go(child3D->pm3D,nx,nx,nx,nx/2,2,1,1,EModelo::ONZE,1,0);
+					double permeabilidade = objPerIn->Go(child3D->pm3D,nx,nx,nx,nx/2,2,1,1,EModelo::ONZE,1,0,0,CDistribuicao3D::Metrica3D::d345,EModeloRede::tres);
 					if (msgBox.clickedButton() == yes) {
 						open((child3D->getFullFileName() + ".rsl").toStdString(),false);
 						// salva saídas em disco
