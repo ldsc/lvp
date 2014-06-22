@@ -2611,10 +2611,17 @@ void Lvp::segmentationPoresThroats() {
 }
 
 void Lvp::exSegmentationPoresThroats(){
-	static int seqNumberSPT = 1;
-	QString filepath = tr(".segmented%1.dgm").arg(QString::number(seqNumberSPT++));
-	int indice, fundo;
+	int seqNumberSPT = 0;
+	QString filepath;
+	QString filename;
+	filepath = dialogPoresThroats->child->getFilePath();
+	filepath += dialogPoresThroats->child->getFileNameNoExt();
+	do {
+		filename = tr("_segmented-%1.dgm").arg(QString::number(++seqNumberSPT));
+		filepath += filename;
+	} while ( QFile::exists(filepath) );
 
+	int indice, fundo;
 	if (dialogPoresThroats->radioButtonBlack->isChecked()) {
 		indice = 1;
 		fundo = 0;
