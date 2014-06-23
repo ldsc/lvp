@@ -415,28 +415,28 @@ void Lvp::updateMenus() {
 	bool hasTextEditor			= false;
 	bool hasHexEditor				= false;
 	QString ext = "";
-	if ( active2DImageViewer() != 0 ) {
+	if ( active2DImageViewer() != nullptr ) {
 		hasImageViewer = true;
-		if ( activePbmImageViewer() != 0 )
+		if ( activePbmImageViewer() != nullptr )
 			hasPbmImageViewer = true;
-	} else if ( active3DImageViewer() != 0 ) {
+	} else if ( active3DImageViewer() != nullptr ) {
 		hasImageViewer3D = true;
-		if ( activeDbmImageViewer() != 0 ) {
+		if ( activeDbmImageViewer() != nullptr ) {
 			hasDbmImageViewer = true;
 			actionSave->setEnabled( activeDbmImageViewer()->isModified );
-		} else if ( activeDgmImageViewer() != 0 ) {
+		} else if ( activeDgmImageViewer() != nullptr ) {
 			//hasDgmImageViewer = true;
 			actionSave->setEnabled( activeDgmImageViewer()->isModified );
 		}
-	} else if ( activeGLWidget() != 0 ) {
+	} else if ( activeGLWidget() != nullptr ) {
 		hasGLWidget = true;
-	} else if ( activePloter() != 0 ) {
+	} else if ( activePloter() != nullptr ) {
 		hasPloter = true;
 		ext = activePloter()->getFileExt();
-	} else if ( activeTextEditor() != 0 ) {
+	} else if ( activeTextEditor() != nullptr ) {
 		hasTextEditor = true;
 		actionSave->setEnabled( hasTextEditor && activeTextEditor()->document()->isModified() );
-	} else if ( activeHexEditor() != 0 ) {
+	} else if ( activeHexEditor() != nullptr ) {
 		hasHexEditor = true;
 		actionSave->setEnabled( hasTextEditor && activeHexEditor()->IsModified() );
 	}
@@ -504,7 +504,7 @@ void Lvp::updateMenus() {
 	actionProperties->setEnabled(hasImageViewer || hasImageViewer3D);
 	actionRelativePermeability->setEnabled(hasImageViewer3D);
 	actionIntrinsicPermeability->setEnabled(hasImageViewer3D);
-	actionIntrinsicPermeability->setEnabled(hasImageViewer3D);
+	actionIntrinsicPermeabilityByNetwork->setEnabled(hasImageViewer3D);
 	actionRotate->setEnabled( hasImageViewer3D || hasImageViewer );
 	actionSaveAs->setEnabled( hasImageViewer || hasImageViewer3D || hasPloter || hasTextEditor || hasHexEditor );
 	actionSeparator->setVisible(mdiArea->subWindowList().size() > 0);
@@ -1211,11 +1211,11 @@ HexEditor *Lvp::createHexEditor() {
 }
 
 void Lvp::updateActionSave(){
-	if (activeTextEditor() != 0){
+	if (activeTextEditor() != nullptr){
 		actionSave->setEnabled(activeTextEditor()->document()->isModified());
-	} else if (activeHexEditor() != 0){
+	} else if (activeHexEditor() != nullptr){
 		actionSave->setEnabled(activeHexEditor()->IsModified());
-	} else if (active3DImageViewer() != 0){
+	} else if (active3DImageViewer() != nullptr){
 		actionSave->setEnabled(active3DImageViewer()->isModified);
 	}
 }
@@ -1231,26 +1231,26 @@ void Lvp::closeEvent(QCloseEvent *event) {
 }
 
 void Lvp::save() {
-	if ( activeTextEditor() != 0 ) {
+	if ( activeTextEditor() != nullptr ) {
 		activeTextEditor()->save();
-	} else 	if ( activeHexEditor() != 0 ) {
+	} else 	if ( activeHexEditor() != nullptr ) {
 		activeHexEditor()->save();
-	} else 	if ( active3DImageViewer() != 0 ) {
+	} else 	if ( active3DImageViewer() != nullptr ) {
 		active3DImageViewer()->save();
 	}
 	updateActionSave();
 }
 
 void Lvp::saveAs() {
-	if ( activeImageViewer() != 0 ) {
+	if ( activeImageViewer() != nullptr ) {
 		activeImageViewer()->saveAs();
 	} else if ( activePloter() != 0 ) {
 		//cerr << "lastOpenPath antes: " << lastOpenPath.toStdString() << endl;
 		activePloter()->saveAs( & lastOpenPath);
 		//cerr << "lastOpenPath depois: " << lastOpenPath.toStdString() << endl;
-	} else if ( activeTextEditor() != 0 ) {
+	} else if ( activeTextEditor() != nullptr ) {
 		activeTextEditor()->saveAs();
-	} else 	if ( activeHexEditor() != 0 ) {
+	} else 	if ( activeHexEditor() != nullptr ) {
 		activeHexEditor()->saveAs();
 	}
 	updateDockLista();
@@ -2411,65 +2411,83 @@ void Lvp::exReconstructionES() {
 
 void Lvp::intrinsicPermeabilityByNetwork() {
 	DbmImageViewer * child3D = nullptr;
-	unsigned int nx=100;
+	DgmImageViewer * child3Dint = nullptr;
+	QString fullFileName;
 	if ( (child3D = activeDbmImageViewer()) ) {
 		if ( ! child3D->pm3D ) {
-			child3D->pm3D = new TCImagem3D<bool>( child3D->getFullFileName().toStdString() );
-		}
-		if ( child3D->pm3D ) {
-			CPermeabilidadeIntrinsecaByRede * objPerIn = nullptr;
-			objPerIn = new CPermeabilidadeIntrinsecaByRede();
-			int limiteIteracoes = 100000;
-			double limiteErro = 1.0e-06;
-			if ( objPerIn ) {
-				bool ok;
-				limiteIteracoes = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the limit iterations number:"), 100000, 1000, 10000000, 1, &ok);
-				if (ok) {
-					QStringList itens = ( QStringList() << tr("1.0e-10") << tr("1.0e-09") << tr("1.0e-08") << tr("1.0e-07") << tr("1.0e-06") << tr("1.0e-05") << tr("1.0e-04") << tr("1.0e-03") << tr("1.0e-02") << tr("1.0e-01") );
-					QString item = QInputDialog::getItem(this, tr("Intrinsic Permeability"), tr("Enter the limit error number:"), itens, 4, false, &ok);
-					if (ok) {
-						limiteErro = item.toDouble(&ok);
-						nx = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the network size:"), 50, 50, 1000, 10, &ok);
-					}
-				}
-				if (ok) {
-					QMessageBox msgBox(this);
-					msgBox.setWindowTitle(tr("LVP - Intrinsic Permeability"));
-					msgBox.setText(tr("Save Percolation Network?"));
-					QPushButton *cancel = msgBox.addButton(QMessageBox::Cancel);
-					QPushButton *yes = msgBox.addButton(tr("&Yes"), QMessageBox::ActionRole);
-					QPushButton *no = msgBox.addButton(tr("&No"), QMessageBox::ActionRole);
-					msgBox.setDefaultButton(no);
-					msgBox.exec();
-
-					if (msgBox.clickedButton() == yes) {
-						objPerIn->SalvarRede((child3D->getFullFileName() + ".rsl").toStdString());
-					} else if (msgBox.clickedButton() == cancel) {
-						return;
-					}
-					QApplication::setOverrideCursor(Qt::WaitCursor);
-					objPerIn->CriarObjetos(nx,nx,nx);
-					objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes);
-					double permeabilidade = objPerIn->Go(child3D->pm3D,nx,nx,nx,nx/2,2,1,1,EModelo::ONZE,1,0,0,CDistribuicao3D::Metrica3D::d345,EModeloRede::tres);
-					if (msgBox.clickedButton() == yes) {
-						open((child3D->getFullFileName() + ".rsl").toStdString(),false);
-						// salva saídas em disco
-						ofstream fout ( (child3D->getFullFileName() + ".permeabilidadeByRede.txt").toStdString() );
-						fout << *objPerIn;
-						fout << "\n\nPermeabilidade = " << permeabilidade << endl;
-						fout.close();
-					}
-					QApplication::restoreOverrideCursor();
-					QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));
-
-				}
+			fullFileName = child3D->getFullFileName();
+			child3D->pm3D = new TCImagem3D<bool>( fullFileName.toStdString() );
+			if ( ! child3D->pm3D ) {
+				QMessageBox::information(this, tr("LVP"), tr("Error while trying to retrieve 3D image!"));
+				return;
 			}
-		} else {
-			QMessageBox::information(this, tr("LVP"), tr("Error while trying to retrieve 3D image!"));
+		}
+	} else if ( (child3Dint = activeDgmImageViewer()) ) {
+		if ( ! child3Dint->pm3D ) {
+			fullFileName = child3Dint->getFullFileName();
+			child3Dint->pm3D = new TCImagem3D<int>( fullFileName.toStdString() );
+			if ( ! child3Dint->pm3D ) {
+				QMessageBox::information(this, tr("LVP"), tr("Error while trying to retrieve 3D image!"));
+				return;
+			}
 		}
 	} else {
 		QMessageBox::information(this, tr("LVP"), tr("Error while trying to retrieve 3D image!"));
 		return;
+	}
+	unsigned int nx = 100;
+	int limiteIteracoes = 100000;
+	double limiteErro = 1.0e-06;
+	CPermeabilidadeIntrinsecaByRede * objPerIn = nullptr;
+	objPerIn = new CPermeabilidadeIntrinsecaByRede();
+	if ( objPerIn ) {
+		bool ok;
+		limiteIteracoes = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the limit iterations number:"), 100000, 1000, 10000000, 1, &ok);
+		if (ok) {
+			QStringList itens = ( QStringList() << tr("1.0e-10") << tr("1.0e-09") << tr("1.0e-08") << tr("1.0e-07") << tr("1.0e-06") << tr("1.0e-05") << tr("1.0e-04") << tr("1.0e-03") << tr("1.0e-02") << tr("1.0e-01") );
+			QString item = QInputDialog::getItem(this, tr("Intrinsic Permeability"), tr("Enter the limit error number:"), itens, 4, false, &ok);
+			if (ok) {
+				limiteErro = item.toDouble(&ok);
+				nx = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the network size:"), 50, 50, 1000, 10, &ok);
+			}
+		}
+		if (ok) {
+			QMessageBox msgBox(this);
+			msgBox.setWindowTitle(tr("LVP - Intrinsic Permeability"));
+			msgBox.setText(tr("Save Percolation Network?"));
+			QPushButton *cancel = msgBox.addButton(QMessageBox::Cancel);
+			QPushButton *yes = msgBox.addButton(tr("&Yes"), QMessageBox::ActionRole);
+			QPushButton *no = msgBox.addButton(tr("&No"), QMessageBox::ActionRole);
+			msgBox.setDefaultButton(no);
+			msgBox.exec();
+
+			if (msgBox.clickedButton() == yes) {
+				objPerIn->SalvarRede((fullFileName + ".rsl").toStdString());
+			} else if (msgBox.clickedButton() == cancel) {
+				return;
+			}
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+			objPerIn->CriarObjetos(nx,nx,nx);
+			objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes);
+			double permeabilidade = 0.0;
+			if ( child3D ) {
+				permeabilidade = objPerIn->Go(child3D->pm3D,nx,nx,nx,nx/2,2,1,1,EModelo::ONZE,1,0,0,CDistribuicao3D::Metrica3D::d345,EModeloRede::dois);
+			} else {
+				permeabilidade = objPerIn->Go(child3Dint->pm3D,nx,nx,nx,CDistribuicao3D::Metrica3D::d345,EModeloRede::dois);
+			}
+			if (msgBox.clickedButton() == yes) {
+				open((fullFileName + ".rsl").toStdString(),false);
+				// salva saídas em disco
+				ofstream fout ( (fullFileName + ".permeabilidadeByRede.txt").toStdString() );
+				fout << *objPerIn;
+				fout << "\n\nPermeabilidade = " << permeabilidade << endl;
+				fout.close();
+			}
+			QApplication::restoreOverrideCursor();
+			QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));
+		}
+	} else {
+		QMessageBox::information(this, tr("LVP"), tr("Error creatting intrinsic permeability object!"));
 	}
 }
 
@@ -2614,7 +2632,7 @@ void Lvp::exSegmentationPoresThroats(){
 	int seqNumberSPT = 0;
 	QString filepath;
 	QString filename;
-	filepath = dialogPoresThroats->child->getFilePath();
+	filepath = "."+dialogPoresThroats->child->getFilePath();
 	filepath += dialogPoresThroats->child->getFileNameNoExt();
 	do {
 		filename = tr("_segmented-%1.dgm").arg(QString::number(++seqNumberSPT));
@@ -2697,7 +2715,7 @@ void Lvp::rotate() {
 		return;
 	}
 	if ( ! filepath.isNull() ) {
-		if ( activePbmImageViewer() != 0 ){
+		if ( activePbmImageViewer() != nullptr ){
 			TCMatriz2D<bool> * pm = nullptr;
 			pm = new TCMatriz2D<bool>(filepath.toStdString());
 			if ( pm ) {
@@ -2718,7 +2736,7 @@ void Lvp::rotate() {
 				QMessageBox::information(this, tr("LVP"), tr("Error trying to create 2D image!"));
 				return;
 			}
-		} else if ( activePgmImageViewer() != 0 ){
+		} else if ( activePgmImageViewer() != nullptr ){
 			TCMatriz2D<int> * pm = nullptr;
 			pm = new TCMatriz2D<int>(filepath.toStdString());
 			if ( pm ) {
@@ -2739,7 +2757,7 @@ void Lvp::rotate() {
 				QMessageBox::information(this, tr("LVP"), tr("Error trying to create 2D image!"));
 				return;
 			}
-		} else if ( activeDbmImageViewer() != 0 ){
+		} else if ( activeDbmImageViewer() != nullptr ){
 			TCMatriz3D<bool> * pm = nullptr;
 			pm = new TCMatriz3D<bool>(filepath.toStdString());
 			if ( pm ) {
@@ -2786,7 +2804,7 @@ void Lvp::rotate() {
 			QMessageBox::information(this, tr("LVP"), tr("Error: Image viewer not active!"));
 			return;
 		}
-	} else if ( activeDgmImageViewer() != 0 ){
+	} else if ( activeDgmImageViewer() != nullptr ){
 		TCMatriz3D<int> * pm = nullptr;
 		pm = new TCMatriz3D<int>(filepath.toStdString());
 		if ( pm ) {
@@ -2919,8 +2937,7 @@ void Lvp::exCrop3DImage() {
 	static int seqNumberCrop3D = 1;
 	string str;
 	if ( DbmImageViewer *mdiChild = activeDbmImageViewer() ) {
-		cerr << "aqui" << endl;
-		TCMatriz3D<bool> * pm3D = mdiChild->pm3D->Crop(dialogCrop->spinBoxStartX->value(), dialogCrop->spinBoxEndX->value(), dialogCrop->spinBoxStartY->value(), dialogCrop->spinBoxEndY->value(), dialogCrop->spinBoxStartZ->value(), dialogCrop->spinBoxEndZ->value());
+		TCImagem3D<bool> * pm3D = mdiChild->pm3D->Crop(dialogCrop->spinBoxStartX->value(), dialogCrop->spinBoxEndX->value(), dialogCrop->spinBoxStartY->value(), dialogCrop->spinBoxEndY->value(), dialogCrop->spinBoxStartZ->value(), dialogCrop->spinBoxEndZ->value());
 
 		str = tr(".croped%1.dbm").arg(QString::number(seqNumberCrop3D++)).toStdString();
 		pm3D->Write( str );
@@ -2931,7 +2948,7 @@ void Lvp::exCrop3DImage() {
 		dialogCrop = nullptr;
 		delete pm3D;
 	} else if ( DgmImageViewer *mdiChild = activeDgmImageViewer() ) {
-		TCMatriz3D<int> * pm3D = mdiChild->pm3D->Crop(dialogCrop->spinBoxStartX->value(), dialogCrop->spinBoxEndX->value(), dialogCrop->spinBoxStartY->value(), dialogCrop->spinBoxEndY->value(), dialogCrop->spinBoxStartZ->value(), dialogCrop->spinBoxEndZ->value());
+		TCImagem3D<int> * pm3D = mdiChild->pm3D->Crop(dialogCrop->spinBoxStartX->value(), dialogCrop->spinBoxEndX->value(), dialogCrop->spinBoxStartY->value(), dialogCrop->spinBoxEndY->value(), dialogCrop->spinBoxStartZ->value(), dialogCrop->spinBoxEndZ->value());
 
 		str = tr(".croped%1.dgm").arg(QString::number(seqNumberCrop3D++)).toStdString();
 		pm3D->Write( str );
@@ -3671,7 +3688,7 @@ void Lvp::porosity() {
 	QPushButton *blackButton = msgBox.addButton(tr("&Black (1)"), QMessageBox::ActionRole);
 	msgBox.setDefaultButton(blackButton);
 
-	if ( activePbmImageViewer() != 0 ) { // imagem 2D
+	if ( activePbmImageViewer() != nullptr ) { // imagem 2D
 		QList<PbmImageViewer *> imagesList = selectedPbmImagesList(); //lista de ponteiros para imagens selecionadas.
 		msgBox.exec();
 		if (msgBox.clickedButton() == blackButton) {
@@ -3698,7 +3715,7 @@ void Lvp::porosity() {
 			msgTmp = tr("Porosity of the image \"%1\"\t= %2\%\n").arg(mdiChild->getFileName()).arg(porosityValue);
 			msg += msgTmp;
 		}
-	} else if ( activeDbmImageViewer() != 0 ) { // imagem 3D
+	} else if ( activeDbmImageViewer() != nullptr ) { // imagem 3D
 		QList<DbmImageViewer *> imagesList = selectedDbmImagesList(); //lista de ponteiros para imagens 3D selecionadas.
 		msgBox.exec();
 		if (msgBox.clickedButton() == blackButton) {
@@ -3880,7 +3897,7 @@ BaseImageViewer * Lvp::activeImageViewer() {
 		else if ( qobject_cast<PgmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<PgmImageViewer *>(activeSubWindow->widget());
 	}
-	return 0;
+	return nullptr;
 }
 
 BasePnmImageViewer * Lvp::active2DImageViewer() {
@@ -3890,7 +3907,7 @@ BasePnmImageViewer * Lvp::active2DImageViewer() {
 		else if ( qobject_cast<PgmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<PgmImageViewer *>(activeSubWindow->widget());
 	}
-	return 0;
+	return nullptr;
 }
 
 BaseDnmImageViewer * Lvp::active3DImageViewer() {
@@ -3900,7 +3917,7 @@ BaseDnmImageViewer * Lvp::active3DImageViewer() {
 		else if ( qobject_cast<DgmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<DgmImageViewer *>(activeSubWindow->widget());
 	}
-	return 0;
+	return nullptr;
 }
 
 DgmImageViewer * Lvp::activeDgmImageViewer() {
@@ -3908,7 +3925,7 @@ DgmImageViewer * Lvp::activeDgmImageViewer() {
 		if ( qobject_cast<DgmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<DgmImageViewer *>(activeSubWindow->widget());
 	}
-	return 0;
+	return nullptr;
 }
 
 DbmImageViewer *Lvp::activeDbmImageViewer() {
@@ -3916,7 +3933,7 @@ DbmImageViewer *Lvp::activeDbmImageViewer() {
 		if ( qobject_cast<DbmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<DbmImageViewer *>(activeSubWindow->widget());
 	}
-	return 0;
+	return nullptr;
 }
 
 PbmImageViewer * Lvp::activePbmImageViewer() {
@@ -3924,7 +3941,7 @@ PbmImageViewer * Lvp::activePbmImageViewer() {
 		if ( qobject_cast<PbmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<PbmImageViewer *>(activeSubWindow->widget());
 	}
-	return 0;
+	return nullptr;
 }
 
 PgmImageViewer * Lvp::activePgmImageViewer() {
@@ -3932,7 +3949,7 @@ PgmImageViewer * Lvp::activePgmImageViewer() {
 		if ( qobject_cast<PgmImageViewer *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<PgmImageViewer *>(activeSubWindow->widget());
 	}
-	return 0;
+	return nullptr;
 }
 
 GLWidget * Lvp::activeGLWidget() {
@@ -3940,7 +3957,7 @@ GLWidget * Lvp::activeGLWidget() {
 		if ( qobject_cast<GLWidget *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<GLWidget *>(activeSubWindow->widget());
 	}
-	return 0;
+	return nullptr;
 }
 
 Ploter * Lvp::activePloter() {
@@ -3948,7 +3965,7 @@ Ploter * Lvp::activePloter() {
 		if ( qobject_cast<Ploter *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<Ploter *>(activeSubWindow->widget());
 	}
-	return 0;
+	return nullptr;
 }
 
 TextEditor * Lvp::activeTextEditor() {
@@ -3956,7 +3973,7 @@ TextEditor * Lvp::activeTextEditor() {
 		if ( qobject_cast<TextEditor *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<TextEditor *>(activeSubWindow->widget());
 	}
-	return 0;
+	return nullptr;
 }
 
 HexEditor * Lvp::activeHexEditor() {
@@ -3964,7 +3981,7 @@ HexEditor * Lvp::activeHexEditor() {
 		if ( qobject_cast<HexEditor *>(activeSubWindow->widget()) != 0 )
 			return qobject_cast<HexEditor *>(activeSubWindow->widget());
 	}
-	return 0;
+	return nullptr;
 }
 
 void Lvp::setActiveSubWindow(QWidget *window) {
@@ -4033,7 +4050,7 @@ QMdiSubWindow *Lvp::findImageViewer(const QString &_fileName) {
 			if (mdiChild->getFullFileName() == canonicalFilePath)
 				return window;
 	}
-	return 0;
+	return nullptr;
 }
 
 QMdiSubWindow *Lvp::findGLWidget(const QString &_fileName) {
@@ -4047,7 +4064,7 @@ QMdiSubWindow *Lvp::findGLWidget(const QString &_fileName) {
 			if (mdiChild->getFullFileName() == canonicalFilePath)
 				return window;
 	}
-	return 0;
+	return nullptr;
 }
 
 QMdiSubWindow *Lvp::findPloter(const QString & _fileName) {
@@ -4062,7 +4079,7 @@ QMdiSubWindow *Lvp::findPloter(const QString & _fileName) {
 			if (mdiChild->getFullFileName() == _fileName)
 				return window;
 	}
-	return 0;
+	return nullptr;
 }
 
 QMdiSubWindow *Lvp::findTextEditor(const QString & _fileName) {
@@ -4077,7 +4094,7 @@ QMdiSubWindow *Lvp::findTextEditor(const QString & _fileName) {
 			if (mdiChild->getFullFileName() == _fileName)
 				return window;
 	}
-	return 0;
+	return nullptr;
 }
 
 QMdiSubWindow *Lvp::findHexEditor(const QString & _fileName) {
@@ -4091,7 +4108,7 @@ QMdiSubWindow *Lvp::findHexEditor(const QString & _fileName) {
 			if (mdiChild->CurFile() == canonicalFilePath)
 				return window;
 	}
-	return 0;
+	return nullptr;
 }
 
 string Lvp::validateFileName( const string _strname ){
@@ -4205,9 +4222,9 @@ void Lvp::updateStatusBar() {
 			mdiChild->destroyStatusBar();
 		}
 	}
-	if ( activeHexEditor() != 0 ) {
+	if ( activeHexEditor() != nullptr ) {
 		activeHexEditor()->createStatusBar();
-	} else if ( activeImageViewer() != 0 ) {
+	} else if ( activeImageViewer() != nullptr ) {
 		activeImageViewer()->createStatusBar();
 	}
 }
