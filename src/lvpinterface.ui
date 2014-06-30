@@ -154,7 +154,7 @@
     </widget>
     <widget class="QMenu" name="menu3DFilters">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="title">
       <string>3D Filters</string>
@@ -163,6 +163,7 @@
      <addaction name="actionInversion3D"/>
      <addaction name="actionIDF3D"/>
      <addaction name="actionIRA3D"/>
+     <addaction name="actionLabeling3D"/>
     </widget>
     <widget class="QMenu" name="menuSkeleton">
      <property name="enabled">
@@ -1643,6 +1644,14 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Intrinsic Permeability (Network)</string>
+   </property>
+  </action>
+  <action name="actionLabeling3D">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Labeling</string>
    </property>
   </action>
   <zorder>dockWidgetVisualisation3D</zorder>

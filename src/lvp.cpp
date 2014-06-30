@@ -31,6 +31,7 @@
 #include <AnaliseImagem/Filtro/FEspacial/FEMorfologiaMatematica/TCFEMMIDFEuclidiana3D.h>
 #include <AnaliseImagem/Filtro/FEspacial/FEMorfologiaMatematica/TCFEMorfologiaMatematica3D.h>
 #include <AnaliseImagem/Filtro/FEspacial/FEConectividade/TCFEConectividade3D.h>
+#include <AnaliseImagem/Filtro/FEspacial/FERotulagem/TCRotulador3D.h>
 //#include <AnaliseImagem/Filtro/FEspacial3D/FEInversao3D/CFEInversao3D.h>
 #include <MetNum/Matriz/TCMatriz2D.h>
 #include <MetNum/Matriz/TCMatriz3D.h>
@@ -302,6 +303,7 @@ void Lvp::createActions() {
 	connect( actionInverter,												SIGNAL( triggered() ),  this,			SLOT( invertPoro()								) );
 	connect( actionIRA,															SIGNAL( triggered() ),  this,			SLOT( ira()												) );
 	connect( actionIRA3D,														SIGNAL( triggered() ),  this,			SLOT( ira()												) );
+	connect( actionLabeling3D,											SIGNAL( triggered() ), 	this,			SLOT( labeling3D()								) );
 	connect( actionLowPass,													SIGNAL( triggered() ), 	this,			SLOT( lowPass()										) );
 	connect( actionMPV,															SIGNAL( triggered() ),  this,			SLOT( openMPV()                   ) );
 	connect( actionNext,														SIGNAL( triggered() ), 	mdiArea,	SLOT( activateNextSubWindow()     ) );
@@ -491,6 +493,7 @@ void Lvp::updateMenus() {
 	actionInversion->setEnabled(hasPbmImageViewer);
 	actionInversion3D->setEnabled(hasDbmImageViewer);
 	actionInverter->setEnabled(hasGLWidget && ( (activeGLWidget()->getPM3D() != nullptr) || (activeGLWidget()->getPM3Di() != nullptr)) );
+	actionLabeling3D->setEnabled(hasDbmImageViewer);
 	actionLowPass->setEnabled(hasImageViewer);
 	actionMPV->setEnabled( hasImageViewer3D );
 	actionPNV->setEnabled( hasTextEditor && activeTextEditor()->getFileExt().toLower()=="rsl" );
@@ -2092,6 +2095,61 @@ void Lvp::connectivity3D() {
 	}
 }
 
+void Lvp::labeling3D() {
+	DbmImageViewer * child3D = nullptr;
+	child3D = activeDbmImageViewer();
+	if ( ! child3D ) {
+		QApplication::restoreOverrideCursor();
+		QMessageBox::information(this, tr("LVP"), tr("Error while trying to retrieve 3D image!"));
+		return;
+	}
+	TCRotulador3D<bool> * obj = nullptr;
+	if ( child3D->pm3D ) {
+		QMessageBox msgBox(this);
+		msgBox.setWindowTitle(tr("LVP - 3D Labeling"));
+		msgBox.setText(tr("Pore is:"));
+		msgBox.addButton(QMessageBox::Cancel);
+		QPushButton *writeButton = msgBox.addButton(tr("&Write (0)"), QMessageBox::ActionRole);
+		QPushButton *blackButton = msgBox.addButton(tr("&Black (1)"), QMessageBox::ActionRole);
+		msgBox.setDefaultButton(blackButton);
+		msgBox.exec();
+
+		int indice, fundo;
+		if (msgBox.clickedButton() == blackButton) {
+			indice = 1;
+			fundo = 0;
+		} else if (msgBox.clickedButton() == writeButton) {
+			indice = 0;
+			fundo = 1;
+		} else {
+			return;
+		}
+		TCMatriz3D<bool> * mat3D = dynamic_cast<TCMatriz3D<bool> *>(child3D->pm3D);
+		obj = new TCRotulador3D<bool>( mat3D, indice, fundo );
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		if ( obj ) {
+			if ( obj->Go( mat3D ) ) {
+				static int seqNumberLabeling3D = 1;
+				//QString qstr = tr("%1.labeled%2.dgm").arg(QString::fromStdString(obj->Path())).arg(QString::number(seqNumberLabeling3D++));
+				QString qstr = tr(".labeled%1.dgm").arg(QString::number(seqNumberLabeling3D++));
+				if ( obj->Write( qstr.toStdString() ) )
+					open( obj->Path()+ qstr.toStdString() );
+				else
+					QMessageBox::information(this, tr("LVP"), "Was not possible to save the labeled image: " + qstr);
+			} else {
+				QApplication::restoreOverrideCursor();
+				QMessageBox::information(this, tr("LVP"), tr("Error trying to labeling the image!"));
+			}
+		} else {
+			QApplication::restoreOverrideCursor();
+			QMessageBox::information(this, tr("LVP"), tr("Error trying to labeling the image!"));
+		}
+		QApplication::restoreOverrideCursor();
+	} else {
+		QMessageBox::information(this, tr("LVP"), tr("Error trying to labeling the image!"));
+	}
+}
+
 void Lvp::connectedObjects(){
 	static int seqNumberConObj = 1;
 	if ( PbmImageViewer *mdiChild = activePbmImageViewer() ) {
@@ -2632,12 +2690,12 @@ void Lvp::exSegmentationPoresThroats(){
 	int seqNumberSPT = 0;
 	QString filepath;
 	QString filename;
-	filepath = "."+dialogPoresThroats->child->getFilePath();
-	filepath += dialogPoresThroats->child->getFileNameNoExt();
+	filepath = dialogPoresThroats->child->getFilePath();
+	filepath += "."+dialogPoresThroats->child->getFileNameNoExt();
 	do {
 		filename = tr("_segmented-%1.dgm").arg(QString::number(++seqNumberSPT));
-		filepath += filename;
-	} while ( QFile::exists(filepath) );
+	} while ( QFile::exists(filepath + filename) );
+	filepath += filename;
 
 	int indice, fundo;
 	if (dialogPoresThroats->radioButtonBlack->isChecked()) {
@@ -2920,15 +2978,15 @@ void Lvp::exImport() {
 void Lvp::crop3DImage(){
 	BaseDnmImageViewer *mdiChild = active3DImageViewer();
 	dialogCrop = new Crop3D(this);
-	dialogCrop->spinBoxStartX->setMaximum(mdiChild->nx-1);
-	dialogCrop->spinBoxStartY->setMaximum(mdiChild->ny-1);
-	dialogCrop->spinBoxStartZ->setMaximum(mdiChild->nz-1);
-	dialogCrop->spinBoxEndX->setMaximum(mdiChild->nx);
-	dialogCrop->spinBoxEndY->setMaximum(mdiChild->ny);
-	dialogCrop->spinBoxEndZ->setMaximum(mdiChild->nz);
-	dialogCrop->spinBoxEndX->setValue(mdiChild->nx);
-	dialogCrop->spinBoxEndY->setValue(mdiChild->ny);
-	dialogCrop->spinBoxEndZ->setValue(mdiChild->nz);
+	dialogCrop->spinBoxStartX->setMaximum(mdiChild->nx-2);
+	dialogCrop->spinBoxStartY->setMaximum(mdiChild->ny-2);
+	dialogCrop->spinBoxStartZ->setMaximum(mdiChild->nz-2);
+	dialogCrop->spinBoxEndX->setMaximum(mdiChild->nx-1);
+	dialogCrop->spinBoxEndY->setMaximum(mdiChild->ny-1);
+	dialogCrop->spinBoxEndZ->setMaximum(mdiChild->nz-1);
+	dialogCrop->spinBoxEndX->setValue(mdiChild->nx-1);
+	dialogCrop->spinBoxEndY->setValue(mdiChild->ny-1);
+	dialogCrop->spinBoxEndZ->setValue(mdiChild->nz-1);
 	dialogCrop->show();
 }
 

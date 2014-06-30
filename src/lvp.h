@@ -247,6 +247,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void inversion();
 		void inversion3D();
 		void invertPoro();
+		void labeling3D();
 		void lowPass();
 		void normalSize();
 		void open();
