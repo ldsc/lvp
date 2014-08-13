@@ -2214,17 +2214,21 @@ void Lvp::addCurve() {
 	plot = activePloter();
 	if ( plot ) {
 		QString ext = plot->getFileExt();
-		if (ext == "cor" or ext == "COR")
+		if (ext.toLower() == "cor")
 			filespath = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Correlation Files (*.cor)"));
-		else if (ext == "dtp" or ext == "DTP" or ext == "dts" or ext == "DTS" or ext == "dtg" or ext == "DTG")
+		else if (ext.toLower() == "dtp" or ext.toLower() == "dts" or ext.toLower() == "dtg")
 			filespath = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Distribution Files (*.dtp *.dts *.dtg)"));
-		else if (ext == "rpc" or ext == "RPC")
+		else if (ext.toLower() == "rpc")
 			filespath = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Relative Permeability Curves (*.rpc)"));
+	} else {
+		QMessageBox::information(this, tr("LVP"), tr("Error trying to add curve! Plot is NULL!"));
 	}
 	if ( ! filespath.isEmpty() ) {
 		QDir lop( filespath.at(0) );
 		lastOpenPath = lop.canonicalPath();
-		plot->addCurves( filespath );
+		if ( ! plot->addCurves( filespath ) ) {
+			QMessageBox::information(this, tr("LVP"), tr("Error trying to add curve!"));
+		}
 		fileWatcher->addPaths(filespath);
 	}
 }

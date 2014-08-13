@@ -77,13 +77,18 @@ bool Ploter::loadFile(const QString & _fileName) {
 					setTitle ("Solids Size Distribution");
 					setAxisTitle ( QwtPlot::yLeft, "Area of solids (%)" );
 				} else if ( fileExt.toLower() == "dtg" ) {
-					setTitle ("Throat Size Distribution");
-					setAxisTitle ( QwtPlot::yLeft, "Porosity (%)" );
+					//setTitle ("Throat Size Distribution");
+					//setAxisTitle ( QwtPlot::yLeft, "Porosity (%)" );
+					setTitle ("Distribuição do Tamanho das Gargantas");
+					setAxisTitle ( QwtPlot::yLeft, "Frequência" );
 				} else {
-					setTitle ("Pores Size Distribution");
-					setAxisTitle ( QwtPlot::yLeft, "Porosity (%)" );
+					//setTitle ("Pores Size Distribution");
+					//setAxisTitle ( QwtPlot::yLeft, "Porosity (%)" );
+					setTitle ("Distribuição do Tamanho dos Poros");
+					setAxisTitle ( QwtPlot::yLeft, "Frequência" );
 				}
-				setAxisTitle ( QwtPlot::xBottom, "Radius (pixel)" );
+				//setAxisTitle ( QwtPlot::xBottom, "Radius (pixel)" );
+				setAxisTitle ( QwtPlot::xBottom, "Raio (pixeis)" );
 			} else if ( fileExt.toLower() == "rpc" ) {
 				QwtPlotCurve *curveOil = new QwtPlotCurve(tr("Oil-%1").arg(fileName));
 				QwtPlotCurve *curveWater = new QwtPlotCurve(tr("Water-%1").arg(fileName));
@@ -211,11 +216,12 @@ bool Ploter::addCurves(const QStringList & _filesName) {
 			}
 			fileName = _filesName.at(i);
 			if ( ! pathCurves.contains( fileName ) ) { // a curva ainda não foi plotada.
-				ext = fileName.mid(fileName.lastIndexOf(".")+1); // pega extenção do arquivo
+				//ext = fileName.mid(fileName.lastIndexOf(".")+1); // pega extenção do arquivo
+				ext = QFileInfo(fileName).suffix();
 				ifstream fin (fileName.toStdString().c_str(), ios::in);
 				int cont = 0, tam  = 512;
 				if (fin.good() && fin.is_open()) {
-					if ( ext == "cor" or ext == "COR" )	{
+					if ( ext.toLower() == "cor" )	{
 						//QwtPlotCurve *curve = new QwtPlotCurve(fileName.mid(fileName.lastIndexOf("/")+1));
 						QwtPlotCurve *curve = new QwtPlotCurve(QFileInfo(fileName).fileName());
 						double x[tam], y[tam];
@@ -226,7 +232,7 @@ bool Ploter::addCurves(const QStringList & _filesName) {
 						curve->setPen(QPen(colors[pathCurves.size()], 2));
 						curve->setSamples(x , y, cont);
 						curve->attach(this);
-					} else if ( fileExt == "dtp" or fileExt == "DTP" or fileExt == "dts" or fileExt == "DTS") {
+					} else if ( ext.toLower() == "dtp" or ext.toLower() == "dtg" or ext.toLower() == "dts" ) {
 						//QwtPlotCurve *curve = new QwtPlotCurve(fileName.mid(fileName.lastIndexOf("/")+1));
 						QwtPlotCurve *curve = new QwtPlotCurve(QFileInfo(fileName).fileName());
 						double x[tam], y[tam];
@@ -247,7 +253,7 @@ bool Ploter::addCurves(const QStringList & _filesName) {
 						curve->setPen(QPen(colors[pathCurves.size()], 2));
 						curve->setSamples(x, y, cont-1);
 						curve->attach(this);
-					} else if ( ext == "rpc" or ext == "RPC" ) {
+					} else if ( ext.toLower() == "rpc" ) {
 						QwtPlotCurve *curveOil = new QwtPlotCurve(tr("Oil-%1").arg(fileName));
 						QwtPlotCurve *curveWater = new QwtPlotCurve(tr("Water-%1").arg(fileName));
 						double saturacao[tam], water[tam], oil[tam];
@@ -277,9 +283,11 @@ bool Ploter::addCurves(const QStringList & _filesName) {
 
 				} else {
 					fin.close();
+					QMessageBox::information(parent, tr("LVP"), tr("Error! Can not open de file \"%1\"").arg(fileName));
 					continue;
 				}
 			} else {
+				QApplication::restoreOverrideCursor();
 				QMessageBox::information(parent, tr("LVP"), tr("The file \"%1\" has been plotted!").arg(fileName));
 			}
 		}
