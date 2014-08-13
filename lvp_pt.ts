@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="pt">
+<TS version="2.1" language="pt">
 <context>
     <name>BaseImageViewer</name>
     <message>
@@ -2331,15 +2331,15 @@ Você deseja salvá-lo?</translation>
     </message>
     <message>
         <source>accumulated-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>acumulado-%1</translation>
     </message>
     <message>
         <source>%1%2</source>
-        <translation type="unfinished">%1%2</translation>
+        <translation>%1%2</translation>
     </message>
     <message>
         <source>Distribution Files (*.dts)</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivos Distribuição (*.dts)</translation>
     </message>
 </context>
 <context>

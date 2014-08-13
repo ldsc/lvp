@@ -90,8 +90,10 @@ MOC_DIR =   ./tmp
 
 OBJECTS_DIR =  ./tmp
 
-TRANSLATIONS = lvp_en.ts \
-               lvp_pt.ts
+#TRANSLATIONS = lvp_en.ts \
+#               lvp_pt.ts
+
+#CODECFORSRC = UTF-8
 
 INCLUDEPATH += ../../qwt/include \
                ../../libldsc/src/ \
