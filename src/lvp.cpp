@@ -2476,8 +2476,8 @@ void Lvp::intrinsicPermeabilityByNetwork() {
 	DgmImageViewer * child3Dint = nullptr;
 	QString fullFileName;
 	if ( (child3D = activeDbmImageViewer()) ) {
+		fullFileName = child3D->getFullFileName();
 		if ( ! child3D->pm3D ) {
-			fullFileName = child3D->getFullFileName();
 			child3D->pm3D = new TCImagem3D<bool>( fullFileName.toStdString() );
 			if ( ! child3D->pm3D ) {
 				QMessageBox::information(this, tr("LVP"), tr("Error while trying to retrieve 3D image!"));
@@ -2485,8 +2485,8 @@ void Lvp::intrinsicPermeabilityByNetwork() {
 			}
 		}
 	} else if ( (child3Dint = activeDgmImageViewer()) ) {
+		fullFileName = child3Dint->getFullFileName();
 		if ( ! child3Dint->pm3D ) {
-			fullFileName = child3Dint->getFullFileName();
 			child3Dint->pm3D = new TCImagem3D<int>( fullFileName.toStdString() );
 			if ( ! child3Dint->pm3D ) {
 				QMessageBox::information(this, tr("LVP"), tr("Error while trying to retrieve 3D image!"));
