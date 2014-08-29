@@ -2484,6 +2484,7 @@ void Lvp::intrinsicPermeabilityByNetwork() {
 				return;
 			}
 		}
+		dialogIntrinsicPermeabilityByNetwork = new IntrinsicPermeabilityByNetwork( this, child3D );
 	} else if ( (child3Dint = activeDgmImageViewer()) ) {
 		fullFileName = child3Dint->getFullFileName();
 		if ( ! child3Dint->pm3D ) {
@@ -2493,64 +2494,112 @@ void Lvp::intrinsicPermeabilityByNetwork() {
 				return;
 			}
 		}
+		dialogIntrinsicPermeabilityByNetwork = new IntrinsicPermeabilityByNetwork( this, child3Dint );
 	} else {
 		QMessageBox::information(this, tr("LVP"), tr("Error while trying to retrieve 3D image!"));
 		return;
 	}
-	unsigned int nx = 100;
-	int limiteIteracoes = 100000;
+	dialogIntrinsicPermeabilityByNetwork->show();
+}
+
+void Lvp::exIntrinsicPermeabilityByNetwork() {
+	unsigned int nx = dialogIntrinsicPermeabilityByNetwork->spinBoxPNSize->value();
+	int limiteIteracoes = dialogIntrinsicPermeabilityByNetwork->spinBoxLimitIterations->value();
 	double limiteErro = 1.0e-06;
+	if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-10" ) {
+		limiteErro = 1.0e-10;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-09" ) {
+		limiteErro = 1.0e-09;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-08" ) {
+		limiteErro = 1.0e-08;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-07" ) {
+		limiteErro = 1.0e-07;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-06" ) {
+		limiteErro = 1.0e-06;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-05" ) {
+		limiteErro = 1.0e-05;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-04" ) {
+		limiteErro = 1.0e-04;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-03" ) {
+		limiteErro = 1.0e-03;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-02" ) {
+		limiteErro = 1.0e-02;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-01" ) {
+		limiteErro = 1.0e-06;
+	}
+
+	EModelo model = SETE;
+	if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 11" ) {
+		model = ONZE;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 10" ) {
+		model = DEZ;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 9" ) {
+		model = NOVE;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 8" ) {
+		model = OITO;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 7" ) {
+		model = SETE;
+	}
+
+	EModeloRede networkModel = tres;
+	if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 3" ) {
+		networkModel = tres;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 2" ) {
+		networkModel = dois;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 1" ) {
+		networkModel = um;
+	}
+
+	int indice, fundo;
+	if (dialogIntrinsicPermeabilityByNetwork->radioButtonBlack->isChecked()) {
+		indice = 1;
+		fundo = 0;
+	} else {
+		indice = 0;
+		fundo = 1;
+	}
+
 	CPermeabilidadeIntrinsecaByRede * objPerIn = nullptr;
 	objPerIn = new CPermeabilidadeIntrinsecaByRede();
 	if ( objPerIn ) {
-		bool ok;
-		limiteIteracoes = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the limit iterations number:"), 100000, 1000, 10000000, 1, &ok);
-		if (ok) {
-			QStringList itens = ( QStringList() << tr("1.0e-10") << tr("1.0e-09") << tr("1.0e-08") << tr("1.0e-07") << tr("1.0e-06") << tr("1.0e-05") << tr("1.0e-04") << tr("1.0e-03") << tr("1.0e-02") << tr("1.0e-01") );
-			QString item = QInputDialog::getItem(this, tr("Intrinsic Permeability"), tr("Enter the limit error number:"), itens, 4, false, &ok);
-			if (ok) {
-				limiteErro = item.toDouble(&ok);
-				nx = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the network size:"), 50, 50, 1000, 10, &ok);
-			}
-		}
-		if (ok) {
-			QMessageBox msgBox(this);
-			msgBox.setWindowTitle(tr("LVP - Intrinsic Permeability"));
-			msgBox.setText(tr("Save Percolation Network?"));
-			QPushButton *cancel = msgBox.addButton(QMessageBox::Cancel);
-			QPushButton *yes = msgBox.addButton(tr("&Yes"), QMessageBox::ActionRole);
-			QPushButton *no = msgBox.addButton(tr("&No"), QMessageBox::ActionRole);
-			msgBox.setDefaultButton(no);
-			msgBox.exec();
-
-			if (msgBox.clickedButton() == yes) {
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		objPerIn->CriarObjetos(nx,nx,nx);
+		objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes);
+		double permeabilidade = 0.0;
+		QString fullFileName;
+		if ( dialogIntrinsicPermeabilityByNetwork->child ) {
+			fullFileName = dialogIntrinsicPermeabilityByNetwork->child->getFullFileName();
+			if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
 				objPerIn->SalvarRede((fullFileName + ".rsl").toStdString());
-			} else if (msgBox.clickedButton() == cancel) {
-				return;
 			}
-			QApplication::setOverrideCursor(Qt::WaitCursor);
-			objPerIn->CriarObjetos(nx,nx,nx);
-			objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes);
-			double permeabilidade = 0.0;
-			if ( child3D ) {
-				permeabilidade = objPerIn->Go(child3D->pm3D,nx,nx,nx,nx/2,2,1,1,EModelo::ONZE,1,0,0,CDistribuicao3D::Metrica3D::d345,EModeloRede::dois);
-			} else {
-				permeabilidade = objPerIn->Go(child3Dint->pm3D,nx,nx,nx,CDistribuicao3D::Metrica3D::d345,EModeloRede::dois);
+			permeabilidade = objPerIn->Go(dialogIntrinsicPermeabilityByNetwork->child->pm3D,nx,nx,nx,nx/2,2,1,1,model,indice,fundo,0,CDistribuicao3D::Metrica3D::d345,networkModel);
+		} else if ( dialogIntrinsicPermeabilityByNetwork->childInt ) {
+			fullFileName = dialogIntrinsicPermeabilityByNetwork->childInt->getFullFileName();
+			if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
+				objPerIn->SalvarRede((fullFileName + ".rsl").toStdString());
 			}
-			if (msgBox.clickedButton() == yes) {
-				open((fullFileName + ".rsl").toStdString(),false);
-				// salva saídas em disco
-				ofstream fout ( (fullFileName + ".permeabilidadeByRede.txt").toStdString() );
-				fout << *objPerIn;
-				fout << "\n\nPermeabilidade = " << permeabilidade << endl;
-				fout.close();
-			}
+			permeabilidade = objPerIn->Go(dialogIntrinsicPermeabilityByNetwork->childInt->pm3D,nx,nx,nx,CDistribuicao3D::Metrica3D::d345,networkModel);
+		} else {
 			QApplication::restoreOverrideCursor();
-			QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));
+			QMessageBox::information(this, tr("LVP"), tr("Error getting 3D image!"));
+			return;
 		}
+		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
+			open((fullFileName + ".rsl").toStdString(),false);
+			// salva saídas em disco
+			ofstream fout ( (fullFileName + ".permeabilidadeByRede.txt").toStdString() );
+			fout << *objPerIn;
+			fout << "\n\nPermeabilidade = " << permeabilidade << endl;
+			fout.close();
+		}
+		QApplication::restoreOverrideCursor();
+		QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));
 	} else {
 		QMessageBox::information(this, tr("LVP"), tr("Error creatting intrinsic permeability object!"));
 	}
+	dialogIntrinsicPermeabilityByNetwork->close();
+	delete dialogIntrinsicPermeabilityByNetwork;
+	dialogIntrinsicPermeabilityByNetwork = nullptr;
 }
 
 void Lvp::intrinsicPermeability() {
@@ -2729,7 +2778,7 @@ void Lvp::exSegmentationPoresThroats(){
 			open( filepath.toStdString() );
 		}
 	} else {
-		EModelo model = ONZE;;
+		EModelo model = ONZE;
 		if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 11" ) {
 			model = ONZE;
 		} else if (dialogPoresThroats->comboBoxModel->currentText() == "Openning Dilatation Model 10" ) {

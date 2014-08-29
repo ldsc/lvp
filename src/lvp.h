@@ -25,6 +25,8 @@
 #include "pbmImageviewer.h"
 #include "pgmImageviewer.h"
 #include "glwidget.h"
+#include "intrinsicPermeabilityByNetwork.h"
+#include "poresThroats.h"
 #include "ploter.h"
 #include "properties.h"
 #include "textEditor.h"
@@ -157,6 +159,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		QFileSystemWatcher *fileWatcher = nullptr; ///< The QFileSystemWatcher class provides an interface for monitoring files and directories for modifications
 
 		PoresThroats * dialogPoresThroats = nullptr;
+		IntrinsicPermeabilityByNetwork * dialogIntrinsicPermeabilityByNetwork = nullptr;
 		OptionsDialog * dialogHexEditor = nullptr;
 		Reconstruction   * dialogGT = nullptr;
 		ReconstructionES * dialogES = nullptr;
@@ -231,6 +234,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void exConfEq();
 		void exConfEq3D();
 		void exImport();
+		void exIntrinsicPermeabilityByNetwork();
 		void exProperties();
 		void exCrop3DImage();
 		void exReconstructionGT();

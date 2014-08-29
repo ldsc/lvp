@@ -28,6 +28,7 @@ SOURCES +=  lvp.cpp \
             crop3D.cpp \
             properties.cpp \
             poresThroats.cpp \
+            intrinsicPermeabilityByNetwork.cpp \
             dialogGrayTons.cpp
 
 HEADERS +=  lvp.h \
@@ -57,6 +58,7 @@ HEADERS +=  lvp.h \
             properties.h \
             qdebugstream.h \
             poresThroats.h \
+            intrinsicPermeabilityByNetwork.h \
             dialogGrayTons.h
 
 
@@ -69,6 +71,7 @@ FORMS +=    lvpinterface.ui \
             optionsdialog.ui \
             dialogCrop3D.ui \
             dialogPoresThroats.ui \
+            dialogIntrinsicPermeabilityByNetwork.ui \
             dialogGrayTons.ui
             #searchdialog.ui
 
