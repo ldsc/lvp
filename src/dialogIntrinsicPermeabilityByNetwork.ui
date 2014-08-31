@@ -32,7 +32,7 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
-  <widget class="QGroupBox" name="groupBox">
+  <widget class="QGroupBox" name="groupBoxSolver">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -82,47 +82,15 @@
      </item>
      <item row="1" column="1">
       <widget class="QComboBox" name="comboBoxLimitError">
+       <property name="currentText">
+        <string notr="true">1.0e-06</string>
+       </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>5</number>
        </property>
        <item>
         <property name="text">
-         <string>1.0e-10</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>1.0e-09</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>1.0e-08</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>1.0e-07</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>1.0e-06</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>1.0e-05</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>1.0e-04</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>1.0e-03</string>
+         <string>1.0e-01</string>
         </property>
        </item>
        <item>
@@ -132,7 +100,42 @@
        </item>
        <item>
         <property name="text">
-         <string>1.0e-01</string>
+         <string>1.0e-03</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1.0e-04</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1.0e-05</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1.0e-06</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1.0e-07</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1.0e-08</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1.0e-09</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1.0e-10</string>
         </property>
        </item>
       </widget>
@@ -172,7 +175,10 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QGroupBox" name="groupBox_5">
+  <widget class="QGroupBox" name="groupBoxSementation">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -303,17 +309,7 @@
      </property>
      <item>
       <property name="text">
-       <string>Model 11</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Model 10</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Model 9</string>
+       <string>Model 7</string>
       </property>
      </item>
      <item>
@@ -323,7 +319,17 @@
      </item>
      <item>
       <property name="text">
-       <string>Model 7</string>
+       <string>Model 9</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Model 10</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Model 11</string>
       </property>
      </item>
     </widget>
@@ -371,7 +377,7 @@
     </widget>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox_4">
+  <widget class="QGroupBox" name="groupBoxPercolationNetwork">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -403,6 +409,9 @@
     </property>
     <property name="text">
      <string>&amp;Save Percolation Network</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
     <property name="tristate">
      <bool>false</bool>
@@ -484,7 +493,7 @@
      </item>
     </layout>
    </widget>
-   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget1</zorder>
    <zorder>checkBoxSPN</zorder>
   </widget>
  </widget>

@@ -6,6 +6,7 @@ IntrinsicPermeabilityByNetwork::IntrinsicPermeabilityByNetwork(QMainWindow *_par
 	parent = _parent;
 	child	= _child;
 	childInt = nullptr;
+	this->groupBoxSementation->setEnabled(true);
 	connect(buttonBox, SIGNAL(accepted()), parent, SLOT(exIntrinsicPermeabilityByNetwork()));
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
@@ -15,6 +16,7 @@ IntrinsicPermeabilityByNetwork::IntrinsicPermeabilityByNetwork(QMainWindow *_par
 	parent = _parent;
 	child	= nullptr;
 	childInt = _child;
+	this->groupBoxSementation->setEnabled(false);
 	connect(buttonBox, SIGNAL(accepted()), parent, SLOT(exIntrinsicPermeabilityByNetwork()));
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
