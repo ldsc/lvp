@@ -1,0 +1,19 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Encoding=UTF-8
+Name=LVP - Laboratório Virtual de Petrofísica
+GenericName=lvp
+Comment=LVP - Laboratório Virtual de Petrofísica
+
+#Exec=/home/bueno/Documentos/03-Pesquisa/4-Desenvolvimento/1-Atual/lvp/bin/lvp
+Exec=lvp
+Icon=/usr/share/icons/lvp_logo.png
+
+Terminal=false
+Type=Application
+MimeType=text/plain;
+Categories=Cientific;
+Name[en_US]=lvp
+
+

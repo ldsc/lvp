@@ -1,3 +1,23 @@
+Leandro:
+========
+
+[ ]- Código Leandro ok; falta corrigir condutancias
+Solução: ver como Liang faz o cálculo e corrigir.
+
+[ ].Se continuar dando resultado estranho;
+posssivelmente código com problema-> corrigir seu código.
+
+[ ]. Tentar calculo da permeabilidade usando código Liang;
+bastaria exportar a rede no mesmo formato!
+se não me engano código Liang salva a rede em disco no classify e depois abre no perm.
+
+Bueno:
+========
+[ ]- Adicionar cálculo condutância sitio->ligação
+[ ]- Implementar abertura da rede gerada pelo Leandro
+[ ]- Testar
+
+
 [ ] Implementar filtros 3D.
 
 [ ] Corrigir em CCorrelacaoFrequencial o uso de índice para informar quem é poro.

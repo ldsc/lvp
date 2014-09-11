@@ -1,0 +1,6 @@
+ln -s /home/bueno/Documentos/03-Pesquisa/4-Desenvolvimento/1-Atual/lvp/bin/lvp  /usr/bin/lvp
+cp *.png /usr/share/icons/
+cp lvp.desktop  /usr/share/applications
+
+## vá em configuracoes->teclado->Aba Atalhos->AtalhosPersonalizados->AdicioneAtalho->Nome=hp15c Comando=java -jar /usr/bin/HP15C
+
