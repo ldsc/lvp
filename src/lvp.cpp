@@ -2798,8 +2798,11 @@ void Lvp::exSegmentationPoresThroats(){
 		filtro.SalvarResultadosParciais(dialogPoresThroats->checkBoxSPR->isChecked());
 		filtro.GerarDetalhesObjetos(dialogPoresThroats->checkBoxGOD->isChecked());
 		filtro.Go(model);
-		filtro.Write(filepath.toStdString());
-		open( filepath.toStdString() );
+		if (filtro.Write(filename.toStdString())) {
+			open( filename.toStdString() );
+		} else {
+			QMessageBox::information(this, tr("LVP"), tr("Error: Can not write the file %1!").arg(filepath));
+		}
 		if (filtro.GerarDetalhesObjetos()) {
 			filepath = dialogPoresThroats->child->getFilePath();
 			filepath+= dialogPoresThroats->child->getFileNameNoExt() + ".rsl";

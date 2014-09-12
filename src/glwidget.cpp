@@ -133,6 +133,11 @@ GLWidget::GLWidget(QString _fileName, int _viewtype, QWidget *parent)
 			text >> lstObjsCon;
 			it->second.Conectar( lstObjsCon );
 		}
+		s = text.readLine(); // lê o restante da linha;
+		//Copia propriedade do objeto com a conexão (não utilizado na visualização da rede).
+		//for (int j = 0; j < nObjsCon; ++j) {
+		//	text >> prop;
+		//}
 	}
 
 	planX = 0;
