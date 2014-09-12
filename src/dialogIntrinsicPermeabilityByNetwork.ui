@@ -392,9 +392,9 @@
    <widget class="QCheckBox" name="checkBoxSPN">
     <property name="geometry">
      <rect>
-      <x>82</x>
+      <x>50</x>
       <y>77</y>
-      <width>146</width>
+      <width>211</width>
       <height>17</height>
      </rect>
     </property>
