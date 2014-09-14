@@ -1,6 +1,8 @@
 QT += opengl
 QT += printsupport
 
+CONFIG += static
+
 SOURCES +=  lvp.cpp \
             main.cpp \
             confEq.cpp \
