@@ -2528,26 +2528,26 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 		limiteErro = 1.0e-06;
 	}
 
-	EModelo model = SETE;
+	EModelo model = EModelo::SETE;
 	if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 11" ) {
-		model = ONZE;
+		model = EModelo::ONZE;
 	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 10" ) {
-		model = DEZ;
+		model = EModelo::DEZ;
 	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 9" ) {
-		model = NOVE;
+		model = EModelo::NOVE;
 	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 8" ) {
-		model = OITO;
+		model = EModelo::OITO;
 	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 7" ) {
-		model = SETE;
+		model = EModelo::SETE;
 	}
 
-	EModeloRede networkModel = tres;
-	if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 3" ) {
-		networkModel = tres;
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 2" ) {
-		networkModel = dois;
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 1" ) {
-		networkModel = um;
+	EModeloRede networkModel = EModeloRede::dois;
+	if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 3" ) {
+		networkModel = EModeloRede::tres;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 2" ) {
+		networkModel = EModeloRede::dois;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 1" ) {
+		networkModel = EModeloRede::um;
 	}
 
 	int indice, fundo;
