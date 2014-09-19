@@ -10,6 +10,7 @@
 #include <AnaliseImagem/Caracterizacao/Correlacao/CCorrelacaoEspacial.h>
 #include <AnaliseImagem/Caracterizacao/Distribuicao/CDistribuicao.h>
 #include <AnaliseImagem/Caracterizacao/Distribuicao/CDistribuicao3D.h>
+#include <AnaliseImagem/Caracterizacao/Distribuicao/CDistribuicaoRSL.h>
 #include <AnaliseImagem/Caracterizacao/Distribuicao/CDistribuicaoTamanhoPorosGargantas.h>
 #include <AnaliseImagem/Filtro/FEspacial/TCFEPassaAlta.h>
 #include <AnaliseImagem/Filtro/FEspacial/TCFEPassaBaixa.h>
@@ -460,7 +461,7 @@ void Lvp::updateMenus() {
 	actionDTPd5711_3D->setVisible(hasImageViewer3D);
 	actionDTPeuclidian->setVisible(hasImageViewer);
 	actionDTPeuclidian3D->setVisible(hasImageViewer3D);
-	actionDTPGd345_3D->setEnabled(hasImageViewer3D);
+	actionDTPGd345_3D->setEnabled(hasImageViewer3D || (hasTextEditor && activeTextEditor()->getFileExt().toLower()=="rsl"));
 	actionCascade->setEnabled(mdiArea->subWindowList().size() > 0);
 	actionClose->setEnabled(mdiArea->subWindowList().size() > 0);
 	actionCloseAll->setEnabled(mdiArea->subWindowList().size() > 0);
@@ -2585,11 +2586,20 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 			return;
 		}
 		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
+			/*
+			cout << "Salvando distribuicoes..." << endl;
+			pair < CDistribuicao3D *, CDistribuicao3D * > dist = objPerIn->Rede()->CalcularDistribuicaoRede();
+			dist.first->Write((fullFileName + ".dtp").toStdString());
+			dist.second->Write((fullFileName + ".dtg").toStdString());
+			open((fullFileName + ".dtp").toStdString(),false);
+			open((fullFileName + ".dtg").toStdString(),false);
+			*/
 			open((fullFileName + ".rsl").toStdString(),false);
-			// salva saídas em disco
+
+			cout << "Salvando em disco log da permeabilidade..." << endl;
 			ofstream fout ( (fullFileName + ".permeabilidadeByRede.txt").toStdString() );
 			fout << *objPerIn;
-			fout << "\n\nPermeabilidade = " << permeabilidade << endl;
+			fout << "\n\nPermeabilidade = " << permeabilidade << "mD." << endl;
 			fout.close();
 		}
 		QApplication::restoreOverrideCursor();
@@ -2641,6 +2651,11 @@ void Lvp::intrinsicPermeability() {
 					objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes);
 					double permeabilidade = objPerIn->Go ( pm3D, modelo );
 					QApplication::restoreOverrideCursor();
+					// salva saídas em disco
+					ofstream fout ( (child3D->getFullFileName() + ".permeabilidadeByGrafo.txt").toStdString() );
+					fout << *objPerIn;
+					fout << "\n\nPermeabilidade = " << permeabilidade << "mD." << endl;
+					fout.close();
 					QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));
 				}
 			}
@@ -3707,7 +3722,6 @@ void Lvp::dtpgD345_3D(){
 	bool ok1, ok2, ok3, ok4;
 	std::pair<CDistribuicao3D *, CDistribuicao3D *> dist;
 	DbmImageViewer * child = activeDbmImageViewer();
-	CDistribuicaoTamanhoPorosGargantas * filtro = nullptr;
 	if ( child != nullptr ){
 		if ( child->pm3D ) {
 			int indice=1;
@@ -3736,8 +3750,10 @@ void Lvp::dtpgD345_3D(){
 			if (ok1 and ok2 and ok3 and ok4) {
 				QApplication::setOverrideCursor(Qt::WaitCursor);
 				EModelo modelo = ONZE;
+				CDistribuicaoTamanhoPorosGargantas * filtro = nullptr;
 				filtro = new CDistribuicaoTamanhoPorosGargantas(child->pm3D, raioMaximo, raioDilatacao, fatorReducao, incrementoRaio, modelo, indice, fundo );
 				dist = filtro->Go(CDistribuicao3D::d345);
+				delete filtro;
 				QApplication::restoreOverrideCursor();
 			}
 		} else {
@@ -3749,16 +3765,35 @@ void Lvp::dtpgD345_3D(){
 		if ( childg != nullptr ) {
 			if (childg->pm3D != nullptr) {
 				QApplication::setOverrideCursor(Qt::WaitCursor);
+				CDistribuicaoTamanhoPorosGargantas * filtro = nullptr;
 				filtro = new CDistribuicaoTamanhoPorosGargantas( childg->pm3D );
 				dist = filtro->Go(CDistribuicao3D::d345);
+				delete filtro;
 				QApplication::restoreOverrideCursor();
 			} else {
-				QMessageBox::information(this, tr("LVP"), tr("Error: 3D image is nullptr!"));
+				QMessageBox::information(this, tr("LVP"), tr("Error: 3D image is null!"));
 				return;
 			}
-		}else {
-			QMessageBox::information(this, tr("LVP"), tr("Error: Image viewer not active!"));
-			return;
+		} else {
+			TextEditor * childt = activeTextEditor();
+			if ( childt != nullptr ) {
+				if ( childt->getFileExt().toLower() == "rsl"){
+					QApplication::setOverrideCursor(Qt::WaitCursor);
+					CRedeDePercolacao * filtro = nullptr;
+					filtro = new CRedeDePercolacao(childt->getFullFileName().toStdString());
+					dist = filtro->CalcularDistribuicaoRede();
+					ofstream fout ( (childt->getFullFileName() + ".import.rsl").toStdString() );
+					filtro->Write(fout);
+					delete filtro;
+					QApplication::restoreOverrideCursor();
+				} else {
+					QMessageBox::information(this, tr("LVP"), tr("Error: RPSL file not active!"));
+					return;
+				}
+			} else {
+				QMessageBox::information(this, tr("LVP"), tr("Error: RPSL file not active!"));
+				return;
+			}
 		}
 	}
 	if (dist.first != nullptr && dist.second != nullptr) {
@@ -3777,8 +3812,6 @@ void Lvp::dtpgD345_3D(){
 	} else {
 		QMessageBox::information(this, tr("LVP"), tr("Erro! - CDistribuicaoTamanhoPorosGargantas class returned nullptr!"));
 	}
-	if(filtro)
-		delete filtro;
 	if(dist.first)
 		delete dist.first;
 	if(dist.second)
