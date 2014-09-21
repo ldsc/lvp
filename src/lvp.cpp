@@ -2586,14 +2586,13 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 			return;
 		}
 		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
-			/*
-			cout << "Salvando distribuicoes..." << endl;
+
 			pair < CDistribuicao3D *, CDistribuicao3D * > dist = objPerIn->Rede()->CalcularDistribuicaoRede();
-			dist.first->Write((fullFileName + ".dtp").toStdString());
-			dist.second->Write((fullFileName + ".dtg").toStdString());
+			dist.first->Write(fullFileName.toStdString());
+			dist.second->Write(fullFileName.toStdString());
 			open((fullFileName + ".dtp").toStdString(),false);
 			open((fullFileName + ".dtg").toStdString(),false);
-			*/
+
 			open((fullFileName + ".rsl").toStdString(),false);
 
 			cout << "Salvando em disco log da permeabilidade..." << endl;
