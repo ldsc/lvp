@@ -125,10 +125,8 @@ GLWidget::GLWidget(QString _fileName, int _viewtype, QWidget *parent)
 		//std::cerr << "Obj: " << obj << " x: " << x << " y: " << y << " z: " << z << " Raio: " << raio << " Tipo: " << tipo << " NVoxeis: " << nVoxeis << " NObjsCon: " << nObjsCon << std::endl;
 		matrizObjetos[obj] = CObjetoImagem( (ETipoObjetoImagem)tipo, nVoxeis);
 		it = matrizObjetos.find(obj);
-		it->second.pontoCentral.x = x;
-		it->second.pontoCentral.y = y;
-		it->second.pontoCentral.z = z;
-		it->second.pontoCentral.df = raio; // df armazena o raio e não a distância ao fundo, logo, não pode obter raio através do método Raio().
+		it->second.PontoCentral( x, y, z, 3*raio );
+		it->second.Raio( raio );
 		for (int j = 0; j < nObjsCon; ++j) {
 			text >> lstObjsCon;
 			it->second.Conectar( lstObjsCon );
@@ -551,13 +549,13 @@ drawByRPSL: {
 		for (int i = 1; i <= numObjs; ++i) {
 			it = matrizObjetos.find(i);
 			tipo = (int) it->second.Tipo();
-			raio = it->second.pontoCentral.df;
+			raio = it->second.Raio();
 			//nVoxeis = it->second.NumObjs();
 			//nObjsCon = it->second.SConexao().size();
 			//obtem propriedades do sítio
-			x = it->second.pontoCentral.x;
-			y = it->second.pontoCentral.y;
-			z = it->second.pontoCentral.z;
+			x = it->second.PontoCentral_X();
+			y = it->second.PontoCentral_Y();
+			z = it->second.PontoCentral_Z();
 			if (tipo == 2) { // Sítio
 				glPushMatrix(); // salva as transformações atuais na pilha
 				//desenha o sítio
@@ -570,15 +568,15 @@ drawByRPSL: {
 				its = it->second.SConexao().begin();
 				//Primeiro sítio
 				it1 = matrizObjetos.find(its->first);
-				x1 = it1->second.pontoCentral.x;
-				y1 = it1->second.pontoCentral.y;
-				z1 = it1->second.pontoCentral.z;
+				x1 = it1->second.PontoCentral_X();
+				y1 = it1->second.PontoCentral_Y();
+				z1 = it1->second.PontoCentral_Z();
 				//Segundo sítio
 				++its;
 				it2 = matrizObjetos.find(its->first);
-				x2 = it2->second.pontoCentral.x;
-				y2 = it2->second.pontoCentral.y;
-				z2 = it2->second.pontoCentral.z;
+				x2 = it2->second.PontoCentral_X();
+				y2 = it2->second.PontoCentral_Y();
+				z2 = it2->second.PontoCentral_Z();
 
 				//cálcula os vetores.
 				vx = x2 - x1;
