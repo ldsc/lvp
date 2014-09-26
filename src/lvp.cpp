@@ -2543,7 +2543,9 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 	}
 
 	EModeloRede networkModel = EModeloRede::dois;
-	if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 3" ) {
+	if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 4" ) {
+		networkModel = EModeloRede::quatro;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 3" ) {
 		networkModel = EModeloRede::tres;
 	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 2" ) {
 		networkModel = EModeloRede::dois;

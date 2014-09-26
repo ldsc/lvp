@@ -468,7 +468,7 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>3</number>
         </property>
         <item>
          <property name="text">
@@ -483,6 +483,11 @@
         <item>
          <property name="text">
           <string>Model 3</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Model 4</string>
          </property>
         </item>
        </widget>
