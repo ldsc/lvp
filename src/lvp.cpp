@@ -3723,6 +3723,7 @@ void Lvp::dtpgD345_3D(){
 	bool ok1, ok2, ok3, ok4;
 	std::pair<CDistribuicao3D *, CDistribuicao3D *> dist;
 	DbmImageViewer * child = activeDbmImageViewer();
+	CRedeDePercolacao * filtrorpsl = nullptr;
 	if ( child != nullptr ){
 		if ( child->pm3D ) {
 			int indice=1;
@@ -3780,12 +3781,9 @@ void Lvp::dtpgD345_3D(){
 			if ( childt != nullptr ) {
 				if ( childt->getFileExt().toLower() == "rsl"){
 					QApplication::setOverrideCursor(Qt::WaitCursor);
-					CRedeDePercolacao * filtro = nullptr;
-					filtro = new CRedeDePercolacao(childt->getFullFileName().toStdString());
-					dist = filtro->CalcularDistribuicaoRede();
-					ofstream fout ( (childt->getFullFileName() + ".import.rsl").toStdString() );
-					filtro->Write(fout);
-					delete filtro;
+					filtrorpsl = new CRedeDePercolacao(childt->getFullFileName().toStdString());
+					dist = filtrorpsl->CalcularDistribuicaoRede();
+					//filtrorpsl->SalvarListaObjetos( (childt->getFullFileName() + ".import.rsl").toStdString() );
 					QApplication::restoreOverrideCursor();
 				} else {
 					QMessageBox::information(this, tr("LVP"), tr("Error: RPSL file not active!"));
@@ -3817,6 +3815,8 @@ void Lvp::dtpgD345_3D(){
 		delete dist.first;
 	if(dist.second)
 		delete dist.second;
+	if(filtrorpsl)
+		delete filtrorpsl;
 	QApplication::restoreOverrideCursor();
 }
 
