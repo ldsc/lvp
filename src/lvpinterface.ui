@@ -257,6 +257,7 @@
     </property>
     <addaction name="actionTruncadeGaussiana"/>
     <addaction name="actionSuperposedSpheres"/>
+    <addaction name="actionPercolationNetwork"/>
    </widget>
    <widget class="QMenu" name="menuSegmentation">
     <property name="title">
@@ -1652,6 +1653,11 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Labeling</string>
+   </property>
+  </action>
+  <action name="actionPercolationNetwork">
+   <property name="text">
+    <string>Percolation Network</string>
    </property>
   </action>
   <zorder>dockWidgetVisualisation3D</zorder>

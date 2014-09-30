@@ -22,6 +22,7 @@ SOURCES +=  lvp.cpp \
             import.cpp\
             hexEditor.cpp \
             optionsdialog.cpp \
+            percolationNetwork.cpp \
             #searchdialog.cpp \
             qHexEdit/qhexedit.cpp \
             qHexEdit/qhexedit_p.cpp \
@@ -51,6 +52,7 @@ HEADERS +=  lvp.h \
             import.h \
             hexEditor.h \
             optionsdialog.h \
+            percolationNetwork.h \
             #searchdialog.h \
             qHexEdit/qhexedit.h \
             qHexEdit/qhexedit_p.h \
@@ -74,6 +76,7 @@ FORMS +=    lvpinterface.ui \
             dialogCrop3D.ui \
             dialogPoresThroats.ui \
             dialogIntrinsicPermeabilityByNetwork.ui \
+            dialogPercolationNetwork.ui \
             dialogGrayTons.ui
             #searchdialog.ui
 

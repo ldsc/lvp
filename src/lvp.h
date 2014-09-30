@@ -26,6 +26,7 @@
 #include "pgmImageviewer.h"
 #include "glwidget.h"
 #include "intrinsicPermeabilityByNetwork.h"
+#include "percolationNetwork.h"
 #include "poresThroats.h"
 #include "ploter.h"
 #include "properties.h"
@@ -87,13 +88,15 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		virtual ~Lvp() {
 			//delete
 			delete settings;
-			if (dialog)							delete dialog;
-			if (dialogGT)						delete dialogGT;
-			if (dialogES)						delete dialogES;
-			if (dialogImport)				delete dialogImport;
+			if (qout) delete qout;
+			if (qerr)	delete qerr;
+			if (dialog) delete dialog;
+			if (dialogGT) delete dialogGT;
+			if (dialogES)	delete dialogES;
+			if (dialogImport) delete dialogImport;
 			if (dialogPoresThroats) delete dialogPoresThroats;
-			if (qout)								delete qout;
-			if (qerr)								delete qerr;
+			if (dialogPercolationNetwork) delete dialogPercolationNetwork;
+			if (dialogIntrinsicPermeabilityByNetwork) delete dialogIntrinsicPermeabilityByNetwork;
 		}
 	// Enums
 	private:
@@ -160,6 +163,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 
 		PoresThroats * dialogPoresThroats = nullptr;
 		IntrinsicPermeabilityByNetwork * dialogIntrinsicPermeabilityByNetwork = nullptr;
+		PercolationNetwork * dialogPercolationNetwork = nullptr;
 		OptionsDialog * dialogHexEditor = nullptr;
 		Reconstruction   * dialogGT = nullptr;
 		ReconstructionES * dialogES = nullptr;
@@ -235,6 +239,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void exConfEq3D();
 		void exImport();
 		void exIntrinsicPermeabilityByNetwork();
+		void exPercolationNetwork();
 		void exProperties();
 		void exCrop3DImage();
 		void exReconstructionGT();
@@ -264,6 +269,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void options(); // abre diálogo de opções para o editor hexadecimal
 		void optionsAccepted(); // grava e lê as opções do editor hexadecimal
 		void segmentationPoresThroats(); // segmentação de poros e gargantas
+		void percolationNetwork(); //abre diálogo de opções para a criação de redes de percolação
 		void porosity();
 		void print();
 		void properties();
