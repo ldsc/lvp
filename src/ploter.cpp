@@ -368,13 +368,15 @@ bool Ploter::save( QString * lop ) {
 
 bool Ploter::saveAs( QString * _lop ) {
 	QString newFileName;
-	if ( fileExt == "cor" || fileExt == "COR" ) {
+	if ( fileExt.toLower() == "cor" ) {
 		newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Correlation Files (*.cor)"));
-	} else if( fileExt == "dtp" || fileExt == "DTP") {
+	} else if( fileExt.toLower() == "dtp" ) {
 		newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Distribution Files (*.dtp)"));
-	} else if( fileExt == "dts" || fileExt == "DTS") {
+	} else if( fileExt.toLower() == "dtg" ) {
+		newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Distribution Files (*.dtp)"));
+	} else if( fileExt.toLower() == "dts" ) {
 		newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Distribution Files (*.dts)"));
-	} else if( fileExt == "rpc" || fileExt == "RPC") {
+	} else if( fileExt.toLower() == "rpc" ) {
 		newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Relative Permeability Curves (*.rpc)"));
 	}
 	if ( newFileName.isEmpty() ) {

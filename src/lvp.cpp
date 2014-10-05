@@ -2624,28 +2624,7 @@ void Lvp::intrinsicPermeabilityByNetwork() {
 void Lvp::exIntrinsicPermeabilityByNetwork() {
 	unsigned int nx = dialogIntrinsicPermeabilityByNetwork->spinBoxPNSize->value();
 	int limiteIteracoes = dialogIntrinsicPermeabilityByNetwork->spinBoxLimitIterations->value();
-	double limiteErro = 1.0e-06;
-	if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-10" ) {
-		limiteErro = 1.0e-10;
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-09" ) {
-		limiteErro = 1.0e-09;
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-08" ) {
-		limiteErro = 1.0e-08;
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-07" ) {
-		limiteErro = 1.0e-07;
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-06" ) {
-		limiteErro = 1.0e-06;
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-05" ) {
-		limiteErro = 1.0e-05;
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-04" ) {
-		limiteErro = 1.0e-04;
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-03" ) {
-		limiteErro = 1.0e-03;
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-02" ) {
-		limiteErro = 1.0e-02;
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText() == "1.0e-01" ) {
-		limiteErro = 1.0e-06;
-	}
+	double limiteErro = dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText().toDouble();
 
 	EModelo model = EModelo::SETE;
 	if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 11" ) {
@@ -2727,8 +2706,10 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 		}
 		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSaveDistributions->isChecked()) {
 			pair < CDistribuicao3D *, CDistribuicao3D * > dist = objPerIn->Rede()->CalcularDistribuicaoRede();
-			dist.first->Write((filePath + "." + fileName + ".rsl").toStdString());
-			dist.second->Write((filePath + "." + fileName + ".rsl").toStdString());
+			dist.first->path = filePath.toStdString();
+			dist.second->path = filePath.toStdString();
+			dist.first->Write(("." + fileName + ".rsl").toStdString());
+			dist.second->Write(("." + fileName + ".rsl").toStdString());
 			open((filePath + "." + fileName + ".rsl" + ".dtp").toStdString(),true);
 			open((filePath + "." + fileName + ".rsl" + ".dtg").toStdString(),true);
 		}
@@ -2769,6 +2750,7 @@ void Lvp::intrinsicPermeability() {
 			if ( objPerIn ) {
 				bool ok;
 				limiteIteracoes = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the limit iterations number:"), 100000, 1000, 10000000, 1, &ok);
+				cerr << "limiteIteracoes: " << limiteIteracoes << endl;
 				if (ok) {
 					QStringList itens = ( QStringList() << tr("1.0e-10") << tr("1.0e-09") << tr("1.0e-08") << tr("1.0e-07") << tr("1.0e-06") << tr("1.0e-05") << tr("1.0e-04") << tr("1.0e-03") << tr("1.0e-02") << tr("1.0e-01") );
 					QString item = QInputDialog::getItem(this, tr("Intrinsic Permeability"), tr("Enter the limit error number:"), itens, 4, false, &ok);
@@ -2776,27 +2758,36 @@ void Lvp::intrinsicPermeability() {
 						limiteErro = item.toDouble(&ok);
 						cerr << "limiteErro: " << limiteErro << endl;
 						modelo = QInputDialog::getInt(this, tr("Intrinsic Permeability"), tr("Enter the Graph model:"), 3, 1, 5, 1, &ok);
+						cerr << "modelo: " << modelo << endl;
 					}
 				}
 				if (ok) {
-					QApplication::setOverrideCursor(Qt::WaitCursor);
-					objPerIn->CriarObjetos( );
-					objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes);
-					double permeabilidade = objPerIn->Go ( pm3D, modelo );
-					QApplication::restoreOverrideCursor();
-					// salva saídas em disco
-					ofstream fout ( (child3D->getFullFileName() + ".permeabilidadeByGrafo.txt").toStdString() );
-					fout << *objPerIn;
-					fout << "\n\nPermeabilidade = " << permeabilidade << "mD." << endl;
-					fout.close();
-					QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));
+					if (objPerIn->CriarObjetos( ) ) {
+						if ( objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes) ) {
+							QApplication::setOverrideCursor(Qt::WaitCursor);
+							double permeabilidade = objPerIn->Go ( pm3D, modelo );
+							QApplication::restoreOverrideCursor();
+							// salva saídas em disco
+							string filename = (child3D->getFilePath() + "." + child3D->getFileName() + ".permeabilidadeByGrafo.txt").toStdString();
+							ofstream fout ( filename );
+							fout << *objPerIn;
+							fout << "\n\nPermeabilidade = " << permeabilidade << " mD." << endl;
+							fout.close();
+							open ( filename, true );
+							QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));
+						} else {
+							QMessageBox::information(this, tr("LVP"), tr("Error trying to set solver properties!"));
+						}
+					} else {
+						QMessageBox::information(this, tr("LVP"), tr("Error trying to create solver objets!"));
+					}
 				}
 			}
 		} else {
-			QMessageBox::information(this, tr("LVP"), tr("Error while trying to retrieve 3D image!"));
+			QMessageBox::information(this, tr("LVP"), tr("Error trying to retrieve 3D image!"));
 		}
 	} else {
-		QMessageBox::information(this, tr("LVP"), tr("Error while trying to retrieve 3D image!"));
+		QMessageBox::information(this, tr("LVP"), tr("Error trying to retrieve 3D image!"));
 		return;
 	}
 }
