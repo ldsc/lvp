@@ -32,6 +32,7 @@ class TextEditor : public QTextEdit
 		QString fileName;
 		QString curFileNoExt;
 		QString fileExt;
+		QString filePath;
 
 		// Métodos
 	public:

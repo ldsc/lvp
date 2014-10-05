@@ -834,17 +834,21 @@ void Lvp::open(string _file, bool novo) {
 				return;
 			}
 			childText = createTextEditor();
-			if ( novo ) {  // é um novo arquivo.
-				childText->isNew = true;
-			}
-			if ( childText->loadFile(fileName) ) {
-				actionPrint->setEnabled(true);
-				actionFitToWindow->setEnabled(false);
-				childText->show();
-				statusBar()->showMessage(tr("File %1 loaded!").arg(fileName), 2000);
+			if ( childText ) {
+				if ( novo ) {  // é um novo arquivo.
+					childText->isNew = true;
+				}
+				if ( childText->loadFile(fileName) ) {
+					actionPrint->setEnabled(true);
+					actionFitToWindow->setEnabled(false);
+					childText->show();
+					statusBar()->showMessage(tr("File %1 loaded!").arg(fileName), 2000);
+				} else {
+					statusBar()->showMessage(tr("Error loading file!"), 2000);
+					childText->close();
+				}
 			} else {
-				statusBar()->showMessage(tr("Error"), 2000);
-				childText->close();
+				statusBar()->showMessage(tr("Error creating text editor!"), 2000);
 			}
 		} else {
 			BaseImageViewer *child = nullptr;
@@ -2522,7 +2526,9 @@ void Lvp::exPercolationNetwork() {
 	}
 
 	EModeloRede networkModel = EModeloRede::dois;
-	if (dialogPercolationNetwork->comboBoxPNModel->currentText() == "Model 4" ) {
+	if (dialogPercolationNetwork->comboBoxPNModel->currentText() == "Model 5" ) {
+		networkModel = EModeloRede::cinco;
+	} else if (dialogPercolationNetwork->comboBoxPNModel->currentText() == "Model 4" ) {
 		networkModel = EModeloRede::quatro;
 	} else if (dialogPercolationNetwork->comboBoxPNModel->currentText() == "Model 3" ) {
 		networkModel = EModeloRede::tres;
@@ -2568,10 +2574,10 @@ void Lvp::exPercolationNetwork() {
 		}
 		if (dialogPercolationNetwork->checkBoxSaveDistributions->isChecked()) {
 			pair < CDistribuicao3D *, CDistribuicao3D * > dist = objRede->CalcularDistribuicaoRede();
-			dist.first->Write((filePath + "." + fileName).toStdString());
-			dist.second->Write((filePath + "." + fileName).toStdString());
-			open((filePath + "." + fileName + ".dtp").toStdString(),true);
-			open((filePath + "." + fileName + ".dtg").toStdString(),true);
+			dist.first->Write((filePath + "." + fileName + ".rsl").toStdString());
+			dist.second->Write((filePath + "." + fileName + ".rsl").toStdString());
+			open((filePath + "." + fileName + ".rsl" + ".dtp").toStdString(),true);
+			open((filePath + "." + fileName + ".rsl" + ".dtg").toStdString(),true);
 		}
 		objRede->SalvarListaObjetos((filePath + "." + fileName + ".rsl").toStdString());
 		open((filePath + "." + fileName + ".rsl").toStdString(),true);
@@ -2655,7 +2661,9 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 	}
 
 	EModeloRede networkModel = EModeloRede::dois;
-	if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 4" ) {
+	if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 5" ) {
+		networkModel = EModeloRede::cinco;
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 4" ) {
 		networkModel = EModeloRede::quatro;
 	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 3" ) {
 		networkModel = EModeloRede::tres;
@@ -2698,8 +2706,8 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 																		model,indice,fundo,0,CDistribuicao3D::Metrica3D::d345,networkModel
 																		);
 		} else if ( dialogIntrinsicPermeabilityByNetwork->childInt ) {
-			fileName = dialogIntrinsicPermeabilityByNetwork->child->getFileName();
-			filePath = dialogIntrinsicPermeabilityByNetwork->child->getFilePath();
+			fileName = dialogIntrinsicPermeabilityByNetwork->childInt->getFileName();
+			filePath = dialogIntrinsicPermeabilityByNetwork->childInt->getFilePath();
 			if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
 				objPerIn->SalvarRede((filePath + "." + fileName + ".rsl").toStdString());
 			}
@@ -2719,10 +2727,10 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 		}
 		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSaveDistributions->isChecked()) {
 			pair < CDistribuicao3D *, CDistribuicao3D * > dist = objPerIn->Rede()->CalcularDistribuicaoRede();
-			dist.first->Write((filePath + "." + fileName).toStdString());
-			dist.second->Write((filePath + "." + fileName).toStdString());
-			open((filePath + "." + fileName + ".dtp").toStdString(),true);
-			open((filePath + "." + fileName + ".dtg").toStdString(),true);
+			dist.first->Write((filePath + "." + fileName + ".rsl").toStdString());
+			dist.second->Write((filePath + "." + fileName + ".rsl").toStdString());
+			open((filePath + "." + fileName + ".rsl" + ".dtp").toStdString(),true);
+			open((filePath + "." + fileName + ".rsl" + ".dtg").toStdString(),true);
 		}
 		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
 			open((filePath + "." + fileName + ".rsl").toStdString(),true);
