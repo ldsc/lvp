@@ -2526,16 +2526,25 @@ void Lvp::exPercolationNetwork() {
 	}
 
 	EModeloRede networkModel = EModeloRede::dois;
-	if (dialogPercolationNetwork->comboBoxPNModel->currentText() == "Model 5" ) {
+	QString modeloRede;
+	if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 6" ) {
+		networkModel = EModeloRede::seis;
+		modeloRede = ".ByModelo6";
+	} else if (dialogPercolationNetwork->comboBoxPNModel->currentText() == "Model 5" ) {
 		networkModel = EModeloRede::cinco;
+		modeloRede = "ByModelo5";
 	} else if (dialogPercolationNetwork->comboBoxPNModel->currentText() == "Model 4" ) {
 		networkModel = EModeloRede::quatro;
+		modeloRede = "ByModelo4";
 	} else if (dialogPercolationNetwork->comboBoxPNModel->currentText() == "Model 3" ) {
 		networkModel = EModeloRede::tres;
+		modeloRede = "ByModelo3";
 	} else if (dialogPercolationNetwork->comboBoxPNModel->currentText() == "Model 2" ) {
 		networkModel = EModeloRede::dois;
+		modeloRede = "ByModelo2";
 	} else if (dialogPercolationNetwork->comboBoxPNModel->currentText() == "Model 1" ) {
 		networkModel = EModeloRede::um;
+		modeloRede = "ByModelo1";
 	}
 
 	int indice, fundo;
@@ -2574,13 +2583,13 @@ void Lvp::exPercolationNetwork() {
 		}
 		if (dialogPercolationNetwork->checkBoxSaveDistributions->isChecked()) {
 			pair < CDistribuicao3D *, CDistribuicao3D * > dist = objRede->CalcularDistribuicaoRede();
-			dist.first->Write((filePath + "." + fileName + ".rsl").toStdString());
-			dist.second->Write((filePath + "." + fileName + ".rsl").toStdString());
-			open((filePath + "." + fileName + ".rsl" + ".dtp").toStdString(),true);
-			open((filePath + "." + fileName + ".rsl" + ".dtg").toStdString(),true);
+			dist.first->Write((filePath + "." + fileName + "." + modeloRede + ".rsl").toStdString());
+			dist.second->Write((filePath + "." + fileName + "." + modeloRede + ".rsl").toStdString());
+			open((filePath + "." + fileName + "." + modeloRede + ".rsl" + ".dtp").toStdString(),true);
+			open((filePath + "." + fileName + "." + modeloRede + ".rsl" + ".dtg").toStdString(),true);
 		}
 		objRede->SalvarListaObjetos((filePath + "." + fileName + ".rsl").toStdString());
-		open((filePath + "." + fileName + ".rsl").toStdString(),true);
+		open((filePath + "." + fileName + "." + modeloRede + ".rsl").toStdString(),true);
 		QApplication::restoreOverrideCursor();
 	} else {
 		QMessageBox::information(this, tr("LVP"), tr("Error percolation network object!"));
@@ -2640,16 +2649,25 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 	}
 
 	EModeloRede networkModel = EModeloRede::dois;
-	if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 5" ) {
+	QString modeloRede;
+	if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 6" ) {
+		networkModel = EModeloRede::seis;
+		modeloRede = ".ByModelo6";
+	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 5" ) {
 		networkModel = EModeloRede::cinco;
+		modeloRede = ".ByModelo5";
 	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 4" ) {
 		networkModel = EModeloRede::quatro;
+		modeloRede = ".ByModelo4";
 	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 3" ) {
 		networkModel = EModeloRede::tres;
+		modeloRede = ".ByModelo3";
 	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 2" ) {
 		networkModel = EModeloRede::dois;
+		modeloRede = ".ByModelo2";
 	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 1" ) {
 		networkModel = EModeloRede::um;
+		modeloRede = ".ByModelo1";
 	}
 
 	int indice, fundo;
@@ -2674,7 +2692,7 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 			fileName = dialogIntrinsicPermeabilityByNetwork->child->getFileName();
 			filePath = dialogIntrinsicPermeabilityByNetwork->child->getFilePath();
 			if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
-				objPerIn->SalvarRede((filePath + "." + fileName + ".rsl").toStdString());
+				objPerIn->SalvarRede((filePath + "." + fileName + "." + modeloRede + ".rsl").toStdString());
 			}
 			permeabilidade = objPerIn->Go(dialogIntrinsicPermeabilityByNetwork->child->pm3D,
 																		nx,nx,nx,
@@ -2688,7 +2706,7 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 			fileName = dialogIntrinsicPermeabilityByNetwork->childInt->getFileName();
 			filePath = dialogIntrinsicPermeabilityByNetwork->childInt->getFilePath();
 			if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
-				objPerIn->SalvarRede((filePath + "." + fileName + ".rsl").toStdString());
+				objPerIn->SalvarRede((filePath + "." + fileName + modeloRede + ".rsl").toStdString());
 			}
 			permeabilidade = objPerIn->Go(dialogIntrinsicPermeabilityByNetwork->childInt->pm3D,nx,nx,nx,CDistribuicao3D::Metrica3D::d345,networkModel);
 		} else {
@@ -2698,23 +2716,23 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 		}
 		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSaveLog->isChecked()) {
 			cout << "Salvando em disco log da permeabilidade..." << endl;
-			ofstream fout ( (filePath + "." + fileName + ".permeabilidadeByRede.txt").toStdString() );
+			ofstream fout ( (filePath + "." + fileName +  modeloRede + ".rsl.permeabilidade.txt").toStdString() );
 			fout << *objPerIn;
 			fout << "\n\nPermeabilidade = " << permeabilidade << "mD." << endl;
 			fout.close();
-			open((filePath + "." + fileName + ".permeabilidadeByRede.txt").toStdString(),true);
+			open((filePath + "." + fileName + modeloRede + ".rsl.permeabilidade.txt").toStdString(),true);
 		}
 		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSaveDistributions->isChecked()) {
 			pair < CDistribuicao3D *, CDistribuicao3D * > dist = objPerIn->Rede()->CalcularDistribuicaoRede();
 			dist.first->path = filePath.toStdString();
 			dist.second->path = filePath.toStdString();
-			dist.first->Write(("." + fileName + ".rsl").toStdString());
-			dist.second->Write(("." + fileName + ".rsl").toStdString());
-			open((filePath + "." + fileName + ".rsl" + ".dtp").toStdString(),true);
-			open((filePath + "." + fileName + ".rsl" + ".dtg").toStdString(),true);
+			dist.first->Write((filePath + "." + fileName + modeloRede + ".rsl").toStdString());
+			dist.second->Write((filePath + "." + fileName + modeloRede + ".rsl").toStdString());
+			open((filePath + "." + fileName + modeloRede + ".rsl" + ".dtp").toStdString(),true);
+			open((filePath + "." + fileName + modeloRede + ".rsl" + ".dtg").toStdString(),true);
 		}
 		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
-			open((filePath + "." + fileName + ".rsl").toStdString(),true);
+			open((filePath + "." + fileName + modeloRede + ".rsl").toStdString(),true);
 		}
 		QApplication::restoreOverrideCursor();
 		QMessageBox::information(this, tr("LVP"), tr("Intrinsic Permeability = %1 mD").arg(permeabilidade));

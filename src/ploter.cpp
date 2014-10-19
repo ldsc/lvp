@@ -373,7 +373,7 @@ bool Ploter::saveAs( QString * _lop ) {
 	} else if( fileExt.toLower() == "dtp" ) {
 		newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Distribution Files (*.dtp)"));
 	} else if( fileExt.toLower() == "dtg" ) {
-		newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Distribution Files (*.dtp)"));
+		newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Distribution Files (*.dtg)"));
 	} else if( fileExt.toLower() == "dts" ) {
 		newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Distribution Files (*.dts)"));
 	} else if( fileExt.toLower() == "rpc" ) {
@@ -388,6 +388,8 @@ bool Ploter::saveAs( QString * _lop ) {
 	//cerr << "newFileName: " << newFileName.toStdString() << endl;
 	//cerr << "_lop: " << _lop->toStdString() << endl;
 	//cerr << "dir.canonicalPath(): " << dir.canonicalPath().toStdString() << endl;
+	if (QFile::exists(newFileName))
+		QFile::remove(newFileName);
 	if (QFile::copy(fullFileName, newFileName)){
 		if (isNew) {
 			QFile::remove(fullFileName);
