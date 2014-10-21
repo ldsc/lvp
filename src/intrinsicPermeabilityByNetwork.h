@@ -4,6 +4,7 @@
 #include "ui_dialogIntrinsicPermeabilityByNetwork.h"
 #include "dbmImageViewer.h"
 #include "dgmImageViewer.h"
+#include "textEditor.h"
 
 #include <QMainWindow>
 
@@ -15,10 +16,13 @@ class IntrinsicPermeabilityByNetwork : public QDialog, public Ui::DialogIntrinsi
 	public:
 		explicit IntrinsicPermeabilityByNetwork(QMainWindow * _parent, DbmImageViewer * _child);
 		explicit IntrinsicPermeabilityByNetwork(QMainWindow * _parent, DgmImageViewer * _child);
+		explicit IntrinsicPermeabilityByNetwork(QMainWindow * _parent, TextEditor * _child);
 		~IntrinsicPermeabilityByNetwork(){}
 
+		TextEditor * childRSL;
 		DbmImageViewer * child;
 		DgmImageViewer * childInt;
+
 		
 	private:
 		 QMainWindow *parent;

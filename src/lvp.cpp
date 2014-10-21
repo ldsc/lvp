@@ -418,6 +418,7 @@ void Lvp::updateMenus() {
 	bool hasPloter					= false;
 	bool hasTextEditor			= false;
 	bool hasHexEditor				= false;
+	bool hasRSL							= false;
 	QString ext = "";
 	if ( active2DImageViewer() != nullptr ) {
 		hasImageViewer = true;
@@ -440,6 +441,8 @@ void Lvp::updateMenus() {
 	} else if ( activeTextEditor() != nullptr ) {
 		hasTextEditor = true;
 		actionSave->setEnabled( hasTextEditor && activeTextEditor()->document()->isModified() );
+		if ( activeTextEditor()->getFileExt().toLower()=="rsl" )
+			hasRSL = true;
 	} else if ( activeHexEditor() != nullptr ) {
 		hasHexEditor = true;
 		actionSave->setEnabled( hasTextEditor && activeHexEditor()->IsModified() );
@@ -462,7 +465,7 @@ void Lvp::updateMenus() {
 	actionDTPd5711_3D->setVisible(hasImageViewer3D);
 	actionDTPeuclidian->setVisible(hasImageViewer);
 	actionDTPeuclidian3D->setVisible(hasImageViewer3D);
-	actionDTPGd345_3D->setEnabled(hasImageViewer3D || (hasTextEditor && activeTextEditor()->getFileExt().toLower()=="rsl"));
+	actionDTPGd345_3D->setEnabled(hasImageViewer3D || hasRSL);
 	actionCascade->setEnabled(mdiArea->subWindowList().size() > 0);
 	actionClose->setEnabled(mdiArea->subWindowList().size() > 0);
 	actionCloseAll->setEnabled(mdiArea->subWindowList().size() > 0);
@@ -498,7 +501,7 @@ void Lvp::updateMenus() {
 	actionLabeling3D->setEnabled(hasDbmImageViewer);
 	actionLowPass->setEnabled(hasImageViewer);
 	actionMPV->setEnabled( hasImageViewer3D );
-	actionPNV->setEnabled( hasTextEditor && activeTextEditor()->getFileExt().toLower()=="rsl" );
+	actionPNV->setEnabled( hasRSL );
 	actionNext->setEnabled(mdiArea->subWindowList().size() > 1);
 	actionNormalSize->setEnabled(!actionFitToWindow->isChecked() && ( hasImageViewer || hasImageViewer3D ));
 	actionOpening->setVisible(hasPbmImageViewer);
@@ -510,7 +513,7 @@ void Lvp::updateMenus() {
 	actionProperties->setEnabled(hasImageViewer || hasImageViewer3D);
 	actionRelativePermeability->setEnabled(hasImageViewer3D);
 	actionIntrinsicPermeability->setEnabled(hasImageViewer3D);
-	actionIntrinsicPermeabilityByNetwork->setEnabled(hasImageViewer3D);
+	actionIntrinsicPermeabilityByNetwork->setEnabled(hasImageViewer3D || hasRSL);
 	actionRotate->setEnabled( hasImageViewer3D || hasImageViewer );
 	actionSaveAs->setEnabled( hasImageViewer || hasImageViewer3D || hasPloter || hasTextEditor || hasHexEditor );
 	actionSeparator->setVisible(mdiArea->subWindowList().size() > 0);
@@ -2524,12 +2527,11 @@ void Lvp::exPercolationNetwork() {
 	} else if (dialogPercolationNetwork->comboBoxSModel->currentText() == "Model 7" ) {
 		model = EModelo::SETE;
 	}
-
 	EModeloRede networkModel = EModeloRede::dois;
-	QString modeloRede;
-	if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 6" ) {
+	QString modeloRede = "ByModelo2";
+	if (dialogPercolationNetwork->comboBoxPNModel->currentText() == "Model 6" ) {
 		networkModel = EModeloRede::seis;
-		modeloRede = ".ByModelo6";
+		modeloRede = "ByModelo6";
 	} else if (dialogPercolationNetwork->comboBoxPNModel->currentText() == "Model 5" ) {
 		networkModel = EModeloRede::cinco;
 		modeloRede = "ByModelo5";
@@ -2546,7 +2548,6 @@ void Lvp::exPercolationNetwork() {
 		networkModel = EModeloRede::um;
 		modeloRede = "ByModelo1";
 	}
-
 	int indice, fundo;
 	if (dialogPercolationNetwork->radioButtonBlack->isChecked()) {
 		indice = 1;
@@ -2559,6 +2560,7 @@ void Lvp::exPercolationNetwork() {
 	CRedeDePercolacao * objRede = nullptr;
 	objRede = new CRedeDePercolacao(nx, nx, nx);
 	if ( objRede ) {
+		cout << "objrede" << endl;
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		QString filePath;
 		QString fileName;
@@ -2588,7 +2590,7 @@ void Lvp::exPercolationNetwork() {
 			open((filePath + "." + fileName + "." + modeloRede + ".rsl" + ".dtp").toStdString(),true);
 			open((filePath + "." + fileName + "." + modeloRede + ".rsl" + ".dtg").toStdString(),true);
 		}
-		objRede->SalvarListaObjetos((filePath + "." + fileName + ".rsl").toStdString());
+		objRede->SalvarListaObjetos((filePath + "." + fileName + "." + modeloRede + ".rsl").toStdString());
 		open((filePath + "." + fileName + "." + modeloRede + ".rsl").toStdString(),true);
 		QApplication::restoreOverrideCursor();
 	} else {
@@ -2602,6 +2604,7 @@ void Lvp::exPercolationNetwork() {
 void Lvp::intrinsicPermeabilityByNetwork() {
 	DbmImageViewer * child3D = nullptr;
 	DgmImageViewer * child3Dint = nullptr;
+	TextEditor * childt = nullptr;
 	QString fullFileName;
 	if ( (child3D = activeDbmImageViewer()) ) {
 		fullFileName = child3D->getFullFileName();
@@ -2623,6 +2626,12 @@ void Lvp::intrinsicPermeabilityByNetwork() {
 			}
 		}
 		dialogIntrinsicPermeabilityByNetwork = new IntrinsicPermeabilityByNetwork( this, child3Dint );
+	} else if ( (childt = activeTextEditor()) ) {
+		if ( childt->getFileExt().toLower() != "rsl"){
+			QMessageBox::information(this, tr("LVP"), tr("Error: RPSL file not active!"));
+			return;
+		}
+		dialogIntrinsicPermeabilityByNetwork = new IntrinsicPermeabilityByNetwork( this, childt );
 	} else {
 		QMessageBox::information(this, tr("LVP"), tr("Error while trying to retrieve 3D image!"));
 		return;
@@ -2683,11 +2692,11 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 	objPerIn = new CPermeabilidadeIntrinsecaByRede();
 	if ( objPerIn ) {
 		QApplication::setOverrideCursor(Qt::WaitCursor);
-		objPerIn->CriarObjetos(nx,nx,nx);
-		objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes);
 		double permeabilidade = 0.0;
 		QString filePath;
 		QString fileName;
+		objPerIn->CriarObjetos( );
+		objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes);
 		if ( dialogIntrinsicPermeabilityByNetwork->child ) {
 			fileName = dialogIntrinsicPermeabilityByNetwork->child->getFileName();
 			filePath = dialogIntrinsicPermeabilityByNetwork->child->getFilePath();
@@ -2709,6 +2718,11 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 				objPerIn->SalvarRede((filePath + "." + fileName + modeloRede + ".rsl").toStdString());
 			}
 			permeabilidade = objPerIn->Go(dialogIntrinsicPermeabilityByNetwork->childInt->pm3D,nx,nx,nx,CDistribuicao3D::Metrica3D::d345,networkModel);
+		} else if ( dialogIntrinsicPermeabilityByNetwork->childRSL ) {
+			fileName = dialogIntrinsicPermeabilityByNetwork->childRSL->getFileName();
+			filePath = dialogIntrinsicPermeabilityByNetwork->childRSL->getFilePath();
+			CContornoRedeDePercolacao *rede = new CContornoRedeDePercolacao( dialogIntrinsicPermeabilityByNetwork->childRSL->getFullFileName().toStdString());
+			permeabilidade = objPerIn->Go( rede );
 		} else {
 			QApplication::restoreOverrideCursor();
 			QMessageBox::information(this, tr("LVP"), tr("Error getting 3D image!"));

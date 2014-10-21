@@ -45,6 +45,7 @@ class TextEditor : public QTextEdit
 		inline QString getFileName() { return fileName; }
 		inline QString getFileNameNoExt() { return curFileNoExt;	}
 		inline QString getFileExt() { return fileExt; }
+		inline QString getFilePath() { return filePath; }
 
 	private slots:
 		void documentWasModified();
