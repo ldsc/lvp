@@ -33,6 +33,8 @@ IntrinsicPermeabilityByNetwork::IntrinsicPermeabilityByNetwork(QMainWindow *_par
 	childRSL = _child;
 	this->groupBoxSementation->setEnabled(false);
 	this->groupBoxPercolationNetwork->setEnabled(false);
+	this->checkBoxSaveDistributions->setEnabled(false);
+	this->checkBoxSPN->setEnabled(false);
 	connect(buttonBox, SIGNAL(accepted()), parent, SLOT(exIntrinsicPermeabilityByNetwork()));
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
