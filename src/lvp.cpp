@@ -2560,7 +2560,6 @@ void Lvp::exPercolationNetwork() {
 	CRedeDePercolacao * objRede = nullptr;
 	objRede = new CRedeDePercolacao(nx, nx, nx);
 	if ( objRede ) {
-		cout << "objrede" << endl;
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		QString filePath;
 		QString fileName;
@@ -2658,27 +2657,28 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 	}
 
 	EModeloRede networkModel = EModeloRede::dois;
-	QString modeloRede;
-	if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 6" ) {
-		networkModel = EModeloRede::seis;
-		modeloRede = ".ByModelo6";
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 5" ) {
-		networkModel = EModeloRede::cinco;
-		modeloRede = ".ByModelo5";
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 4" ) {
-		networkModel = EModeloRede::quatro;
-		modeloRede = ".ByModelo4";
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 3" ) {
-		networkModel = EModeloRede::tres;
-		modeloRede = ".ByModelo3";
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 2" ) {
-		networkModel = EModeloRede::dois;
-		modeloRede = ".ByModelo2";
-	} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 1" ) {
-		networkModel = EModeloRede::um;
-		modeloRede = ".ByModelo1";
+	QString modeloRede="";
+	if (dialogIntrinsicPermeabilityByNetwork->groupBoxPercolationNetwork->isEnabled()) {
+		if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 6" ) {
+			networkModel = EModeloRede::seis;
+			modeloRede = ".ByModelo6";
+		} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 5" ) {
+			networkModel = EModeloRede::cinco;
+			modeloRede = ".ByModelo5";
+		} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 4" ) {
+			networkModel = EModeloRede::quatro;
+			modeloRede = ".ByModelo4";
+		} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 3" ) {
+			networkModel = EModeloRede::tres;
+			modeloRede = ".ByModelo3";
+		} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 2" ) {
+			networkModel = EModeloRede::dois;
+			modeloRede = ".ByModelo2";
+		} else if (dialogIntrinsicPermeabilityByNetwork->comboBoxPNModel->currentText() == "Model 1" ) {
+			networkModel = EModeloRede::um;
+			modeloRede = ".ByModelo1";
+		}
 	}
-
 	int indice, fundo;
 	if (dialogIntrinsicPermeabilityByNetwork->radioButtonBlack->isChecked()) {
 		indice = 1;
@@ -2695,7 +2695,7 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 		double permeabilidade = 0.0;
 		QString filePath;
 		QString fileName;
-		objPerIn->CriarObjetos( );
+		objPerIn->CriarObjetosFluidoSolver( );
 		objPerIn->SetarPropriedadesSolver(limiteErro,limiteIteracoes);
 		if ( dialogIntrinsicPermeabilityByNetwork->child ) {
 			fileName = dialogIntrinsicPermeabilityByNetwork->child->getFileName();
@@ -2730,11 +2730,11 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 		}
 		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSaveLog->isChecked()) {
 			cout << "Salvando em disco log da permeabilidade..." << endl;
-			ofstream fout ( (filePath + "." + fileName +  modeloRede + ".rsl.permeabilidade.txt").toStdString() );
+			ofstream fout ( (filePath + "." + fileName +  modeloRede + ".permeabilidade.txt").toStdString() );
 			fout << *objPerIn;
 			fout << "\n\nPermeabilidade = " << permeabilidade << "mD." << endl;
 			fout.close();
-			open((filePath + "." + fileName + modeloRede + ".rsl.permeabilidade.txt").toStdString(),true);
+			open((filePath + "." + fileName + modeloRede + ".permeabilidade.txt").toStdString(),true);
 		}
 		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSaveDistributions->isChecked()) {
 			pair < CDistribuicao3D *, CDistribuicao3D * > dist = objPerIn->Rede()->CalcularDistribuicaoRede();

@@ -117,7 +117,9 @@ GLWidget::GLWidget(QString _fileName, int _viewtype, QWidget *parent)
 	text >> c >> numObjs >> nx >> ny >> nz;
 	//std::cerr << "numObjs: " << numObjs  << " nx: " << nx << " ny: " << ny << " nz: " << nz << std::endl;
 	s = text.readLine(); // lê o restante da linha;
-	s = text.readLine(); // lê a linha seguinte;
+	s = text.readLine(); // lê a linha seguinte: # fatorAmplificacao:
+	s = text.readLine(); // lê a linha seguinte: # dimensaoPixel:
+	s = text.readLine(); // lê a linha seguinte: Obj.  X    Y    Z    Raio Tipo N.Voxeis N.ObjsCon LstObjsCons Cond.Obj-Cons Cond.Obj
 
 	matrizObjetos.clear();
 	for (int i = 0; i < numObjs; ++i) {
