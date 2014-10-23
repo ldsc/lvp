@@ -71,7 +71,7 @@ bool TextEditor::save( ) {
 }
 
 bool TextEditor::saveAs( ) {
-	QString newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1/%2").arg(QFileInfo(fullFileName).path()).arg(fileName), tr("Network of Sites and Links (*.rsl);;Text Files (*.txt)"));
+	QString newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(filePath).arg(fileName), tr("Network of Sites and Links (*.rsl);;Text Files (*.txt)"));
 	if ( ! newFileName.isEmpty() ) {
 		QString oldFileName = fullFileName;
 		if ( saveFile(newFileName) ) {

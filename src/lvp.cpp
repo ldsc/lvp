@@ -2285,8 +2285,7 @@ void Lvp::average() {
 			if( objDist->Media(fnames, CDistribuicao::dtp) ){
 				static int seqNumberAverage = 1;
 				qstr = tr(".average-%1").arg(QString::number(seqNumberAverage++));
-				objDist->path = plot->getFilePath ().toStdString();
-				if ( objDist->Write(qstr.toStdString()) ) {
+				if ( objDist->Write( (plot->getFilePath() + qstr).toStdString() ) ) {
 					qstr.append(".dtp");
 					statusBar()->showMessage(tr("%1 Ok!").arg(qstr), 10000);
 					open(qstr.toStdString());
@@ -2302,8 +2301,7 @@ void Lvp::average() {
 			if( objDist->Media(fnames, CDistribuicao::dts) ){
 				static int seqNumberAverage = 1;
 				qstr = tr(".average-%1").arg(QString::number(seqNumberAverage++));
-				objDist->path = plot->getFilePath ().toStdString();
-				if ( objDist->Write(qstr.toStdString()) ) {
+				if ( objDist->Write( (plot->getFilePath() + qstr).toStdString()) ) {
 					qstr.append(".dts");
 					statusBar()->showMessage(tr("%1 Ok!").arg(qstr), 10000);
 					open(qstr.toStdString());
@@ -2738,8 +2736,6 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 		}
 		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSaveDistributions->isChecked()) {
 			pair < CDistribuicao3D *, CDistribuicao3D * > dist = objPerIn->Rede()->CalcularDistribuicaoRede();
-			dist.first->path = filePath.toStdString();
-			dist.second->path = filePath.toStdString();
 			dist.first->Write((filePath + "." + fileName + modeloRede + ".rsl").toStdString());
 			dist.second->Write((filePath + "." + fileName + modeloRede + ".rsl").toStdString());
 			open((filePath + "." + fileName + modeloRede + ".rsl" + ".dtp").toStdString(),true);
