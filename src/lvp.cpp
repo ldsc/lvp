@@ -10,7 +10,7 @@
 #include <AnaliseImagem/Caracterizacao/Correlacao/CCorrelacaoEspacial.h>
 #include <AnaliseImagem/Caracterizacao/Distribuicao/CDistribuicao.h>
 #include <AnaliseImagem/Caracterizacao/Distribuicao/CDistribuicao3D.h>
-#include <AnaliseImagem/Caracterizacao/Distribuicao/CDistribuicaoRSL.h>
+//#include <AnaliseImagem/Caracterizacao/Distribuicao/CDistribuicaoRSL.h>
 #include <AnaliseImagem/Caracterizacao/Distribuicao/CDistribuicaoTamanhoPorosGargantas.h>
 #include <AnaliseImagem/Filtro/FEspacial/TCFEPassaAlta.h>
 #include <AnaliseImagem/Filtro/FEspacial/TCFEPassaBaixa.h>
