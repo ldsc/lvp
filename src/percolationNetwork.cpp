@@ -9,6 +9,7 @@ PercolationNetwork::PercolationNetwork(QMainWindow *_parent, DbmImageViewer *_ch
 	this->groupBoxSementation->setEnabled(true);
 	connect(buttonBox, SIGNAL(accepted()), parent, SLOT(exPercolationNetwork()));
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(checkBoxUseDistributionsFiles, SIGNAL(toggled(bool)), this->groupBoxSementation, SLOT(setDisabled(bool)));
 }
 
 PercolationNetwork::PercolationNetwork(QMainWindow *_parent, DgmImageViewer *_child) : QDialog(_parent) {

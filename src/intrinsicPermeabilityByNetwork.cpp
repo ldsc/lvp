@@ -11,6 +11,7 @@ IntrinsicPermeabilityByNetwork::IntrinsicPermeabilityByNetwork(QMainWindow *_par
 	this->groupBoxPercolationNetwork->setEnabled(true);
 	connect(buttonBox, SIGNAL(accepted()), parent, SLOT(exIntrinsicPermeabilityByNetwork()));
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(checkBoxUseDistributionsFiles, SIGNAL(toggled(bool)), this->groupBoxSementation, SLOT(setDisabled(bool)));
 }
 
 IntrinsicPermeabilityByNetwork::IntrinsicPermeabilityByNetwork(QMainWindow *_parent, DgmImageViewer *_child) : QDialog(_parent) {
@@ -34,6 +35,7 @@ IntrinsicPermeabilityByNetwork::IntrinsicPermeabilityByNetwork(QMainWindow *_par
 	this->groupBoxSementation->setEnabled(false);
 	this->groupBoxPercolationNetwork->setEnabled(false);
 	this->checkBoxSaveDistributions->setEnabled(false);
+	this->checkBoxUseDistributionsFiles->setEnabled(false);
 	this->checkBoxSPN->setEnabled(false);
 	connect(buttonBox, SIGNAL(accepted()), parent, SLOT(exIntrinsicPermeabilityByNetwork()));
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));

@@ -23,7 +23,6 @@ class IntrinsicPermeabilityByNetwork : public QDialog, public Ui::DialogIntrinsi
 		DbmImageViewer * child;
 		DgmImageViewer * childInt;
 
-		
 	private:
 		 QMainWindow *parent;
 };

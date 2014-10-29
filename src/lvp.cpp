@@ -2640,6 +2640,8 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 	unsigned int nx = dialogIntrinsicPermeabilityByNetwork->spinBoxPNSize->value();
 	int limiteIteracoes = dialogIntrinsicPermeabilityByNetwork->spinBoxLimitIterations->value();
 	double limiteErro = dialogIntrinsicPermeabilityByNetwork->comboBoxLimitError->currentText().toDouble();
+	bool pressureJustOnSites = dialogIntrinsicPermeabilityByNetwork->checkBoxPressureOnSites->isChecked();
+	CContornoRedeDePercolacao * rede = nullptr;
 
 	EModelo model = EModelo::SETE;
 	if (dialogIntrinsicPermeabilityByNetwork->comboBoxSModel->currentText() == "Model 11" ) {
@@ -2701,25 +2703,74 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 			if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
 				objPerIn->SalvarRede((filePath + "." + fileName + "." + modeloRede + ".rsl").toStdString());
 			}
-			permeabilidade = objPerIn->Go(dialogIntrinsicPermeabilityByNetwork->child->pm3D,
-																		nx,nx,nx,
-																		dialogIntrinsicPermeabilityByNetwork->spinBoxRmax->value(),
-																		dialogIntrinsicPermeabilityByNetwork->spinBoxRdilatation->value(),
-																		dialogIntrinsicPermeabilityByNetwork->spinBoxRreduction->value(),
-																		dialogIntrinsicPermeabilityByNetwork->spinBoxRinc->value(),
-																		model,indice,fundo,0,CDistribuicao3D::Metrica3D::d345,networkModel
-																		);
+			if (dialogIntrinsicPermeabilityByNetwork->checkBoxUseDistributionsFiles->isChecked()) {
+				if ( QFile::exists(dialogIntrinsicPermeabilityByNetwork->child->getFullFileName()+".dtp") &&
+						 QFile::exists(dialogIntrinsicPermeabilityByNetwork->child->getFullFileName()+".dtg") )
+				{ rede = new CContornoRedeDePercolacao (nx,nx,nx,pressureJustOnSites);
+					if ( rede->Go( (dialogIntrinsicPermeabilityByNetwork->child->getFullFileName()+".dtp").toStdString(),
+												 (dialogIntrinsicPermeabilityByNetwork->child->getFullFileName()+".dtg").toStdString(),
+												 dialogIntrinsicPermeabilityByNetwork->child->pm3D->DimensaoPixel(),
+												 dialogIntrinsicPermeabilityByNetwork->child->pm3D->FatorAmplificacao(),
+												 networkModel
+												 ) )
+					{
+						permeabilidade = objPerIn->Go(rede);
+					} else {
+						QApplication::restoreOverrideCursor();
+						QMessageBox::information(this, tr("LVP"), tr("Was not possible to generate the percolation network!"));
+						return;
+					}
+				} else {
+					QApplication::restoreOverrideCursor();
+					QMessageBox::information(this, tr("LVP"), tr("Distributions files not found!"));
+					return;
+				}
+			} else {
+				permeabilidade = objPerIn->Go(dialogIntrinsicPermeabilityByNetwork->child->pm3D,
+																			nx,nx,nx,
+																			dialogIntrinsicPermeabilityByNetwork->spinBoxRmax->value(),
+																			dialogIntrinsicPermeabilityByNetwork->spinBoxRdilatation->value(),
+																			dialogIntrinsicPermeabilityByNetwork->spinBoxRreduction->value(),
+																			dialogIntrinsicPermeabilityByNetwork->spinBoxRinc->value(),
+																			model,indice,fundo,0,CDistribuicao3D::Metrica3D::d345,
+																			networkModel,pressureJustOnSites
+																			);
+			}
 		} else if ( dialogIntrinsicPermeabilityByNetwork->childInt ) {
 			fileName = dialogIntrinsicPermeabilityByNetwork->childInt->getFileName();
 			filePath = dialogIntrinsicPermeabilityByNetwork->childInt->getFilePath();
 			if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
 				objPerIn->SalvarRede((filePath + "." + fileName + modeloRede + ".rsl").toStdString());
 			}
-			permeabilidade = objPerIn->Go(dialogIntrinsicPermeabilityByNetwork->childInt->pm3D,nx,nx,nx,CDistribuicao3D::Metrica3D::d345,networkModel);
+			if (dialogIntrinsicPermeabilityByNetwork->checkBoxUseDistributionsFiles->isChecked()) {
+				if ( QFile::exists(dialogIntrinsicPermeabilityByNetwork->childInt->getFullFileName()+".dtp") &&
+						 QFile::exists(dialogIntrinsicPermeabilityByNetwork->childInt->getFullFileName()+".dtg") )
+				{ rede = new CContornoRedeDePercolacao (nx,nx,nx,pressureJustOnSites);
+					if ( rede->Go( (dialogIntrinsicPermeabilityByNetwork->childInt->getFullFileName()+".dtp").toStdString(),
+												 (dialogIntrinsicPermeabilityByNetwork->childInt->getFullFileName()+".dtg").toStdString(),
+												 dialogIntrinsicPermeabilityByNetwork->childInt->pm3D->DimensaoPixel(),
+												 dialogIntrinsicPermeabilityByNetwork->childInt->pm3D->FatorAmplificacao(),
+												 networkModel
+												 ) )
+					{
+						permeabilidade = objPerIn->Go(rede);
+					} else {
+						QApplication::restoreOverrideCursor();
+						QMessageBox::information(this, tr("LVP"), tr("Was not possible to generate the percolation network!"));
+						return;
+					}
+				} else {
+					QApplication::restoreOverrideCursor();
+					QMessageBox::information(this, tr("LVP"), tr("Distributions files not found!"));
+					return;
+				}
+			} else {
+				permeabilidade = objPerIn->Go(dialogIntrinsicPermeabilityByNetwork->childInt->pm3D,nx,nx,nx,CDistribuicao3D::Metrica3D::d345,networkModel,pressureJustOnSites);
+			}
 		} else if ( dialogIntrinsicPermeabilityByNetwork->childRSL ) {
 			fileName = dialogIntrinsicPermeabilityByNetwork->childRSL->getFileName();
 			filePath = dialogIntrinsicPermeabilityByNetwork->childRSL->getFilePath();
-			CContornoRedeDePercolacao *rede = new CContornoRedeDePercolacao( dialogIntrinsicPermeabilityByNetwork->childRSL->getFullFileName().toStdString());
+			CContornoRedeDePercolacao *rede = new CContornoRedeDePercolacao( dialogIntrinsicPermeabilityByNetwork->childRSL->getFullFileName().toStdString(), pressureJustOnSites);
 			permeabilidade = objPerIn->Go( rede );
 		} else {
 			QApplication::restoreOverrideCursor();
@@ -2749,6 +2800,8 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 	} else {
 		QMessageBox::information(this, tr("LVP"), tr("Error creatting intrinsic permeability object!"));
 	}
+	if (rede)
+		delete rede;
 	dialogIntrinsicPermeabilityByNetwork->close();
 	delete dialogIntrinsicPermeabilityByNetwork;
 	dialogIntrinsicPermeabilityByNetwork = nullptr;
@@ -2910,8 +2963,7 @@ void Lvp::exSegmentationPoresThroats(){
 	int seqNumberSPT = 0;
 	QString filepath;
 	QString filename;
-	filepath = dialogPoresThroats->child->getFilePath();
-	filepath += "."+dialogPoresThroats->child->getFileNameNoExt();
+	filepath = dialogPoresThroats->child->getFilePath()+"."+dialogPoresThroats->child->getFileNameNoExt();
 	do {
 		filename = tr("_segmented-%1.dgm").arg(QString::number(++seqNumberSPT));
 	} while ( QFile::exists(filepath + filename) );
@@ -3904,13 +3956,13 @@ void Lvp::dtpgD345_3D(){
 			int incrementoRaio = QInputDialog::getInt(this, tr(":. Segmentation"), tr("Enter the increment value for the structuring element radius:"), 1, 1, raioMaximo, 1, &ok4);
 			if (ok1 and ok2 and ok3 and ok4) {
 				QApplication::setOverrideCursor(Qt::WaitCursor);
+				filepath = child->getFilePath();
+				filename = child->getFileName();
 				EModelo modelo = ONZE;
 				CDistribuicaoTamanhoPorosGargantas * filtro = nullptr;
 				filtro = new CDistribuicaoTamanhoPorosGargantas(child->pm3D, raioMaximo, raioDilatacao, fatorReducao, incrementoRaio, modelo, indice, fundo );
 				dist = filtro->Go(CDistribuicao3D::d345);
 				delete filtro;
-				filepath = child->getFilePath();
-				filename = child->getFileName();
 				QApplication::restoreOverrideCursor();
 			}
 		} else {
@@ -3922,12 +3974,12 @@ void Lvp::dtpgD345_3D(){
 		if ( childg != nullptr ) {
 			if (childg->pm3D != nullptr) {
 				QApplication::setOverrideCursor(Qt::WaitCursor);
+				filepath = childg->getFilePath();
+				filename = childg->getFileName();
 				CDistribuicaoTamanhoPorosGargantas * filtro = nullptr;
 				filtro = new CDistribuicaoTamanhoPorosGargantas( childg->pm3D );
 				dist = filtro->Go(CDistribuicao3D::d345);
 				delete filtro;
-				filepath = child->getFilePath();
-				filename = child->getFileName();
 				QApplication::restoreOverrideCursor();
 			} else {
 				QMessageBox::information(this, tr("LVP"), tr("Error: 3D image is null!"));

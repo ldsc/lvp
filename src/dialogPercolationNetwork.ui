@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>330</width>
-    <height>350</height>
+    <width>402</width>
+    <height>429</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>330</width>
-    <height>330</height>
+    <width>402</width>
+    <height>429</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>330</width>
-    <height>350</height>
+    <width>402</width>
+    <height>429</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -35,9 +35,9 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>300</y>
-     <width>311</width>
+     <x>14</x>
+     <y>375</y>
+     <width>371</width>
      <height>52</height>
     </rect>
    </property>
@@ -57,215 +57,13 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QGroupBox" name="groupBoxSementation">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>120</y>
-     <width>311</width>
-     <height>181</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>SEGMENTATION</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-   <widget class="QGroupBox" name="groupBox_2">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>19</y>
-      <width>171</width>
-      <height>151</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Structuring Element:</string>
-    </property>
-    <widget class="QWidget" name="layoutWidget2_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>19</y>
-       <width>151</width>
-       <height>128</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>Reduction factor:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_7">
-        <property name="text">
-         <string>Dilatation radius:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_8">
-        <property name="text">
-         <string>Radius increment:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QSpinBox" name="spinBoxRinc">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QSpinBox" name="spinBoxRreduction">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_9">
-        <property name="text">
-         <string>Maximum radius:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="spinBoxRmax">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>1000</number>
-        </property>
-        <property name="value">
-         <number>50</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="spinBoxRdilatation">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>10</number>
-        </property>
-        <property name="value">
-         <number>1</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_6">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>19</y>
-      <width>111</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Model:</string>
-    </property>
-    <widget class="QComboBox" name="comboBoxSModel">
-     <property name="geometry">
-      <rect>
-       <x>12</x>
-       <y>24</y>
-       <width>91</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>Model 7</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Model 8</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Model 9</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Model 10</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Model 11</string>
-      </property>
-     </item>
-    </widget>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_3">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>89</y>
-      <width>111</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Pore is:</string>
-    </property>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>5</x>
-       <y>25</y>
-       <width>101</width>
-       <height>52</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QRadioButton" name="radioButtonBlack">
-        <property name="text">
-         <string>&amp;Black</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="radioButtonWrite">
-        <property name="text">
-         <string>&amp;Write</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
-  </widget>
   <widget class="QGroupBox" name="groupBoxPercolationNetwork">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
-     <width>311</width>
-     <height>101</height>
+     <y>3</y>
+     <width>381</width>
+     <height>131</height>
     </rect>
    </property>
    <property name="title">
@@ -277,10 +75,10 @@
    <widget class="QWidget" name="layoutWidget1">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>18</y>
-      <width>291</width>
-      <height>51</height>
+      <x>0</x>
+      <y>30</y>
+      <width>381</width>
+      <height>91</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_2">
@@ -292,10 +90,10 @@
        <widget class="QSpinBox" name="spinBoxPNSize">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>18</y>
+          <x>19</x>
+          <y>20</y>
           <width>121</width>
-          <height>20</height>
+          <height>31</height>
          </rect>
         </property>
         <property name="minimum">
@@ -321,10 +119,10 @@
        <widget class="QComboBox" name="comboBoxPNModel">
         <property name="geometry">
          <rect>
-          <x>12</x>
-          <y>18</y>
+          <x>21</x>
+          <y>19</y>
           <width>121</width>
-          <height>20</height>
+          <height>31</height>
          </rect>
         </property>
         <property name="currentIndex">
@@ -363,33 +161,263 @@
        </widget>
       </widget>
      </item>
+     <item row="1" column="0" colspan="2" alignment="Qt::AlignHCenter">
+      <widget class="QCheckBox" name="checkBoxSaveDistributions">
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>&amp;Save Distributions</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="tristate">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
-   <widget class="QCheckBox" name="checkBoxSaveDistributions">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>76</y>
-      <width>111</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::LeftToRight</enum>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="text">
-     <string>&amp;Save Distributions</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-    <property name="tristate">
-     <bool>false</bool>
-    </property>
-   </widget>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>140</y>
+     <width>381</width>
+     <height>231</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_5">
+    <item row="0" column="0" alignment="Qt::AlignHCenter">
+     <widget class="QCheckBox" name="checkBoxUseDistributionsFiles">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>&amp;Use Distributions Files</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+      <property name="tristate">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="groupBoxSementation">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>500</width>
+        <height>500</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>SEGMENTATION</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>25</y>
+         <width>361</width>
+         <height>171</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBox_6">
+          <property name="title">
+           <string>Model:</string>
+          </property>
+          <widget class="QComboBox" name="comboBoxSModel">
+           <property name="geometry">
+            <rect>
+             <x>17</x>
+             <y>31</y>
+             <width>91</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Model 7</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Model 8</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Model 9</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Model 10</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Model 11</string>
+            </property>
+           </item>
+          </widget>
+         </widget>
+        </item>
+        <item row="0" column="1" rowspan="2">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="minimumSize">
+           <size>
+            <width>220</width>
+            <height>151</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Structuring Element:</string>
+          </property>
+          <widget class="QWidget" name="layoutWidget2_2">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>29</y>
+             <width>201</width>
+             <height>128</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Reduction factor:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Dilatation radius:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Radius increment:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QSpinBox" name="spinBoxRinc">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QSpinBox" name="spinBoxRreduction">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Maximum radius:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="spinBoxRmax">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>1000</number>
+              </property>
+              <property name="value">
+               <number>50</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="spinBoxRdilatation">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>10</number>
+              </property>
+              <property name="value">
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="title">
+           <string>Pore is:</string>
+          </property>
+          <widget class="QWidget" name="layoutWidget">
+           <property name="geometry">
+            <rect>
+             <x>16</x>
+             <y>22</y>
+             <width>91</width>
+             <height>52</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="radioButtonBlack">
+              <property name="text">
+               <string>&amp;Black</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="radioButtonWrite">
+              <property name="text">
+               <string>&amp;Write</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <tabstops>
