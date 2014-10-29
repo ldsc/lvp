@@ -3872,6 +3872,8 @@ void Lvp::distribution3D (CBaseDistribuicao::Tipos tipo, Metrics3D m3d) {
 
 void Lvp::dtpgD345_3D(){
 	bool ok1, ok2, ok3, ok4;
+	QString filepath;
+	QString filename;
 	std::pair<CDistribuicao3D *, CDistribuicao3D *> dist;
 	DbmImageViewer * child = activeDbmImageViewer();
 	CRedeDePercolacao * filtrorpsl = nullptr;
@@ -3907,6 +3909,8 @@ void Lvp::dtpgD345_3D(){
 				filtro = new CDistribuicaoTamanhoPorosGargantas(child->pm3D, raioMaximo, raioDilatacao, fatorReducao, incrementoRaio, modelo, indice, fundo );
 				dist = filtro->Go(CDistribuicao3D::d345);
 				delete filtro;
+				filepath = child->getFilePath();
+				filename = child->getFileName();
 				QApplication::restoreOverrideCursor();
 			}
 		} else {
@@ -3922,6 +3926,8 @@ void Lvp::dtpgD345_3D(){
 				filtro = new CDistribuicaoTamanhoPorosGargantas( childg->pm3D );
 				dist = filtro->Go(CDistribuicao3D::d345);
 				delete filtro;
+				filepath = child->getFilePath();
+				filename = child->getFileName();
 				QApplication::restoreOverrideCursor();
 			} else {
 				QMessageBox::information(this, tr("LVP"), tr("Error: 3D image is null!"));
@@ -3934,7 +3940,8 @@ void Lvp::dtpgD345_3D(){
 					QApplication::setOverrideCursor(Qt::WaitCursor);
 					filtrorpsl = new CRedeDePercolacao(childt->getFullFileName().toStdString());
 					dist = filtrorpsl->CalcularDistribuicaoRede();
-					//filtrorpsl->SalvarListaObjetos( (childt->getFullFileName() + ".import.rsl").toStdString() );
+					filepath = childt->getFilePath();
+					filename = childt->getFileName();
 					QApplication::restoreOverrideCursor();
 				} else {
 					QMessageBox::information(this, tr("LVP"), tr("Error: RPSL file not active!"));
@@ -3947,27 +3954,26 @@ void Lvp::dtpgD345_3D(){
 		}
 	}
 	if (dist.first != nullptr && dist.second != nullptr) {
-		static int seqNumberDTPG = 0;
-		seqNumberDTPG++;
-		QString filepath = tr(".distribution%1").arg(QString::number(seqNumberDTPG));
-		filepath = validateFileName(filepath);
+		filepath = validateFileName(filepath+"/."+filename);
 		ok1 = dist.first->Write(filepath.toStdString());
 		ok2 = dist.second->Write(filepath.toStdString());
 		if ( ok1 and ok2 ) {
-			open( (filepath + ".dtp").toStdString() );
-			open( (filepath + ".dtg").toStdString() );
+			open( (filepath+".dtp").toStdString() );
+			open( (filepath+".dtg").toStdString() );
 		} else {
 			QMessageBox::information(this, tr("LVP"), tr("Erro! - Can not save the distribution file!"));
 		}
 	} else {
 		QMessageBox::information(this, tr("LVP"), tr("Erro! - CDistribuicaoTamanhoPorosGargantas class returned nullptr!"));
 	}
-	if(dist.first)
-		delete dist.first;
-	if(dist.second)
-		delete dist.second;
-	if(filtrorpsl)
+	if( filtrorpsl != nullptr ) {
 		delete filtrorpsl;
+	} else {
+		if(dist.first)
+			delete dist.first;
+		if(dist.second)
+			delete dist.second;
+	}
 	QApplication::restoreOverrideCursor();
 }
 
