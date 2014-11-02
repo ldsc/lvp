@@ -2561,6 +2561,7 @@ void Lvp::exPercolationNetwork() {
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		QString filePath;
 		QString fileName;
+
 		if ( dialogPercolationNetwork->child ) {
 			filePath = dialogPercolationNetwork->child->getFilePath();
 			fileName = dialogPercolationNetwork->child->getFileName();
@@ -2574,7 +2575,29 @@ void Lvp::exPercolationNetwork() {
 		} else if ( dialogPercolationNetwork->childInt ) {
 			filePath = dialogPercolationNetwork->childInt->getFilePath();
 			fileName = dialogPercolationNetwork->childInt->getFileName();
-			objRede->Go(dialogPercolationNetwork->childInt->pm3D,CDistribuicao3D::Metrica3D::d345,networkModel);
+			if (dialogPercolationNetwork->checkBoxUseDistributionsFiles->isChecked()) {
+				if ( QFile::exists(dialogPercolationNetwork->childInt->getFullFileName()+".dtp") &&
+						 QFile::exists(dialogPercolationNetwork->childInt->getFullFileName()+".dtg") )
+				{
+					if ( ! objRede->Go( (dialogPercolationNetwork->childInt->getFullFileName()+".dtp").toStdString(),
+												 (dialogPercolationNetwork->childInt->getFullFileName()+".dtg").toStdString(),
+												 dialogPercolationNetwork->childInt->pm3D->DimensaoPixel(),
+												 dialogPercolationNetwork->childInt->pm3D->FatorAmplificacao(),
+												 networkModel
+												 ) )
+					{
+						QApplication::restoreOverrideCursor();
+						QMessageBox::information(this, tr("LVP"), tr("Was not possible to generate the percolation network!"));
+						return;
+					}
+				} else {
+					QApplication::restoreOverrideCursor();
+					QMessageBox::information(this, tr("LVP"), tr("Distributions files not found!"));
+					return;
+				}
+			} else {
+				objRede->Go(dialogPercolationNetwork->childInt->pm3D,CDistribuicao3D::Metrica3D::d345,networkModel);
+			}
 		} else {
 			QApplication::restoreOverrideCursor();
 			QMessageBox::information(this, tr("LVP"), tr("Error getting 3D image!"));
