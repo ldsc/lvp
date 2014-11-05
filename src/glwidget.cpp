@@ -7,7 +7,7 @@
 #endif
 
 GLWidget::GLWidget(TCMatriz3D<bool> * _pm3D, QString _fileName, int _viewtype, QWidget *parent)
-//: QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer), parent) { //QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
+//: QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer), parent) {
 	: QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
 	viewtype=_viewtype;
 	distpoints = 0.001;
@@ -45,7 +45,7 @@ GLWidget::GLWidget(TCMatriz3D<bool> * _pm3D, QString _fileName, int _viewtype, Q
 }
 
 GLWidget::GLWidget(TCMatriz3D<int> * _pm3D, QString _fileName, int _viewtype, QWidget *parent)
-//: QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer), parent) {
+	//: QGLWidget(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer | QGL::SampleBuffers), parent) {
 	: QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
 	viewtype = _viewtype;
 	distpoints = 0.001;

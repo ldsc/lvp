@@ -72,7 +72,7 @@ It is available in English and Portuguese and can be easily translated into othe
 
 ---
 
-\version 2.0.0
+\version 0.2.0
 \image html splashScream.png
 */
 
@@ -98,7 +98,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 			if (dialogPercolationNetwork) delete dialogPercolationNetwork;
 			if (dialogIntrinsicPermeabilityByNetwork) delete dialogIntrinsicPermeabilityByNetwork;
 		}
-	// Enums
+		// Enums
 	private:
 		/// Tipos de operações da Morfologia Matemática
 		enum MorphType {
@@ -125,7 +125,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 			m3DEuclidian
 		};
 
-	// Atributos
+		// Atributos
 	public:
 		/// Último diretório acessado
 		QString lastOpenPath;
@@ -188,23 +188,23 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void import(QString file);
 
 	private slots:
-		void about();
-		void accumulated();
-		void addCurve();
-		void average();
-		void changeViewMode();
-		void closeActiveSubWindow();
-		void closeAllSubWindows();
-		void closing();
-		void closing3D();
-		void connectedObjects();
-		void confEq();
-		void connectivity3D();
+		void about();///< Exibe a tela Sobre (about)
+		void accumulated();///< Acumula os valores de um gráfico e exibe a curva de valores acumulados
+		void addCurve();///< Adiciona curva ao gráfico
+		void average();///< Calcula a média das curvas exibidas em um gráfico
+		void changeViewMode();///< Muda o modo de visualização de uma imagem 3D
+		void closeActiveSubWindow();///< Fecha a aba ativa
+		void closeAllSubWindows();///< Fecha todas as abas
+		void closing();///< Aplica a operação morfológica de fechamento em imagens 2D
+		void closing3D();///< Aplica a operação morfológica de fechamento em imagens 3D
+		void connectedObjects();///< Filtra e exibe os objetos interconectados em uma imagem 3D
+		void confEq();///< Define as configurações de equilíbrio em imagens binárias
+		void connectivity3D();///< Verifica se uma imagem 3D possui conectividade entre duas fronteiras paralelas
 		void copy();
-		void correlationFFT();
-		void correlationFFT3D();
-		void correlationSpatial();
-		void correlationSpatial3D();
+		void correlationFFT();///< Executa correlação em imagens 2D binárias pela Trasformada de Fourier
+		void correlationFFT3D();///< Executa correlação em imagens 3D binárias pela Trasformada de Fourier
+		void correlationSpatial();///< Executa correlação espacial em imagens 2D binárias
+		void correlationSpatial3D();///< Executa correlação espacial em imagens 3D binárias
 		void crop3DImage();
 		void dilation();
 		void dilation3D();
@@ -226,7 +226,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void dtpD5711_3D();
 		void dtpEuclidian();
 		void dtpEuclidian3D();
-		void dtpgD345_3D(); ///<Calcula a distribuição de tamanho de poros e gargantas de imagens 3D, utilizando métrica D345.
+		void dtpgD345_3D(); ///< Calcula a distribuição de tamanho de poros e gargantas de imagens 3D, utilizando métrica D345.
 		void updateActionSave();
 		void erosion();
 		void erosion3D();
@@ -266,10 +266,10 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void openMPV( );
 		void openPNV( );
 		void openEditor();
-		void options(); // abre diálogo de opções para o editor hexadecimal
-		void optionsAccepted(); // grava e lê as opções do editor hexadecimal
-		void segmentationPoresThroats(); // segmentação de poros e gargantas
-		void percolationNetwork(); //abre diálogo de opções para a criação de redes de percolação
+		void options(); ///< Abre diálogo de opções para o editor hexadecimal
+		void optionsAccepted(); ///< Grava e lê as opções do editor hexadecimal
+		void segmentationPoresThroats(); /// Executa segmentação de poros e gargantas
+		void percolationNetwork(); /// Abre diálogo de opções para a criação de redes de percolação
 		void porosity();
 		void print();
 		void properties();
@@ -329,47 +329,81 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		//void dragLeaveEvent(QDragLeaveEvent *event);
 
 	private:
+		/// Executa correlação em imagem 3D
 		void correlation3D( CCorrelacao3D::Tipos tipo );
+		/// Executa operações morfológicas em imagens 2D
 		void mathematicalMorphology( MorphType mtype );
+		/// Executa operações morfológicas em imagens 3D
 		void mathematicalMorphology3D( MorphType mtype );
+		/// Calcula distribuição em imagem 2D
 		void distribution( CBaseDistribuicao::Tipos tipo, Metrics2D m2d );
+		/// Calcula distribuição em imagem 3D
 		void distribution3D( CBaseDistribuicao::Tipos tipo, Metrics3D m3d );
+		/// Cria ações dos objetos da interface QT
 		void createActions();
+		/// Lê últimas configurações utilizadas
 		void readSettings();
+		/// Grava as últimas configurações utilizadas
 		void writeSettings();
+		/// Gera dinamicamete o menu de traduções do software
 		void createLanguageMenu();
+		/// Pega ponteiro para widget Image Viewer ativo
 		BaseImageViewer *activeImageViewer();
+		/// Pega ponteiro para widget Image Viewer 3D ativo
 		BaseDnmImageViewer *active3DImageViewer();
+		/// Pega ponteiro para widget Image Viewer 2D ativo
 		BasePnmImageViewer *active2DImageViewer();
+		/// Pega ponteiro para widget de imagem DBM ativa
 		DbmImageViewer *activeDbmImageViewer();
+		/// Pega ponteiro para widget de imagem DGM ativa
 		DgmImageViewer *activeDgmImageViewer();
+		/// Pega ponteiro para widget de imagem PBM ativa
 		PbmImageViewer *activePbmImageViewer();
+		/// Pega ponteiro para widget de imagem PGM ativa
 		PgmImageViewer *activePgmImageViewer();
+		/// Pega ponteiro para widget OpenGL ativo
 		GLWidget *activeGLWidget();
+		/// Pega ponteiro para widget Ploter ativo
 		Ploter *activePloter();
+		/// Pega ponteiro para widget Editor de Textos ativo
 		TextEditor *activeTextEditor();
+		/// Pega ponteiro para widget para visualizador exadecimal ativa
 		HexEditor *activeHexEditor();
+		/// Pega lista de imagens 2D selecionadas
 		QList<BasePnmImageViewer *> selected2DImagesList();
+		/// Pega lista de imagens 3D selecionadas
 		QList<BaseDnmImageViewer *> selected3DImagesList();
+		/// Pega lista de imagens PBM selecionadas
 		QList<PbmImageViewer *> selectedPbmImagesList();
+		/// Pega lista de imagens PGM selecionadas
 		QList<PgmImageViewer *> selectedPgmImagesList();
+		/// Pega lista de imagens DBM selecionadas
 		QList<DbmImageViewer *> selectedDbmImagesList();
+		/// Pega lista de imagens DGM selecionadas
 		QList<DgmImageViewer *> selectedDgmImagesList();
+		/// Pega lista graficos selecionados
 		QList<Ploter *> selectedPloterList();
+		/// Pega lista de todas as imagens selecionadas
 		QList<BaseImageViewer *> selectedAllImagesList();
+		/// Retorna ponteiro para janela de widget Image Viewer de acordo com o nome de arquivo passado como parâmetro
 		QMdiSubWindow *findImageViewer(const QString &_fileName);
+		/// Retorna ponteiro para janela de widget OpenGL de acordo com o nome de arquivo passado como parâmetro
 		QMdiSubWindow *findGLWidget(const QString &_fileName);
+		/// Retorna ponteiro para janela de widget Ploter de acordo com o nome de arquivo passado como parâmetro
 		QMdiSubWindow *findPloter(const QString &_fileName);
+		/// Retorna ponteiro para janela de widget Text Editor de acordo com o nome de arquivo passado como parâmetro
 		QMdiSubWindow *findTextEditor(const QString & _fileName);
+		/// Retorna ponteiro para janela de widget Hex Editor de acordo com o nome de arquivo passado como parâmetro
 		QMdiSubWindow *findHexEditor(const QString & _fileName);
-		//verifica se existe arquivo com o nome informado. Caso exista retorna o nome de um arquivo inexistente.
+		/// Verifica se existe arquivo com o nome informado. Caso exista retorna o nome de um arquivo inexistente.
 		string validateFileName( const string _strname );
+		/// Verifica se existe arquivo com o nome informado. Caso exista retorna o nome de um arquivo inexistente.
 		QString validateFileName( const QString _name);
 
 		//From HexEditor
-//		QLabel *lbAddress, *lbAddressName;
-//		QLabel *lbOverwriteMode, *lbOverwriteModeName;
-//		QLabel *lbSize, *lbSizeName;
+		//QLabel *lbAddress, *lbAddressName;
+		//QLabel *lbOverwriteMode, *lbOverwriteModeName;
+		//QLabel *lbSize, *lbSizeName;
 };
 
 #endif

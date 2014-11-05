@@ -11,14 +11,19 @@ class BaseDnmImageViewer : public BaseImageViewer
 	Q_OBJECT
 		// Construtor / Destrutor
 	public:
+		///Construtor. Recebe ponteiro para objeto da classe QMainWindow
 		BaseDnmImageViewer( QMainWindow * _parent );
 		virtual ~ BaseDnmImageViewer( ) { }
 
 		//Atributos
 	public:
+		///Define o eixo paralelo a visualização
 		E_eixo direcao;
+		///Plano de visualização
 		int curPlan;
+		///Tamanho do eixo z da imagem (pixeis)
 		int nz;
+		///Sinaliza se a imagem foi modificada.
 		bool isModified;
 
 		//Métodos
