@@ -2227,7 +2227,7 @@ void Lvp::addCurve() {
 		if (ext.toLower() == "cor")
 			filespath = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Correlation Files (*.cor)"));
 		else if (ext.toLower() == "dtp" or ext.toLower() == "dts" or ext.toLower() == "dtg")
-			filespath = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Distribution Files (*.dtp *.dts *.dtg)"));
+			filespath = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Distribution Files (*.dtp *.dts *.dtg);;Distributions of Pores Size (*.dtp);;Distributions of Solids Size (*.dts);;Distributions of Throats Size (*.dtg)"));
 		else if (ext.toLower() == "rpc")
 			filespath = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), lastOpenPath, tr("Relative Permeability Curves (*.rpc)"));
 	} else {
@@ -2603,7 +2603,7 @@ void Lvp::exPercolationNetwork() {
 			QMessageBox::information(this, tr("LVP"), tr("Error getting 3D image!"));
 			return;
 		}
-		if (dialogPercolationNetwork->checkBoxSaveDistributions->isChecked()) {
+		if (dialogPercolationNetwork->checkBoxSaveDistributions->isChecked() && dialogPercolationNetwork->groupBoxPercolationNetwork->isEnabled() ) {
 			pair < CDistribuicao3D *, CDistribuicao3D * > dist = objRede->CalcularDistribuicaoRede();
 			dist.first->Write((filePath + "." + fileName + "." + modeloRede + ".rsl").toStdString());
 			dist.second->Write((filePath + "." + fileName + "." + modeloRede + ".rsl").toStdString());
