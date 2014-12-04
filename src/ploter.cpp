@@ -77,15 +77,15 @@ bool Ploter::loadFile(const QString & _fileName) {
 					setTitle ("Solids Size Distribution");
 					setAxisTitle ( QwtPlot::yLeft, "Area of solids (%)" );
 				} else if ( fileExt.toLower() == "dtg" ) {
-					//setTitle ("Throat Size Distribution");
-					//setAxisTitle ( QwtPlot::yLeft, "Porosity (%)" );
-					setTitle ("Distribuição do Tamanho das Gargantas");
-					setAxisTitle ( QwtPlot::yLeft, "Frequência" );
+					setTitle ("Throat Size Distribution");
+					setAxisTitle ( QwtPlot::yLeft, "Porosity (%)" );
+					//setTitle ("Distribuição do Tamanho das Gargantas");
+					//setAxisTitle ( QwtPlot::yLeft, "Frequência" );
 				} else {
-					//setTitle ("Pores Size Distribution");
-					//setAxisTitle ( QwtPlot::yLeft, "Porosity (%)" );
-					setTitle ("Distribuição do Tamanho dos Poros");
-					setAxisTitle ( QwtPlot::yLeft, "Frequência" );
+					setTitle ("Pores Size Distribution");
+					setAxisTitle ( QwtPlot::yLeft, "Porosity (%)" );
+					//setTitle ("Distribuição do Tamanho dos Poros");
+					//setAxisTitle ( QwtPlot::yLeft, "Frequência" );
 				}
 				//setAxisTitle ( QwtPlot::xBottom, "Radius (pixel)" );
 				setAxisTitle ( QwtPlot::xBottom, "Raio (pixeis)" );

@@ -4092,7 +4092,7 @@ void Lvp::porosity() {
 			porosityValue = ( ( double(poro) / double(nx * ny) ) * 100 );
 			sumPorority += porosityValue;
 			cont ++;
-			msgTmp = tr("Porosity of the image \"%1\"\t= %2\%\n").arg(mdiChild->getFileName()).arg(porosityValue);
+			msgTmp = tr("Porosity of \"%1\"\t= %2\%\n").arg(mdiChild->getFileName()).arg(porosityValue);
 			msg += msgTmp;
 		}
 	} else if ( activeDbmImageViewer() != nullptr ) { // imagem 3D
@@ -4121,18 +4121,18 @@ void Lvp::porosity() {
 			porosityValue = ( ( double(poro) / double(nx * ny * nz) ) * 100 );
 			sumPorority += porosityValue;
 			cont ++;
-			msgTmp = tr("Porosity of the image \"%1\"\t= %2\%\n").arg(mdiChild->getFileName()).arg(porosityValue);
+			msgTmp = tr("Porosity of \"%1\"\t= %2\%\n").arg(mdiChild->getFileName()).arg(porosityValue);
 			msg += msgTmp;
 		}
 		if ( cont > 1 ) {
 			msgTmp = tr("\nAverage = %1\%\n").arg( sumPorority / cont );
 			msg += msgTmp;
 		}
-		QMessageBox msgPorosity;
-		msgPorosity.setText( msg );
-		msgPorosity.setIcon(QMessageBox::Information);
-		msgPorosity.exec();
 	}
+	QMessageBox msgPorosity;
+	msgPorosity.setText( msg );
+	msgPorosity.setIcon(QMessageBox::Information);
+	msgPorosity.exec();
 }
 
 // Retorna a lista de imagens selecionadas em Images List

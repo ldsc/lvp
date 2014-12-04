@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>DialogPercolationNetwork</class>
  <widget class="QDialog" name="DialogPercolationNetwork">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,7 +26,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Pores and Throats Segmentation</string>
+   <string>Percolation Network</string>
   </property>
   <property name="windowIcon">
    <iconset resource="application.qrc">

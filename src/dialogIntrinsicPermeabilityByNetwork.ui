@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Pores and Throats Segmentation</string>
+   <string>Intrinsic Permeability</string>
   </property>
   <property name="windowIcon">
    <iconset resource="application.qrc">
