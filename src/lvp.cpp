@@ -1259,10 +1259,10 @@ void Lvp::saveAs() {
 		activeImageViewer()->saveAs();
 	} else if ( activePloter() != 0 ) {
 		//cerr << "lastOpenPath antes: " << lastOpenPath.toStdString() << endl;
-		activePloter()->saveAs( & lastOpenPath);
+		activePloter()->saveAs( & lastOpenPath );
 		//cerr << "lastOpenPath depois: " << lastOpenPath.toStdString() << endl;
 	} else if ( activeTextEditor() != nullptr ) {
-		activeTextEditor()->saveAs();
+		activeTextEditor()->saveAs( & lastOpenPath );
 	} else 	if ( activeHexEditor() != nullptr ) {
 		activeHexEditor()->saveAs();
 	}
@@ -2764,6 +2764,7 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 			filePath = dialogIntrinsicPermeabilityByNetwork->childInt->getFilePath();
 			if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
 				objPerIn->SalvarRede((filePath + "." + fileName + modeloRede + ".rsl").toStdString());
+				//QMessageBox::information(this, tr("LVP"), tr(objPerIn->salvarRede.c_str()));
 			}
 			if (dialogIntrinsicPermeabilityByNetwork->checkBoxUseDistributionsFiles->isChecked()) {
 				if ( QFile::exists(dialogIntrinsicPermeabilityByNetwork->childInt->getFullFileName()+".dtp") &&
@@ -2804,11 +2805,12 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 			cout << "Salvando em disco log da permeabilidade..." << endl;
 			ofstream fout ( (filePath + "." + fileName +  modeloRede + ".permeabilidade.txt").toStdString() );
 			fout << *objPerIn;
-			fout << "\n\nPermeabilidade = " << permeabilidade << "mD." << endl;
+			fout << "\n\nPermeabilidade = " << permeabilidade << " mD." << endl;
 			fout.close();
 			open((filePath + "." + fileName + modeloRede + ".permeabilidade.txt").toStdString(),true);
 		}
 		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSaveDistributions->isChecked()) {
+			cout << "Salvando distribuições da rede em disco..." << endl;
 			pair < CDistribuicao3D *, CDistribuicao3D * > dist = objPerIn->Rede()->CalcularDistribuicaoRede();
 			dist.first->Write((filePath + "." + fileName + modeloRede + ".rsl").toStdString());
 			dist.second->Write((filePath + "." + fileName + modeloRede + ".rsl").toStdString());
@@ -2816,6 +2818,7 @@ void Lvp::exIntrinsicPermeabilityByNetwork() {
 			open((filePath + "." + fileName + modeloRede + ".rsl" + ".dtg").toStdString(),true);
 		}
 		if (dialogIntrinsicPermeabilityByNetwork->checkBoxSPN->isChecked()) {
+			cout << "Abrindo rede de percolação." << endl;
 			open((filePath + "." + fileName + modeloRede + ".rsl").toStdString(),true);
 		}
 		QApplication::restoreOverrideCursor();

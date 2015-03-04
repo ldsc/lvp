@@ -39,7 +39,7 @@ class TextEditor : public QTextEdit
 		bool loadFile( const QString & _fileName );
 		void reloadFile();
 		bool save();
-		bool saveAs();
+		bool saveAs(QString *_lop);
 
 		inline QString getFullFileName() { return fullFileName; }
 		inline QString getFileName() { return fileName; }

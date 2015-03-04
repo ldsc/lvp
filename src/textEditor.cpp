@@ -70,8 +70,11 @@ bool TextEditor::save( ) {
 	return saveFile(fullFileName);
 }
 
-bool TextEditor::saveAs( ) {
-	QString newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(filePath).arg(fileName), tr("Network of Sites and Links (*.rsl);;Text Files (*.txt)"));
+bool TextEditor::saveAs( QString * _lop ) {
+	if (_lop->isEmpty()){
+		*_lop = filePath;
+	}
+	QString newFileName = QFileDialog::getSaveFileName(this, tr("Save As"), tr("%1%2").arg(_lop->left(_lop->lastIndexOf("/")+1)).arg(fileName), tr("Network of Sites and Links (*.rsl);;Text Files (*.txt)"));
 	if ( ! newFileName.isEmpty() ) {
 		QString oldFileName = fullFileName;
 		if ( saveFile(newFileName) ) {
@@ -79,6 +82,7 @@ bool TextEditor::saveAs( ) {
 				QFile::remove(oldFileName);
 			}
 			isNew = false;
+			*_lop = newFileName;
 			return true;
 		}
 	}
@@ -128,7 +132,8 @@ bool TextEditor::maybeSave() {
 	if(isNew){
 		ret = QMessageBox::warning(parent, tr("LVP"), tr("'%1' isn't save.\n""Do you want to save it?").arg(getFileName()), QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 		if (ret == QMessageBox::Save) {
-			return saveAs();
+			static QString lop("./");
+			return saveAs( & lop );
 		} else if (ret == QMessageBox::Cancel) {
 			return false;
 		}
