@@ -1,4 +1,5 @@
 QT += opengl
+#QT += 3dcore 3drenderer 3dinput
 QT += printsupport
 
 CONFIG += static
@@ -119,7 +120,8 @@ unix {
     LIBS +=  -lGLU
 }
 win32 {
-    LIBS +=  -lglu32
+    LIBS +=  -lglu32\
+             -lopengl32
 }
 
 TARGET = lvp

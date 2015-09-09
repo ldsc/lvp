@@ -13,6 +13,7 @@
 #include <AnaliseImagem/Segmentacao/PorosGargantas/CObjetoImagem.h>
 #include "GL/glu.h"
 #include "math.h"
+#include "GL/gl.h"
 
 #include "dialogGrayTons.h"
 
