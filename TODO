@@ -1,18 +1,3 @@
-Leandro:
-========
-
-[ ]- Código Leandro ok; falta corrigir condutancias
-Solução: ver como Liang faz o cálculo e corrigir.
-
-[ ].Se continuar dando resultado estranho;
-posssivelmente código com problema-> corrigir seu código.
-
-[ ]. Tentar calculo da permeabilidade usando código Liang;
-bastaria exportar a rede no mesmo formato!
-se não me engano código Liang salva a rede em disco no classify e depois abre no perm.
-
-Bueno:
-========
 [ ]- Adicionar cálculo condutância sitio->ligação
 [ ]- Implementar abertura da rede gerada pelo Leandro
 [ ]- Testar
@@ -24,7 +9,7 @@ Bueno:
 [ ] Resolver bug em conectividade 3D quando informa que poro é branco (0).
 
 [ ] Quando executa salvar como... para um arquivo 3D, precisa apagar o arquivo oculto referente a face de visualização da imagem 3D.
-[ ] Quando executa salvar como... ao invés de salvar o arquivo em disco e depois ler novamente, salvar e alterar as propriedades do arquivo 	hora visualizado para não precisar abrir novamente. Atenção para o caso de arquivo ASCII que passa a ser binário!
+[ ] Quando executa salvar como... ao invés de salvar o arquivo em disco e depois ler novamente, salvar e alterar as propriedades do arquivo hora visualizado para não precisar abrir novamente. Atenção para o caso de arquivo ASCII que passa a ser binário!
 
 [ ] Modificar Glwidget para trabalhar com imagens DGM. Descomentar código em Lvp::open3DVisualization( )
 [ ] Modificar filtros para trabalharem com o tipo bool

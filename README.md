@@ -1,7 +1,7 @@
 LVP - Laboratório Virtual de Petrofísica 
 ===
 
-O software LVP oferece ao usuário diversas funcionalidades de simulação e determinação de propriedades petrofísicas através da análise de imagens de meios porosos. O propósito inicial no desenvolvimento deste software foi o de facilitar, através de uma interface gráfica amigável e avançada, a utilização dos modelos e algoritmos desenvolvidos como parte de um trabalho de mestrado realizado na UENF/LENEP. Devido ao fato do trabalho ter como base a biblioteca para análise de imagens de meios porosos lib_ldsc, diversas outras funcionalidades implementadas nesta biblioteca foram disponibilizadas no LVP.
+O software LVP oferece ao usuário diversas funcionalidades de simulação e determinação de propriedades petrofísicas através da análise de imagens de meios porosos. O propósito inicial no desenvolvimento deste software foi o de facilitar, através de uma interface gráfica amigável e avançada, a utilização dos modelos e algoritmos desenvolvidos como parte de um trabalho de mestrado, e posteriormente de doutorado, realizado na UENF/LENEP. Devido ao fato dos trabalhos terem como base a biblioteca para análise de imagens de meios porosos lib_ldsc, diversas outras funcionalidades implementadas nesta biblioteca foram disponibilizadas no LVP.
 
 Dentre as funcionalidades podemos destacar:
 
@@ -29,6 +29,18 @@ Dentre as funcionalidades podemos destacar:
 
 • Rotação de imagens tridimensionais;
 
+• Corte de imagens tridimensionais;
+
 • Determinação das configurações de equilíbrio;
 
-• Reconstruções tridimensionais através dos métodos esferas sobrepostas, gaussiana truncada e gaussiana truncada revisada.
+• Reconstruções tridimensionais através dos métodos esferas sobrepostas, gaussiana truncada e gaussiana truncada revisada;
+
+• Segmentação de poros e gargantas, através de operações morfológicas;
+
+• Criação de redes de percolação representativas ao meio poroso;
+
+• Calculo da permeabilidade intrínseca nas redes de percolação.
+
+===
+
+Para compilação do LVP, veja instruções no arquivo INSTALL
