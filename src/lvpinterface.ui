@@ -251,6 +251,12 @@
      <string>&amp;Idiom</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuIA">
+    <property name="title">
+     <string>&amp;IA</string>
+    </property>
+    <addaction name="actionGatherImageData"/>
+   </widget>
    <widget class="QMenu" name="menuReconstruction">
     <property name="title">
      <string>&amp;Reconstruction</string>
@@ -273,6 +279,7 @@
    <addaction name="menuSegmentation"/>
    <addaction name="menuCharacterization"/>
    <addaction name="menuReconstruction"/>
+   <addaction name="menuIA"/>
    <addaction name="menuWindow"/>
    <addaction name="menuLanguage"/>
    <addaction name="menu_Help"/>
@@ -1123,6 +1130,14 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Porosity</string>
+   </property>
+  </action>
+  <action name="actionGatherImageData">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Gather Image Data from IA</string>
    </property>
   </action>
   <action name="action3DVisualization">
