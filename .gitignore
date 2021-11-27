@@ -56,3 +56,5 @@ tmp/
 *.dll
 imagensTese
 build
+.qmake.stash
+.vscode

@@ -1,6 +1,5 @@
-ln -s /home/joao/Documentos/dev/C++/lvp/build/build-lvp-Desktop-Debug/bin/lvp  /usr/bin/lvp
-cp *.png /usr/share/icons/
+#!/bin/bash
+
+ln -s $1/bin/lvp  /usr/bin/lvp
+cp *.png /usr/share/icons
 cp lvp.desktop  /usr/share/applications
-
-## vá em configuracoes->teclado->Aba Atalhos->AtalhosPersonalizados->AdicioneAtalho->Nome=hp15c Comando=java -jar /usr/bin/HP15C
-
