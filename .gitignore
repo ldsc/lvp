@@ -55,4 +55,4 @@ tmp/
 *.Release
 *.dll
 imagensTese
-
+build
