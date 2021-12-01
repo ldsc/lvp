@@ -103,3 +103,21 @@ Após a execução desses passos é possivel criar um link simbólico no diretó
 $ install_optional/install /caminho/completo/do/lvp
 $ lvp
 ```
+
+## TODO
+
+[ ] Adicionar cálculo condutância sitio->ligação
+[ ] Implementar abertura da rede gerada pelo Leandro
+[ ] Testar
+
+[ ] Implementar filtros 3D.
+
+[ ] Corrigir em `CCorrelacaoFrequencial` o uso de índice para informar quem é poro.
+[ ] Resolver bug em conectividade 3D quando informa que poro é branco (0).
+
+[ ] Quando executa salvar como... para um arquivo 3D, precisa apagar o arquivo oculto referente a face de visualização da imagem 3D.
+[ ] Quando executa salvar como... ao inv�s de salvar o arquivo em disco e depois ler novamente, salvar e alterar as propriedades do arquivo hora visualizado para não precisar abrir novamente. Atenção para o caso de arquivo ASCII que passa a ser binário!
+
+[ ] Modificar Glwidget para trabalhar com imagens DGM. Descomentar código em `Lvp::open3DVisualization`
+[ ] Modificar filtros para trabalharem com o tipo bool
+[ ] Implementar editor exadecimal
