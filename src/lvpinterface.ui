@@ -13,8 +13,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>785</width>
-    <height>1220</height>
+    <width>863</width>
+    <height>1113</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,8 +36,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>785</width>
-     <height>21</height>
+     <width>863</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -253,9 +253,12 @@
    </widget>
    <widget class="QMenu" name="menuIA">
     <property name="title">
-     <string>&amp;IA</string>
+     <string>AI</string>
     </property>
-    <addaction name="actionGatherImageData"/>
+    <addaction name="actionCollectPixelData"/>
+    <addaction name="actionSetupNeuralNetwork"/>
+    <addaction name="separator"/>
+    <addaction name="actionImportTorchModel"/>
    </widget>
    <widget class="QMenu" name="menuReconstruction">
     <property name="title">
@@ -1132,12 +1135,12 @@ p, li { white-space: pre-wrap; }
     <string>Porosity</string>
    </property>
   </action>
-  <action name="actionGatherImageData">
+  <action name="actionCollectPixelData">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Gather Image Data from IA</string>
+    <string>Collect Pixel Data</string>
    </property>
   </action>
   <action name="action3DVisualization">
@@ -1673,6 +1676,16 @@ p, li { white-space: pre-wrap; }
   <action name="actionPercolationNetwork">
    <property name="text">
     <string>Percolation Network</string>
+   </property>
+  </action>
+  <action name="actionSetupNeuralNetwork">
+   <property name="text">
+    <string>Setup Neural Network</string>
+   </property>
+  </action>
+  <action name="actionImportTorchModel">
+   <property name="text">
+    <string>Import Torch Model</string>
    </property>
   </action>
   <zorder>dockWidgetVisualisation3D</zorder>
