@@ -349,6 +349,7 @@ void Lvp::createActions()
 	connect(actionAddData, SIGNAL(clicked()), this, SLOT(addPixelInformationData()));
 	connect(actionClear, SIGNAL(clicked()), this, SLOT(cleanCollectedPixelDataTable()));
 	connect(actionUndo, SIGNAL(clicked()), this, SLOT(undoLastAddDataAction()));
+	connect(actionExportData, SIGNAL(clicked()), this, SLOT(exportCollectedData()));
 }
 
 void Lvp::closeActiveSubWindow()
@@ -5807,7 +5808,7 @@ void Lvp::addPixelInformationData()
 	if (active2DImageViewer() == nullptr){
 		QMessageBox msgCollectDataError;
 		msgCollectDataError.setText("Please, load an 2D image before trying to add pixel data!");
-		msgCollectDataError.setIcon(QMessageBox::Information);
+		msgCollectDataError.setIcon(QMessageBox::Critical);
 		msgCollectDataError.exec();
 
 		return;
@@ -5875,4 +5876,48 @@ void Lvp::undoLastAddDataAction()
 		}
 		collectdPixelDataSizes.removeLast();
 	}
+}
+
+void Lvp::exportCollectedData() 
+{
+	try
+	{
+		QString filename = QFileDialog::getSaveFileName(this, "Save As");
+
+		if (filename.isEmpty())
+			return;
+
+		QFile collectedDataFile(filename);
+
+		if (!collectedDataFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			return;
+		
+		QTextStream out(&collectedDataFile);
+
+		for (int row = 0; row < pixelDataTable->rowCount(); row++)
+		{
+			for (int col = 0; col < 6; col++)
+			{
+				out << pixelDataTable->item(row, col)->text() <<  "\t";
+			}
+			out << "\n";		
+		}
+
+		collectedDataFile.close();
+
+		QMessageBox msgExportSuccess;
+		msgExportSuccess.setText("Data exported with succes!");
+		msgExportSuccess.setIcon(QMessageBox::Information);
+		msgExportSuccess.exec();
+	}
+	catch(const std::exception& e)
+	{
+		QMessageBox msgExportError;
+		msgExportError.setText("Something went wrong when tryind to save the file!");
+		msgExportError.setInformativeText(e.what());
+		msgExportError.setIcon(QMessageBox::Critical);
+		msgExportError.exec();
+		std::cerr << e.what() << '\n';
+	}
+	
 }

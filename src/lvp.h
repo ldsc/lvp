@@ -330,6 +330,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
         void on_solidSelection_clicked();
 		void cleanCollectedPixelDataTable();
 		void undoLastAddDataAction();
+		void exportCollectedData();
 
 protected:
 		/// Sobrecarrega método chamado quando o usuário fecha o software.
