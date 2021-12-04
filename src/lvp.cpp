@@ -345,6 +345,7 @@ void Lvp::createActions()
 	connect(actionZoomOut, SIGNAL(triggered()), this, SLOT(zoomOut()));
 	connect(action3DVisualization, SIGNAL(triggered()), this, SLOT(open3DVisualization()));
 	connect(actionAddData, SIGNAL(clicked()), this, SLOT(addPixelInformationData()));
+	connect(actionClear, SIGNAL(clicked()), this, SLOT(cleanCollectedPixelDataTable()));
 }
 
 void Lvp::closeActiveSubWindow()
@@ -5829,9 +5830,9 @@ void Lvp::addPixelInformationData()
 	active2DImageViewer()->clearCollectPixelDataVector();
 }
 
-void Lvp::setPixelDataCollectType(CollectType type) {
+void Lvp::setPixelDataCollectType(CollectType type) 
+{
 	pixelDataCollectType = type;
-	std::cout << type << "\n";
 }
 
 void Lvp::on_poreSelection_clicked()
@@ -5842,4 +5843,16 @@ void Lvp::on_poreSelection_clicked()
 void Lvp::on_solidSelection_clicked()
 {
 	setPixelDataCollectType(CollectType::solid);
+}
+
+void Lvp::cleanCollectedPixelDataTable() 
+{
+	QMessageBox::StandardButton replay;
+	replay = QMessageBox::question(this, "LVP", "Are you sure?", QMessageBox::Yes | QMessageBox::No);
+
+	if (replay == QMessageBox::Yes)
+	{
+		pixelDataTable->clearContents();
+		pixelDataTable->setRowCount(0);
+	}
 }

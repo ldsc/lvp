@@ -327,6 +327,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void setPixelDataCollectType(CollectType type);
         void on_poreSelection_clicked();
         void on_solidSelection_clicked();
+		void cleanCollectedPixelDataTable();
 
 protected:
 		/// Sobrecarrega método chamado quando o usuário fecha o software.
