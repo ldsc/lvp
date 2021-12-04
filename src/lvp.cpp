@@ -271,6 +271,7 @@ void Lvp::createActions()
 	connect(actionConnectedObjects, SIGNAL(triggered()), this, SLOT(connectedObjects()));
 	connect(actionConnectivity, SIGNAL(triggered()), this, SLOT(connectivity3D()));
 	connect(actionConfEq, SIGNAL(triggered()), this, SLOT(confEq()));
+	connect(actionSetupNeuralNetwork, SIGNAL(triggered()), this, SLOT(neuralNetworkConfig()));
 	connect(actionCopy, SIGNAL(triggered()), this, SLOT(copy()));
 	connect(actionCorFrequency, SIGNAL(triggered()), this, SLOT(correlationFFT()));
 	connect(actionCorFrequency3D, SIGNAL(triggered()), this, SLOT(correlationFFT3D()));
@@ -5927,4 +5928,10 @@ void Lvp::exportCollectedData()
 		std::cerr << e.what() << '\n';
 	}
 	
+}
+
+void Lvp::neuralNetworkConfig() 
+{
+	nnConfigDialog = new NeuralNetworkConfig(this);
+	nnConfigDialog->show();
 }

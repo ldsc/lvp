@@ -26,6 +26,7 @@
 #include "pgmImageviewer.h"
 #include "glwidget.h"
 #include "intrinsicPermeabilityByNetwork.h"
+#include "neuralNetworkConfig.h"
 #include "percolationNetwork.h"
 #include "poresThroats.h"
 #include "ploter.h"
@@ -177,6 +178,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		Import * dialogImport = nullptr;
 		Crop3D * dialogCrop = nullptr;
 		ConfEq * dialog = nullptr;
+		NeuralNetworkConfig *nnConfigDialog = nullptr;
 
 		QTranslator appTranslator;
 		QString qmPath;
@@ -303,6 +305,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		void updateStatusBar();
 		void zoomIn();
 		void zoomOut();
+		void neuralNetworkConfig();
 		GLWidget * createGLWidget(DbmImageViewer *_mdiChild);
 		GLWidget * createGLWidget(DgmImageViewer *_mdiChild);
 		GLWidget * createGLWidget(TextEditor *_mdiChild);
