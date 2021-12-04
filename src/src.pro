@@ -13,6 +13,7 @@ SOURCES +=  lvp.cpp \
             dbmImageViewer.cpp \
             #dbmImageViewerInt.cpp \
             dgmImageViewer.cpp \
+            neuralNetworkConfig.cpp \
             pbmImageviewer.cpp \
             pgmImageviewer.cpp \
             glwidget.cpp \
@@ -43,6 +44,7 @@ HEADERS +=  lvp.h \
             dbmImageViewer.h \
             #dbmImageViewerInt.h \
             dgmImageViewer.h \
+            neuralNetworkConfig.h \
             pbmImageviewer.h \
             pgmImageviewer.h \
             glwidget.h \
