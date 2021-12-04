@@ -5112,6 +5112,9 @@ void Lvp::porosity()
 	QPushButton *blackButton = msgBox.addButton(tr("&Black (1)"), QMessageBox::ActionRole);
 	msgBox.setDefaultButton(blackButton);
 
+	QMessageBox msgPorosity;
+	msgPorosity.setIcon(QMessageBox::Information);
+
 	if (activePbmImageViewer() != nullptr)
 	{																  // imagem 2D
 		QList<PbmImageViewer *> imagesList = selectedPbmImagesList(); // lista de ponteiros para imagens selecionadas.
@@ -5189,9 +5192,13 @@ void Lvp::porosity()
 			msg += msgTmp;
 		}
 	}
-	QMessageBox msgPorosity;
+	else 
+	{
+		msg = tr("Please, load an Black and White image format before trying to calculate!");
+		msgPorosity.setIcon(QMessageBox::Critical);
+	}
+	
 	msgPorosity.setText(msg);
-	msgPorosity.setIcon(QMessageBox::Information);
 	msgPorosity.exec();
 }
 
