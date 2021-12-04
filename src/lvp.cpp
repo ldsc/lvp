@@ -53,6 +53,8 @@ Lvp::Lvp()
 {
 	setupUi(this); // this sets up GUI
 
+	collectdPixelDataSizes = QStack<int>();
+
 	mdiArea = new QMdiArea;
 	mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -346,6 +348,7 @@ void Lvp::createActions()
 	connect(action3DVisualization, SIGNAL(triggered()), this, SLOT(open3DVisualization()));
 	connect(actionAddData, SIGNAL(clicked()), this, SLOT(addPixelInformationData()));
 	connect(actionClear, SIGNAL(clicked()), this, SLOT(cleanCollectedPixelDataTable()));
+	connect(actionUndo, SIGNAL(clicked()), this, SLOT(undoLastAddDataAction()));
 }
 
 void Lvp::closeActiveSubWindow()
@@ -5810,6 +5813,7 @@ void Lvp::addPixelInformationData()
 		return;
 	}
 
+
 	QVector<CollectedPixelData> collectedDataVector = active2DImageViewer()->getCollectedPixelDataVector();
 	
 	for (auto &&collectedData : collectedDataVector)
@@ -5827,6 +5831,7 @@ void Lvp::addPixelInformationData()
 		row++;
 	}
 	 
+	collectdPixelDataSizes.append(collectedDataVector.length());
 	active2DImageViewer()->clearCollectPixelDataVector();
 }
 
@@ -5854,5 +5859,20 @@ void Lvp::cleanCollectedPixelDataTable()
 	{
 		pixelDataTable->clearContents();
 		pixelDataTable->setRowCount(0);
+	}
+}
+
+void Lvp::undoLastAddDataAction() 
+{
+	QMessageBox::StandardButton replay;
+	replay = QMessageBox::question(this, "LVP", "Are you sure?", QMessageBox::Yes | QMessageBox::No);
+
+	if (replay == QMessageBox::Yes)
+	{
+        for (int i = 0; i < collectdPixelDataSizes.last(); i++)
+		{
+			pixelDataTable->removeRow(pixelDataTable->rowCount() - 1);
+		}
+		collectdPixelDataSizes.removeLast();
 	}
 }

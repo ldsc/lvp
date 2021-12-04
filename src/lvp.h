@@ -183,6 +183,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		QSettings * settings = nullptr;
 
 		CollectType pixelDataCollectType = CollectType::pore;
+		QStack<int> collectdPixelDataSizes;
 
 #ifndef QT_NO_PRINTER
 		QPrinter printer;
@@ -328,6 +329,7 @@ class Lvp : public QMainWindow, public Ui::MainWindow
         void on_poreSelection_clicked();
         void on_solidSelection_clicked();
 		void cleanCollectedPixelDataTable();
+		void undoLastAddDataAction();
 
 protected:
 		/// Sobrecarrega método chamado quando o usuário fecha o software.
