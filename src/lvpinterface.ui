@@ -812,7 +812,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item row="1" column="2">
-      <widget class="QPushButton" name="actionAddPores">
+      <widget class="QPushButton" name="actionAddData">
        <property name="text">
         <string>Add Data</string>
        </property>
@@ -836,7 +836,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item row="2" column="2" colspan="3">
-      <widget class="QTableWidget" name="tableWidget">
+      <widget class="QTableWidget" name="pixelDataTable">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
          <horstretch>0</horstretch>

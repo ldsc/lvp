@@ -14,6 +14,7 @@
 #include <QStatusBar>
 #include <QFileDialog>
 #include <QPushButton>
+#include <QVector>
 #include <MetNum/Matriz/TCMatriz2D.h>
 #include <MetNum/Matriz/TCImagem3D.h>
 #include <QPushButton>
@@ -23,6 +24,10 @@ class QListWidgetItem;
 class QImage;
 class QSignalMapper;
 class QWhellEvent;
+
+struct CollectedPixelData {
+	int x, y, R, G, B, label;
+};
 
 /*! BaseImageViewer é a classe base para representar imagens.*/
 class BaseImageViewer : public QScrollArea
@@ -55,6 +60,7 @@ class BaseImageViewer : public QScrollArea
 		QListWidgetItem *item;
 		int nx;
 		int ny;
+		QVector<CollectedPixelData> collectedPixelDataVector;
 
 	protected:
 		QImage *image;
@@ -91,6 +97,8 @@ class BaseImageViewer : public QScrollArea
 		inline QString getFileNameNoExt() { return curFileNoExt; }
 		inline QString getFileExt() { return fileExt; }
 		inline QString getFilePath() { return filePath; }
+		inline QVector<CollectedPixelData> getCollectedPixelDataVector() { return collectedPixelDataVector; };
+		inline void clearCollectPixelDataVector() { collectedPixelDataVector.clear(); }
 		inline double ScaleFactor() { return scaleFactor; }
 		void print();
 		void zoomIn();

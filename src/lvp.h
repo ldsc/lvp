@@ -125,6 +125,12 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 			m3DEuclidian
 		};
 
+		/// Tipos de dados coletados para pixels
+		enum CollectType {
+			pore,
+			solid
+		};
+
 		// Atributos
 	public:
 		/// Último diretório acessado
@@ -175,6 +181,8 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 		QTranslator appTranslator;
 		QString qmPath;
 		QSettings * settings = nullptr;
+
+		CollectType pixelDataCollectType = CollectType::pore;
 
 #ifndef QT_NO_PRINTER
 		QPrinter printer;
@@ -315,7 +323,12 @@ class Lvp : public QMainWindow, public Ui::MainWindow
 			textEditMessages->append("An Error Occured! Error Code is: "+QString::number(process->error()));
 		}*/
 
-	protected:
+        void addPixelInformationData();
+		void setPixelDataCollectType(CollectType type);
+        void on_poreSelection_clicked();
+        void on_solidSelection_clicked();
+
+protected:
 		/// Sobrecarrega método chamado quando o usuário fecha o software.
 		void closeEvent(QCloseEvent *event);
 

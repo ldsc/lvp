@@ -344,6 +344,7 @@ void Lvp::createActions()
 	connect(actionZoomIn, SIGNAL(triggered()), this, SLOT(zoomIn()));
 	connect(actionZoomOut, SIGNAL(triggered()), this, SLOT(zoomOut()));
 	connect(action3DVisualization, SIGNAL(triggered()), this, SLOT(open3DVisualization()));
+	connect(actionAddData, SIGNAL(clicked()), this, SLOT(addPixelInformationData()));
 }
 
 void Lvp::closeActiveSubWindow()
@@ -5794,4 +5795,51 @@ void Lvp::optionsAccepted()
 {
 	writeSettings();
 	readSettings();
+}
+
+void Lvp::addPixelInformationData()
+{
+
+	if (active2DImageViewer() == nullptr){
+		QMessageBox msgCollectDataError;
+		msgCollectDataError.setText("Please, load an 2D image before trying to add pixel data!");
+		msgCollectDataError.setIcon(QMessageBox::Information);
+		msgCollectDataError.exec();
+
+		return;
+	}
+
+	QVector<CollectedPixelData> collectedDataVector = active2DImageViewer()->getCollectedPixelDataVector();
+	
+	for (auto &&collectedData : collectedDataVector)
+	{
+		int row = pixelDataTable->rowCount();
+		
+		pixelDataTable->insertRow(pixelDataTable->rowCount());
+		pixelDataTable->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(collectedData.x)));
+		pixelDataTable->setItem(row, 1, new QTableWidgetItem(QString("%1").arg(collectedData.y)));
+		pixelDataTable->setItem(row, 2, new QTableWidgetItem(QString("%1").arg(collectedData.R)));
+		pixelDataTable->setItem(row, 3, new QTableWidgetItem(QString("%1").arg(collectedData.G)));
+		pixelDataTable->setItem(row, 4, new QTableWidgetItem(QString("%1").arg(collectedData.B)));
+		pixelDataTable->setItem(row, 5, new QTableWidgetItem(QString("%1").arg(pixelDataCollectType)));
+		
+		row++;
+	}
+	 
+	active2DImageViewer()->clearCollectPixelDataVector();
+}
+
+void Lvp::setPixelDataCollectType(CollectType type) {
+	pixelDataCollectType = type;
+	std::cout << type << "\n";
+}
+
+void Lvp::on_poreSelection_clicked()
+{
+	setPixelDataCollectType(CollectType::pore);
+}
+
+void Lvp::on_solidSelection_clicked()
+{
+	setPixelDataCollectType(CollectType::solid);
 }
