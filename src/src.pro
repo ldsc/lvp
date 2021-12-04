@@ -73,6 +73,7 @@ FORMS +=    lvpinterface.ui \
             dialogProperties.ui \
             dialogReconstruction.ui \
             dialogReconstructionES.ui \
+            neuralNetworkConfig.ui \
             optionsdialog.ui \
             dialogCrop3D.ui \
             dialogPoresThroats.ui \
