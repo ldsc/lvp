@@ -790,10 +790,55 @@ p, li { white-space: pre-wrap; }
    </attribute>
    <widget class="QWidget" name="dockWidgetImagePixelDataList">
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="1" column="0" colspan="4">
+     <item row="0" column="2">
+      <widget class="QPushButton" name="actionExportData">
+       <property name="text">
+        <string>Export</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QPushButton" name="actionClear">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QPushButton" name="actionUndo">
+       <property name="text">
+        <string>Undo</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="actionAddPores">
+       <property name="text">
+        <string>Add Data</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QRadioButton" name="poreSelection">
+       <property name="text">
+        <string>Pore</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <widget class="QRadioButton" name="solidSelection">
+       <property name="text">
+        <string>Solid</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2" colspan="3">
       <widget class="QTableWidget" name="tableWidget">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -837,34 +882,6 @@ p, li { white-space: pre-wrap; }
          <string>Label</string>
         </property>
        </column>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="actionAddSolids">
-       <property name="text">
-        <string>Add Solids</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QPushButton" name="actionAddPores">
-       <property name="text">
-        <string>Add Pores</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="QPushButton" name="actionClear">
-       <property name="text">
-        <string>Clear</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QPushButton" name="actionExportData">
-       <property name="text">
-        <string>Export</string>
-       </property>
       </widget>
      </item>
     </layout>
