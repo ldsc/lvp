@@ -19,8 +19,8 @@ class NeuralNetworkConfig : public QDialog, public Ui::NeuralNetworkConfig
 
 public:
 	explicit NeuralNetworkConfig(QMainWindow *_parent);
-	inline QVector<LayerConfig> getLayerConfigData() { return layerConfigData; }
 	~NeuralNetworkConfig() {}
+	inline QVector<LayerConfig> getLayerConfigData() { return layerConfigData; }
 
 private:
 	QComboBox *createTableCombobox(QStringList optionsList);
@@ -29,6 +29,11 @@ private slots:
 	void on_actionAddLayer_clicked();
 
     void on_buttonBox_accepted();
+
+    void on_actionResetLayers_clicked();
+	
+	void onKeyPressEvent(QKeyEvent *event);
+
 
 private:
 	QMainWindow *parent;

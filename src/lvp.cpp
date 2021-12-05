@@ -1,5 +1,4 @@
 #include <QtGui>
-#include <QDebug>
 #include <string>
 #include <set>
 #include <cstdlib> // Utilizada em Correlation
@@ -128,6 +127,9 @@ Lvp::Lvp()
 
 	// Controles da visualização 3D
 	dockWidgetVisualisation3D->setVisible(false);
+
+	// Controles de configuração de Redes Neurais
+	nnConfigDialog = new NeuralNetworkConfig(this);
 
 	// Lista de gráficos
 	gridLayoutChart = new QGridLayout(dockWidgetContentsListaChart);
@@ -352,6 +354,7 @@ void Lvp::createActions()
 	connect(actionClear, SIGNAL(clicked()), this, SLOT(cleanCollectedPixelDataTable()));
 	connect(actionUndo, SIGNAL(clicked()), this, SLOT(undoLastAddDataAction()));
 	connect(actionExportData, SIGNAL(clicked()), this, SLOT(exportCollectedData()));
+	connect(actionRunNeuralNetworkTraining, SIGNAL(triggered()), this, SLOT(exRunNNTraining()));
 }
 
 void Lvp::closeActiveSubWindow()
@@ -5922,7 +5925,7 @@ void Lvp::exportCollectedData()
 	catch(const std::exception& e)
 	{
 		QMessageBox msgExportError;
-		msgExportError.setText("Something went wrong when tryind to save the file!");
+		msgExportError.setText("Something went wrong when trying to save the file!");
 		msgExportError.setInformativeText(e.what());
 		msgExportError.setIcon(QMessageBox::Critical);
 		msgExportError.exec();
@@ -5933,11 +5936,14 @@ void Lvp::exportCollectedData()
 
 void Lvp::neuralNetworkConfig() 
 {
-	nnConfigDialog = new NeuralNetworkConfig(this);
-	
-	if(nnConfigDialog->exec() == QDialog::Accepted)
-	{
-		QVector<LayerConfig> layerConfigData = nnConfigDialog->getLayerConfigData();
-		qDebug() << layerConfigData[0].numNeurons;
-	}
+	nnConfigDialog->show();
+}
+
+void Lvp::exRunNNTraining() 
+{
+	int batchSize = nnConfigDialog->spinBoxBatchSize->value();
+	int numEpochs = nnConfigDialog->spinBoxNumEpochs->value();
+
+	QVector<LayerConfig> layersConfig = nnConfigDialog->getLayerConfigData();
+	int numLayers = layersConfig.length();
 }

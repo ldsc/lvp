@@ -255,7 +255,7 @@
     <property name="title">
      <string>AI</string>
     </property>
-    <addaction name="actionCollectPixelData"/>
+    <addaction name="actionRunNeuralNetworkTraining"/>
     <addaction name="actionSetupNeuralNetwork"/>
     <addaction name="separator"/>
     <addaction name="actionImportTorchModel"/>
@@ -1253,12 +1253,12 @@ p, li { white-space: pre-wrap; }
     <string>Porosity</string>
    </property>
   </action>
-  <action name="actionCollectPixelData">
+  <action name="actionRunNeuralNetworkTraining">
    <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Collect Pixel Data</string>
+    <string>Run Neural Network Training</string>
    </property>
   </action>
   <action name="action3DVisualization">
