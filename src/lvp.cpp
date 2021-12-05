@@ -1,4 +1,5 @@
 #include <QtGui>
+#include <QDebug>
 #include <string>
 #include <set>
 #include <cstdlib> // Utilizada em Correlation
@@ -5933,5 +5934,10 @@ void Lvp::exportCollectedData()
 void Lvp::neuralNetworkConfig() 
 {
 	nnConfigDialog = new NeuralNetworkConfig(this);
-	nnConfigDialog->show();
+	
+	if(nnConfigDialog->exec() == QDialog::Accepted)
+	{
+		QVector<LayerConfig> layerConfigData = nnConfigDialog->getLayerConfigData();
+		qDebug() << layerConfigData[0].numNeurons;
+	}
 }

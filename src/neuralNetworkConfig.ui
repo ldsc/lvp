@@ -6,21 +6,65 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>402</width>
-    <height>380</height>
+    <width>531</width>
+    <height>283</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Neural Network Configuration</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="3" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="layersGroupBox">
+     <property name="title">
+      <string>Layers Configuration</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QTableWidget" name="layersTable">
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>28</number>
+        </attribute>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>150</number>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Number of Neurons</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Function</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Type</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QPushButton" name="actionAddLayer">
+     <property name="text">
+      <string>Add Layer</string>
      </property>
     </widget>
    </item>
