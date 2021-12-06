@@ -233,11 +233,19 @@ void BaseImageViewer::getFileNames(const QString & _fileName) {
 void BaseImageViewer::mouseMoveEvent(QMouseEvent *event) {
 	if (event->x() >= 0 && event->y() >= 0 && event->x() < image->width() && event->y() < image->height() && scaleFactor == 1.0 && !isFitedToWindow) {
 		int gray = qGray(image->pixel( event->pos() ));
-		//parent->statusBar()->showMessage(tr("Coordinates (x = %1, y = %2) - RGB (%3,%4,%5)").arg(event->x()).arg(event->y()).arg(gray).arg(gray).arg(gray), 2000);
-		//QToolTip::showText(event->pos(), tr("Coordinates"));
 		lbX->setText(QString("%1").arg(event->x()));
 		lbY->setText(QString("%1").arg(event->y()));
 		lbRGB->setText(QString("%1,%2,%3").arg(gray).arg(gray).arg(gray));
+
+		CollectedPixelData collectedPixelData = CollectedPixelData();
+		collectedPixelData.x = event->x();
+		collectedPixelData.y = event->y();
+		collectedPixelData.R = gray;
+		collectedPixelData.G = gray;
+		collectedPixelData.B = gray;
+		collectedPixelData.label = 0;
+
+		collectedPixelDataVector.append(collectedPixelData);
 	}
 }
 

@@ -55,4 +55,7 @@ tmp/
 *.Release
 *.dll
 imagensTese
-
+build
+.qmake.stash
+.vscode
+.autosave

@@ -13,8 +13,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>785</width>
-    <height>1220</height>
+    <width>863</width>
+    <height>1286</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,8 +36,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>785</width>
-     <height>21</height>
+     <width>863</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -251,6 +251,15 @@
      <string>&amp;Idiom</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuIA">
+    <property name="title">
+     <string>AI</string>
+    </property>
+    <addaction name="actionRunNeuralNetworkTraining"/>
+    <addaction name="actionSetupNeuralNetwork"/>
+    <addaction name="separator"/>
+    <addaction name="actionImportTorchModel"/>
+   </widget>
    <widget class="QMenu" name="menuReconstruction">
     <property name="title">
      <string>&amp;Reconstruction</string>
@@ -273,6 +282,7 @@
    <addaction name="menuSegmentation"/>
    <addaction name="menuCharacterization"/>
    <addaction name="menuReconstruction"/>
+   <addaction name="menuIA"/>
    <addaction name="menuWindow"/>
    <addaction name="menuLanguage"/>
    <addaction name="menu_Help"/>
@@ -762,6 +772,124 @@ p, li { white-space: pre-wrap; }
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsMessages"/>
   </widget>
+  <widget class="QDockWidget" name="dockWidgetImagePixelData">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetFloatable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>:. Image Pixel Data</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetImagePixelDataList">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="2">
+      <widget class="QPushButton" name="actionExportData">
+       <property name="text">
+        <string>Export</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QPushButton" name="actionClear">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QPushButton" name="actionUndo">
+       <property name="text">
+        <string>Undo</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="actionAddData">
+       <property name="text">
+        <string>Add Data</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QRadioButton" name="poreSelection">
+       <property name="text">
+        <string>Pore</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <widget class="QRadioButton" name="solidSelection">
+       <property name="text">
+        <string>Solid</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2" colspan="3">
+      <widget class="QTableWidget" name="pixelDataTable">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <attribute name="horizontalHeaderCascadingSectionResizes">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="horizontalHeaderDefaultSectionSize">
+        <number>40</number>
+       </attribute>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>true</bool>
+       </attribute>
+       <attribute name="verticalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>x</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>y</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>R</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>G</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>B</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Label</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionOpen">
    <property name="enabled">
     <bool>true</bool>
@@ -1123,6 +1251,14 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Porosity</string>
+   </property>
+  </action>
+  <action name="actionRunNeuralNetworkTraining">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Run Neural Network Training</string>
    </property>
   </action>
   <action name="action3DVisualization">
@@ -1660,8 +1796,19 @@ p, li { white-space: pre-wrap; }
     <string>Percolation Network</string>
    </property>
   </action>
+  <action name="actionSetupNeuralNetwork">
+   <property name="text">
+    <string>Setup Neural Network</string>
+   </property>
+  </action>
+  <action name="actionImportTorchModel">
+   <property name="text">
+    <string>Import Torch Model</string>
+   </property>
+  </action>
   <zorder>dockWidgetVisualisation3D</zorder>
   <zorder>dockWidgetMessages</zorder>
+  <zorder>dockWidgetImagePixelData</zorder>
  </widget>
  <resources>
   <include location="application.qrc"/>

@@ -13,6 +13,7 @@ SOURCES +=  lvp.cpp \
             dbmImageViewer.cpp \
             #dbmImageViewerInt.cpp \
             dgmImageViewer.cpp \
+            neuralNetworkConfig.cpp \
             pbmImageviewer.cpp \
             pgmImageviewer.cpp \
             glwidget.cpp \
@@ -43,6 +44,7 @@ HEADERS +=  lvp.h \
             dbmImageViewer.h \
             #dbmImageViewerInt.h \
             dgmImageViewer.h \
+            neuralNetworkConfig.h \
             pbmImageviewer.h \
             pgmImageviewer.h \
             glwidget.h \
@@ -73,6 +75,7 @@ FORMS +=    lvpinterface.ui \
             dialogProperties.ui \
             dialogReconstruction.ui \
             dialogReconstructionES.ui \
+            neuralNetworkConfig.ui \
             optionsdialog.ui \
             dialogCrop3D.ui \
             dialogPoresThroats.ui \
@@ -104,17 +107,17 @@ OBJECTS_DIR =  ./tmp
 
 #CODECFORSRC = UTF-8
 
-INCLUDEPATH += ../../qwt/include \
-               ../../libldsc/src/ \
+INCLUDEPATH += /usr/local/qwt-6.2.0/include \
+               /usr/local/libldsc/src/ \
                 /usr/include/qwt/ \
-		../../libldsc/src/
+                /usr/local/libldsc/src/
 
-LIBS +=  -L../../qwt/lib \
+LIBS +=  -L/usr/local/qwt-6.2.0/lib \
          -L/usr/include/qwt \
-         -L../../libldsc/src \
+         -L/usr/local/libldsc/src \
          -lqwt \
          -lldsc \
-         -lgomp 
+         -lgomp
 
 unix {
     LIBS +=  -lGLU

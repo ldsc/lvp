@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ln -s $1/bin/lvp  /usr/bin/lvp
+cp *.png /usr/share/icons
+cp lvp.desktop  /usr/share/applications
